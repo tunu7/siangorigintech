@@ -16,9 +16,14 @@ const links = [
     number: "02",
   },
   {
+    name: "Careers",
+    href: "/careers",
+    number: "03",
+  },
+  {
     name: "Contact",
     href: "/contact",
-    number: "03",
+    number: "04",
   },
 ];
 
@@ -97,9 +102,7 @@ export default function Navbar() {
                   href={link.href}
                   className="group relative text-sm text-neutral-500 transition-colors duration-300 hover:text-black"
                 >
-                  <span>
-                    {link.name}
-                  </span>
+                  <span>{link.name}</span>
 
                   {/* Underline */}
 
@@ -165,7 +168,6 @@ export default function Navbar() {
             : "invisible opacity-0"
         }`}
       >
-
         <div className="flex h-full flex-col justify-between px-6 pb-10 pt-32">
 
           {/* NAVIGATION */}
@@ -186,7 +188,6 @@ export default function Navbar() {
                   transitionDelay: `${index * 70}ms`,
                 }}
               >
-
                 <div className="flex items-center gap-4">
 
                   <span className="text-xs text-neutral-400">
@@ -203,7 +204,6 @@ export default function Navbar() {
                   size={24}
                   className="text-black transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
                 />
-
               </Link>
             ))}
 
@@ -218,10 +218,9 @@ export default function Navbar() {
                   : "translate-y-5 opacity-0"
               }`}
               style={{
-                transitionDelay: "240ms",
+                transitionDelay: `${links.length * 70 + 30}ms`,
               }}
             >
-
               <span className="text-base font-medium text-white">
                 Start a project
               </span>
@@ -232,7 +231,6 @@ export default function Navbar() {
                   className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                 />
               </span>
-
             </Link>
 
           </nav>
@@ -246,10 +244,9 @@ export default function Navbar() {
                 : "translate-y-5 opacity-0"
             }`}
             style={{
-              transitionDelay: "300ms",
+              transitionDelay: "400ms",
             }}
           >
-
             <p className="text-xs uppercase tracking-[0.2em] text-neutral-400">
               Technology · Growth · AI
             </p>
@@ -263,11 +260,9 @@ export default function Navbar() {
                 © {new Date().getFullYear()}
               </span>
             </div>
-
           </div>
 
         </div>
-
       </div>
     </>
   );
