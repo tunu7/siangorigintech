@@ -241,7 +241,7 @@ export default async function JobPage({
     items-center
     gap-4
     rounded-full
-    !bg-[#0B4D2C]
+    bg-[#0B4D2C]!
     py-2
     pl-7
     pr-2
@@ -249,12 +249,12 @@ export default async function JobPage({
     font-medium
     uppercase
     tracking-[0.12em]
-    !text-white
+    text-white!
     shadow-[0_8px_30px_rgba(11,77,44,0.12)]
     transition-all
     duration-300
     hover:-translate-y-1
-    hover:!bg-[#176B3A]
+    hover:bg-[#176B3A]!
     hover:shadow-[0_14px_35px_rgba(11,77,44,0.22)]
   "
 >
@@ -268,13 +268,13 @@ export default async function JobPage({
       items-center
       justify-center
       rounded-full
-      !bg-[#EAF3EC]
-      !text-[#0B4D2C]
+      bg-[#EAF3EC]!
+      text-[#0B4D2C]!
       transition-all
       duration-300
       group-hover:translate-x-0.5
-      group-hover:!bg-white
-      group-hover:!text-[#0B4D2C]
+      group-hover:bg-white!
+      group-hover:text-[#0B4D2C]!
     "
   >
     <span className="transition-transform duration-300 group-hover:translate-x-1">

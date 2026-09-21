@@ -174,7 +174,7 @@ export default function ApplyPage() {
       {/* Ambient green glow */}
       <div className="pointer-events-none absolute -right-50 top-[8%] h-130 w-130 rounded-full bg-[#2F7D46]/5 blur-3xl animate-[applyFloat_14s_ease-in-out_infinite]" />
 
-      <div className="pointer-events-none absolute bottom-[10%] left-[-45] h-105 w-105 rounded-full bg-[#176B3A]/4 blur-3xl animate-[applyFloatReverse_16s_ease-in-out_infinite]" />
+      <div className="pointer-events-none absolute bottom-[10%] -left-45 h-105 w-105 rounded-full bg-[#176B3A]/4 blur-3xl animate-[applyFloatReverse_16s_ease-in-out_infinite]" />
 
       {/* Technical grid */}
       <div className="pointer-events-none absolute inset-0 opacity-[0.025]">
