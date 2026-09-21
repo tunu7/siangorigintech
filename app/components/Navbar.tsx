@@ -66,7 +66,7 @@ export default function Navbar() {
       <header
         className={`fixed left-0 top-0 z-50 w-full transition-all duration-500 ${
           scrolled
-            ? "border-b border-black/10 bg-[#f7f7f5]/90 backdrop-blur-xl"
+            ? "border-b border-[#0B4D2C]/10 bg-[#F7FAF7]/95 backdrop-blur-xl"
             : "bg-transparent"
         }`}
       >
@@ -79,11 +79,11 @@ export default function Navbar() {
             onClick={closeMenu}
             className="group relative z-60 flex shrink-0 items-center gap-2.5"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-[10px] font-bold tracking-tight text-white transition-transform duration-300 group-hover:rotate-12">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#06351F] text-[10px] font-bold tracking-tight text-white transition-all duration-300 group-hover:rotate-12 group-hover:bg-[#0B4D2C]">
               SO
             </span>
 
-            <span className="text-sm font-semibold tracking-[-0.02em] text-black">
+            <span className="text-sm font-semibold tracking-[-0.02em] text-[#0B4D2C]">
               SIANG ORIGIN
             </span>
           </Link>
@@ -100,17 +100,17 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="group relative text-sm text-neutral-500 transition-colors duration-300 hover:text-black"
+                  className="group relative text-sm text-[#617568] transition-colors duration-300 hover:text-[#0B4D2C]"
                 >
                   <span>{link.name}</span>
 
                   {/* Underline */}
 
-                  <span className="absolute -bottom-2 left-0 h-px w-0 bg-black transition-all duration-300 group-hover:w-full" />
+                  <span className="absolute -bottom-2 left-0 h-px w-0 bg-[#2F7D46] transition-all duration-300 group-hover:w-full" />
 
                   {/* Number */}
 
-                  <span className="absolute -right-2 -top-3 text-[8px] text-neutral-300 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <span className="absolute -right-2 -top-3 text-[8px] text-[#2F7D46]/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     {link.number}
                   </span>
                 </Link>
@@ -122,7 +122,7 @@ export default function Navbar() {
 
             <Link
               href="/contact"
-              className="group flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-neutral-800"
+              className="group flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-[#0B4D2C] px-5 py-3 text-sm font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#176B3A]"
             >
               <span className="text-white">
                 Start a project
@@ -130,7 +130,7 @@ export default function Navbar() {
 
               <ArrowUpRight
                 size={15}
-                className="text-white transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                className="text-[#A8D5B4] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               />
             </Link>
 
@@ -143,7 +143,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
-            className="relative z-60 flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-[#f7f7f5]/80 text-black transition-all duration-300 hover:bg-white lg:hidden"
+            className="relative z-60 flex h-10 w-10 items-center justify-center rounded-full border border-[#0B4D2C]/15 bg-[#F7FAF7]/85 text-[#0B4D2C] transition-all duration-300 hover:border-[#2F7D46]/30 hover:bg-[#EAF3EC] lg:hidden"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
           >
@@ -162,7 +162,7 @@ export default function Navbar() {
       ========================== */}
 
       <div
-        className={`fixed inset-0 z-40 bg-[#f7f7f5] transition-all duration-500 lg:hidden ${
+        className={`fixed inset-0 z-40 bg-[#F7FAF7] transition-all duration-500 lg:hidden ${
           menuOpen
             ? "visible opacity-100"
             : "invisible opacity-0"
@@ -179,7 +179,7 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={closeMenu}
-                className={`group flex items-center justify-between border-t border-black/10 py-6 transition-all duration-500 ${
+                className={`group flex items-center justify-between border-t border-[#0B4D2C]/10 py-6 transition-all duration-500 ${
                   menuOpen
                     ? "translate-y-0 opacity-100"
                     : "translate-y-5 opacity-0"
@@ -190,11 +190,11 @@ export default function Navbar() {
               >
                 <div className="flex items-center gap-4">
 
-                  <span className="text-xs text-neutral-400">
+                  <span className="text-xs text-[#617568]">
                     {link.number}
                   </span>
 
-                  <span className="text-4xl font-medium tracking-tight text-black">
+                  <span className="text-4xl font-medium tracking-tight text-[#0B4D2C]">
                     {link.name}
                   </span>
 
@@ -202,7 +202,7 @@ export default function Navbar() {
 
                 <ArrowUpRight
                   size={24}
-                  className="text-black transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
+                  className="text-[#176B3A] transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
                 />
               </Link>
             ))}
@@ -212,7 +212,7 @@ export default function Navbar() {
             <Link
               href="/contact"
               onClick={closeMenu}
-              className={`group mt-8 flex items-center justify-between rounded-full bg-black px-6 py-5 text-white transition-all duration-500 hover:bg-neutral-800 ${
+              className={`group mt-8 flex items-center justify-between rounded-full bg-[#0B4D2C] px-6 py-5 text-white transition-all duration-500 hover:bg-[#176B3A] ${
                 menuOpen
                   ? "translate-y-0 opacity-100"
                   : "translate-y-5 opacity-0"
@@ -225,7 +225,7 @@ export default function Navbar() {
                 Start a project
               </span>
 
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-black">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#EAF3EC] text-[#0B4D2C]">
                 <ArrowUpRight
                   size={17}
                   className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
@@ -247,11 +247,11 @@ export default function Navbar() {
               transitionDelay: "400ms",
             }}
           >
-            <p className="text-xs uppercase tracking-[0.2em] text-neutral-400">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#617568]">
               Technology · Growth · AI
             </p>
 
-            <div className="mt-5 flex items-center justify-between border-t border-black/10 pt-5 text-xs text-neutral-400">
+            <div className="mt-5 flex items-center justify-between border-t border-[#0B4D2C]/10 pt-5 text-xs text-[#617568]">
               <span>
                 Siang Origin Technologies
               </span>
