@@ -12,6 +12,7 @@ export default function ApplyPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [resume, setResume] = useState<File | null>(null);
 
   async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>
@@ -41,6 +42,7 @@ export default function ApplyPage() {
       }
 
       setSuccess(true);
+      setResume(null);
       form.reset();
     } catch (error) {
       setError(
@@ -51,6 +53,39 @@ export default function ApplyPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleResumeChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      setResume(null);
+      return;
+    }
+
+    // PDF validation
+    if (
+      file.type !== "application/pdf" &&
+      !file.name.toLowerCase().endsWith(".pdf")
+    ) {
+      setError("Please upload a PDF file.");
+      setResume(null);
+      event.target.value = "";
+      return;
+    }
+
+    // 10MB validation
+    if (file.size > 10 * 1024 * 1024) {
+      setError("Resume must be smaller than 10MB.");
+      setResume(null);
+      event.target.value = "";
+      return;
+    }
+
+    setError("");
+    setResume(file);
   }
 
   /* ---------------- SUCCESS ---------------- */
@@ -162,6 +197,7 @@ export default function ApplyPage() {
             }
           `}
         </style>
+
       </main>
     );
   }
@@ -229,6 +265,7 @@ export default function ApplyPage() {
               Tell us about yourself, your experience and what you can
               bring to Siang Origin Technologies.
             </p>
+
           </div>
 
           {/* Form */}
@@ -362,21 +399,53 @@ export default function ApplyPage() {
                 htmlFor="resume"
                 className="mt-3 flex cursor-pointer flex-col items-center justify-center border border-dashed border-[#0B4D2C]/20 bg-[#EAF3EC]/40 p-8 text-center transition-all duration-300 hover:border-[#2F7D46] hover:bg-[#EAF3EC]/70"
               >
-                <span className="text-sm font-medium text-[#0B4D2C]">
-                  Upload your resume
-                </span>
+                {resume ? (
+                  <>
+                    {/* PDF Icon */}
+                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#0B4D2C] text-xs font-bold tracking-wider text-white shadow-sm">
+                      PDF
+                    </div>
 
-                <span className="mt-2 text-xs text-[#617568]">
-                  PDF only · Maximum 10MB
-                </span>
+                    {/* File name */}
+                    <span className="mt-4 max-w-full truncate px-4 text-sm font-medium text-[#0B4D2C]">
+                      {resume.name}
+                    </span>
+
+                    {/* File size */}
+                    <span className="mt-2 text-xs text-[#617568]">
+                      {(resume.size / 1024 / 1024).toFixed(2)} MB · PDF
+                    </span>
+
+                    {/* Replace text */}
+                    <span className="mt-3 text-xs font-medium text-[#2F7D46]">
+                      Click to replace
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    {/* Upload icon */}
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#0B4D2C]/15 bg-white text-[#0B4D2C]">
+                      ↑
+                    </div>
+
+                    <span className="mt-4 text-sm font-medium text-[#0B4D2C]">
+                      Upload your resume
+                    </span>
+
+                    <span className="mt-2 text-xs text-[#617568]">
+                      PDF only · Maximum 10MB
+                    </span>
+                  </>
+                )}
 
                 <input
                   id="resume"
                   name="resume"
                   type="file"
                   required
-                  accept="application/pdf"
+                  accept="application/pdf,.pdf"
                   className="sr-only"
+                  onChange={handleResumeChange}
                 />
               </label>
             </div>
@@ -479,6 +548,7 @@ export default function ApplyPage() {
           }
         `}
       </style>
+
     </main>
   );
 }
