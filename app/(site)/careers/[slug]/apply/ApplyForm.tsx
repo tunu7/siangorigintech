@@ -1,14 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
 import Link from "next/link";
+import { upload } from "@vercel/blob/client";
 
-export default function ApplyPage() {
-  const params = useParams();
-
-  const slug = params.slug as string;
-
+export default function ApplyForm({ slug }: { slug: string }) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -25,12 +21,40 @@ export default function ApplyPage() {
     const form = event.currentTarget;
     const formData = new FormData(form);
 
-    formData.append("jobSlug", slug);
-
     try {
+      if (!resume) {
+        throw new Error("Please upload your resume.");
+      }
+
+      // 1. Upload the PDF directly to Vercel Blob
+      const blob = await upload(
+        `resumes/${slug}/resume.pdf`,
+        resume,
+        {
+          access: "private",
+          handleUploadUrl: "/api/apply/upload",
+          contentType: "application/pdf",
+        }
+      ).catch(() => {
+        throw new Error("Unable to upload resume. Please try again.");
+      });
+
+      // 2. Submit the application details
       const response = await fetch("/api/apply", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          email: formData.get("email"),
+          phone: formData.get("phone"),
+          linkedin: formData.get("linkedin"),
+          portfolio: formData.get("portfolio"),
+          message: formData.get("message"),
+          company: formData.get("company"),
+          jobSlug: slug,
+          resumePathname: blob.pathname,
+          resumeName: resume.name,
+        }),
       });
 
       const data = await response.json();
@@ -273,6 +297,16 @@ export default function ApplyPage() {
             onSubmit={handleSubmit}
             className="mt-20 space-y-10 animate-[applyFadeUp_700ms_ease-out_150ms_both]"
           >
+
+            {/* Honeypot */}
+            <input
+              type="text"
+              name="company"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="hidden"
+            />
 
             {/* Name */}
             <div>

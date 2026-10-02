@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "@/app/components/Navbar";
-import Footer from "@/app/components/Footer";
 
 export const metadata: Metadata = {
   title: {
@@ -19,13 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <Navbar />
-
-        <main>{children}</main>
-
-        <Footer />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
