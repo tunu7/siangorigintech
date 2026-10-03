@@ -12,12 +12,12 @@ import { resetContent, saveContent } from "./actions";
 type Values = Record<string, ContentValue>;
 
 const inputClass =
-  "mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand";
+  "mt-2 w-full rounded-lg border border-line-strong bg-white px-3 py-2 text-sm outline-none focus:border-ink";
 
-const labelClass = "text-xs uppercase tracking-wider text-zinc-500";
+const labelClass = "text-[11px] font-medium uppercase tracking-[0.16em] text-muted";
 
 const smallButton =
-  "rounded-md border border-zinc-300 bg-white px-2.5 py-1 text-xs hover:border-brand hover:text-brand disabled:opacity-40 disabled:hover:border-zinc-300 disabled:hover:text-inherit";
+  "rounded-md border border-line-strong bg-white px-2.5 py-1 text-xs hover:border-ink disabled:opacity-40 disabled:hover:border-line-strong disabled:hover:text-inherit";
 
 export default function ContentEditor({
   sectionKey,
@@ -89,7 +89,7 @@ export default function ContentEditor({
       {groupByHeading(fields).map((block, index) => (
         <section
           key={index}
-          className="space-y-4 rounded-xl border border-zinc-200 bg-white p-6"
+          className="space-y-4 rounded-lg border border-line bg-white p-6"
         >
           {block.heading && (
             <h2 className="text-sm font-semibold">{block.heading}</h2>
@@ -107,7 +107,7 @@ export default function ContentEditor({
         </section>
       ))}
 
-      <div className="sticky bottom-4 z-10 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-white/95 p-4 shadow-lg shadow-zinc-900/5 backdrop-blur">
+      <div className="sticky bottom-4 z-10 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-line bg-white/95 p-4 shadow-lg shadow-ink/5 backdrop-blur">
         <div className="text-sm">
           {state.error ? (
             <span role="alert" className="text-red-600">
@@ -118,7 +118,7 @@ export default function ContentEditor({
           ) : state.saved ? (
             <span className="text-brand">Saved. The live site is updated.</span>
           ) : (
-            <span className="text-zinc-500">
+            <span className="text-muted">
               {customized ? "Edited" : "Showing the original text"}
             </span>
           )}
@@ -130,7 +130,7 @@ export default function ContentEditor({
               type="button"
               onClick={reset}
               disabled={pending}
-              className="text-sm text-zinc-500 hover:text-red-700 disabled:opacity-50"
+              className="text-sm text-muted hover:text-red-700 disabled:opacity-50"
             >
               Restore original
             </button>
@@ -138,7 +138,7 @@ export default function ContentEditor({
           <button
             type="submit"
             disabled={pending || !dirty}
-            className="rounded-lg bg-brand px-5 py-2 text-sm font-medium text-white hover:bg-brand-hover disabled:opacity-50"
+            className="rounded-md bg-ink px-5 py-2 text-sm font-medium text-paper hover:bg-brand disabled:opacity-50"
           >
             {pending ? "Saving..." : "Save changes"}
           </button>
@@ -193,7 +193,7 @@ function FieldInput({
           className={`${inputClass} resize-y`}
         />
         {field.hint && (
-          <p className="mt-1 text-xs text-zinc-400">{field.hint}</p>
+          <p className="mt-1 text-xs text-muted">{field.hint}</p>
         )}
       </div>
     );
@@ -236,7 +236,7 @@ function SimpleInput({
       <label htmlFor={id} className={labelClass}>
         {field.label}
         {field.type !== "select" && field.required && (
-          <span className="text-brand"> *</span>
+          <span className="text-red-700"> *</span>
         )}
       </label>
 
@@ -276,7 +276,7 @@ function SimpleInput({
       )}
 
       {field.type !== "select" && field.hint && (
-        <p className="mt-1 text-xs text-zinc-400">{field.hint}</p>
+        <p className="mt-1 text-xs text-muted">{field.hint}</p>
       )}
     </div>
   );
@@ -318,10 +318,10 @@ function GroupInput({
         {items.map((item, index) => (
           <li
             key={index}
-            className="space-y-3 rounded-lg border border-zinc-200 bg-zinc-50 p-4"
+            className="space-y-3 rounded-lg border border-line bg-paper p-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="text-xs font-medium text-zinc-500">
+              <span className="text-xs font-medium text-muted">
                 {field.itemLabel} {index + 1}
               </span>
               <div className="flex gap-1.5">

@@ -16,19 +16,14 @@ Browser ──1. upload() ─► /api/apply/upload (client token) ─► Vercel 
 Admin ─► /admin  (also /login, /dashboard, or "Team login" in the footer)
            password login, signed HttpOnly cookie, returns you to the page
            you asked for; 5 failed attempts per IP → 15 min lockout
-           ├─ Applications: search / filter / sort / paginate, status counts,
-           │    bulk status change + delete, CSV export
-           │    detail: status + internal notes, resume via 60s presigned URL,
-           │    other applications from the same person, delete (incl. resume)
-           ├─ Jobs: create / edit / open / close / delete postings
-           │    (changes revalidate /careers immediately)
-           ├─ Enquiries: contact-form inbox with unread / archived views,
-           │    search, bulk actions, reply by email
-           ├─ Content: edit the text of every page + site settings
-           │    (company details, navigation menu, emails, SEO, banner)
-           └─ Projects: add / edit / reorder / hide portfolio projects,
-                cover images uploaded straight to Blob (≤5MB) and served
-                via /media/projects/* (only that prefix is ever public)
+
+           Overview        what needs attention: new applications, unread
+                           enquiries, open roles, latest activity
+           Recruitment     Applications (search / filter / sort / bulk
+                           actions / CSV), Jobs (create / edit / open / close)
+           Inbox           Enquiries (unread / archived, bulk actions)
+           Website         Pages (text of every page), Projects (with cover
+                           images via /media/projects/*), Navigation & settings
 
 Every content, project and job change revalidates the public site, so it
 updates immediately while pages stay statically cached.
@@ -39,10 +34,11 @@ the Vercel Function (4.5MB request body limit).
 
 ## Performance notes
 
-- Public pages are static and only re-render when admin content changes
-  (`revalidatePath`), so visitors never wait on the database.
+- Public pages are static and re-render instantly when admin content
+  changes (`revalidatePath`), plus hourly as a safety net for database
+  changes made outside the admin, so visitors never wait on the database.
 - Dashboard pages live in `app/admin/(dashboard)/` under one layout: the
-  header persists across navigations, unread counts stream in via
+  sidebar persists across navigations, unread counts stream in via
   `<Suspense>`, and `loading.tsx` shows a skeleton instantly.
 - Each admin page loads its data in a single HTTP round trip to Neon using
   `batch()` from `lib/db.ts` (a read-only transaction). Prefer adding
@@ -94,3 +90,10 @@ are defined in `lib/content-schema.ts` (add a field there and it appears in
 the editor). Projects (`/admin/projects`) and jobs (`/admin/jobs`) have
 their own tables, and contact enquiries are saved to `enquiries`. Schema changes go in `db/migrations/`
 as idempotent SQL files.
+
+## Design
+
+Warm paper (`--color-paper`) and ink (`--color-ink`) with deep green as a
+sparing accent; Instrument Serif for display type (`.font-display`) and
+Geist for text. Tokens live in `app/globals.css`; shared public components
+in `app/components/ui.tsx`, admin components in `app/admin/components/ui.tsx`.

@@ -11,22 +11,17 @@ export default async function NotFound() {
     <div className="flex min-h-screen flex-col">
       <Navbar brand={{ shortName, logoMark, navCta, navCtaHref, nav }} />
 
-      <main className="relative flex flex-1 items-center overflow-hidden">
-        <div aria-hidden className="bg-dots absolute inset-0" />
-        <Container className="relative py-24 text-center">
-          <p className="animate-fade-up text-8xl font-semibold tracking-tighter text-brand/15 sm:text-9xl">
-            404
+      <main className="flex flex-1 items-center">
+        <Container className="py-24 sm:py-32">
+          <p className="animate-fade-up text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
+            Error 404
           </p>
-          <h1 className="mt-2 animate-fade-up text-3xl font-semibold tracking-tight [animation-delay:100ms]">
-            Page not found
+          <h1 className="font-display mt-6 max-w-3xl animate-fade-up text-5xl text-balance [animation-delay:80ms] sm:text-7xl">
+            This page has moved, or never existed.
           </h1>
-          <p className="mx-auto mt-4 max-w-md animate-fade-up text-zinc-600 [animation-delay:200ms]">
-            The page you&apos;re looking for doesn&apos;t exist or has been
-            moved.
-          </p>
-          <div className="mt-8 animate-fade-up [animation-delay:300ms]">
+          <div className="mt-12 animate-fade-up [animation-delay:160ms]">
             <ButtonLink href="/" arrow>
-              Back to home
+              Return home
             </ButtonLink>
           </div>
         </Container>

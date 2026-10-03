@@ -7,9 +7,9 @@ import { saveProject } from "./actions";
 import ImageField from "./ImageField";
 
 const inputClass =
-  "mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand";
+  "mt-2 w-full rounded-lg border border-line-strong bg-white px-3 py-2 text-sm outline-none focus:border-ink";
 
-const labelClass = "text-xs uppercase tracking-wider text-zinc-500";
+const labelClass = "text-[11px] font-medium uppercase tracking-[0.16em] text-muted";
 
 export default function ProjectForm({ project }: { project?: Project }) {
   const [state, action, pending] = useActionState<FormState, FormData>(
@@ -30,17 +30,17 @@ export default function ProjectForm({ project }: { project?: Project }) {
     >
       <input type="hidden" name="id" value={project?.id ?? ""} />
 
-      <section className="rounded-xl border border-zinc-200 bg-white p-6">
+      <section className="rounded-lg border border-line bg-white p-6">
         <ImageField
           initial={project?.image ?? null}
           onUploadingChange={setUploading}
         />
       </section>
 
-      <section className="grid gap-4 rounded-xl border border-zinc-200 bg-white p-6 sm:grid-cols-2">
+      <section className="grid gap-4 rounded-lg border border-line bg-white p-6 sm:grid-cols-2">
         <div>
           <label htmlFor="title" className={labelClass}>
-            Title <span className="text-brand">*</span>
+            Title <span className="text-red-700">*</span>
           </label>
           <input
             id="title"
@@ -54,7 +54,7 @@ export default function ProjectForm({ project }: { project?: Project }) {
 
         <div>
           <label htmlFor="category" className={labelClass}>
-            Category <span className="text-brand">*</span>
+            Category <span className="text-red-700">*</span>
           </label>
           <input
             id="category"
@@ -79,7 +79,7 @@ export default function ProjectForm({ project }: { project?: Project }) {
             placeholder="AB"
             className={`${inputClass} uppercase`}
           />
-          <p className="mt-1 text-xs text-zinc-400">
+          <p className="mt-1 text-xs text-muted">
             Up to 3 letters shown on the card when there&apos;s no image.
           </p>
         </div>
@@ -98,14 +98,14 @@ export default function ProjectForm({ project }: { project?: Project }) {
             placeholder="https://example.com"
             className={inputClass}
           />
-          <p className="mt-1 text-xs text-zinc-400">
+          <p className="mt-1 text-xs text-muted">
             Optional. Makes the card clickable.
           </p>
         </div>
 
         <div className="sm:col-span-2">
           <label htmlFor="description" className={labelClass}>
-            Description <span className="text-brand">*</span>
+            Description <span className="text-red-700">*</span>
           </label>
           <textarea
             id="description"
@@ -119,18 +119,18 @@ export default function ProjectForm({ project }: { project?: Project }) {
         </div>
       </section>
 
-      <section className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-white p-6">
+      <section className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-line bg-white p-6">
         <div className="flex flex-wrap gap-6">
           <label className="flex items-center gap-3 text-sm">
             <input
               type="checkbox"
               name="published"
               defaultChecked={project?.published ?? true}
-              className="h-4 w-4 accent-brand"
+              className="h-4 w-4 accent-ink"
             />
             <span>
               <span className="font-medium">Published</span>
-              <span className="block text-xs text-zinc-500">
+              <span className="block text-xs text-muted">
                 Shown on the work page.
               </span>
             </span>
@@ -141,11 +141,11 @@ export default function ProjectForm({ project }: { project?: Project }) {
               type="checkbox"
               name="featured"
               defaultChecked={project?.featured ?? true}
-              className="h-4 w-4 accent-brand"
+              className="h-4 w-4 accent-ink"
             />
             <span>
               <span className="font-medium">Featured</span>
-              <span className="block text-xs text-zinc-500">
+              <span className="block text-xs text-muted">
                 Also shown on the home page.
               </span>
             </span>
@@ -155,7 +155,7 @@ export default function ProjectForm({ project }: { project?: Project }) {
         <button
           type="submit"
           disabled={pending || uploading}
-          className="rounded-lg bg-brand px-5 py-2 text-sm font-medium text-white hover:bg-brand-hover disabled:opacity-50"
+          className="rounded-md bg-ink px-5 py-2 text-sm font-medium text-paper hover:bg-brand disabled:opacity-50"
         >
           {pending
             ? "Saving..."

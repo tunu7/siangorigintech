@@ -11,7 +11,7 @@ import {
 } from "@/lib/media";
 
 const smallButton =
-  "rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm hover:border-brand hover:text-brand disabled:opacity-50";
+  "rounded-md border border-line-strong bg-white px-3 py-1.5 text-sm hover:border-ink disabled:opacity-50";
 
 // Uploads the image straight to Blob and stores its pathname in a hidden
 // `image` input submitted with the project form.
@@ -77,7 +77,7 @@ export default function ImageField({
 
   return (
     <div>
-      <p className="text-xs uppercase tracking-wider text-zinc-500">
+      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
         Cover image
       </p>
 
@@ -92,7 +92,7 @@ export default function ImageField({
           if (file) void handleFile(file);
         }}
       >
-        <div className="relative flex aspect-[4/3] w-48 items-center justify-center overflow-hidden rounded-lg border border-dashed border-zinc-300 bg-zinc-50 text-xs text-zinc-400">
+        <div className="relative flex aspect-[4/3] w-48 items-center justify-center overflow-hidden rounded-lg border border-dashed border-line-strong bg-paper text-xs text-muted">
           {pathname ? (
             <Image
               src={mediaUrl(pathname)}
@@ -135,12 +135,12 @@ export default function ImageField({
             <button
               type="button"
               onClick={() => setPathname("")}
-              className="text-sm text-zinc-500 hover:text-red-700"
+              className="text-sm text-muted hover:text-red-700"
             >
               Remove image
             </button>
           )}
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-muted">
             JPG, PNG, WebP or AVIF, up to 5MB. Landscape (4:3) works best.
           </p>
         </div>

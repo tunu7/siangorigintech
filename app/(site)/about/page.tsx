@@ -1,104 +1,95 @@
 import type { Metadata } from "next";
 import ContactCTA from "@/app/components/ContactCTA";
 import { Reveal } from "@/app/components/motion";
-import {
-  Container,
-  Eyebrow,
-  PageBackdrop,
-  PageHeader,
-} from "@/app/components/ui";
+import { Container, PageHeader, Section } from "@/app/components/ui";
 import { getContent } from "@/lib/content";
 
 export async function generateMetadata(): Promise<Metadata> {
   const about = await getContent("about");
-  return { title: "About", description: about.metaDescription };
-}
-
-function Section({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Reveal
-      as="section"
-      className="grid gap-6 border-t border-zinc-200 py-16 md:grid-cols-[1fr_2fr] md:gap-12"
-    >
-      <Eyebrow>{label}</Eyebrow>
-      <div>{children}</div>
-    </Reveal>
-  );
+  return { title: "Studio", description: about.metaDescription };
 }
 
 export default async function AboutPage() {
   const about = await getContent("about");
+  let index = 0;
 
   return (
-    <div className="relative isolate">
-      <PageBackdrop />
-      <Container className="pt-24">
+    <>
+      <Container>
         <PageHeader
           eyebrow={about.eyebrow}
           title={about.title}
           description={about.intro}
         />
 
-        <div className="mt-20">
+        <div className="pb-12">
           {about.whoParagraphs.length > 0 && (
-            <Section label={about.whoLabel}>
-              <div className="max-w-2xl space-y-5 text-lg leading-8 text-zinc-600">
-                {about.whoParagraphs.map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
-                ))}
-              </div>
-            </Section>
+            <Reveal>
+              <Section label={about.whoLabel} index={++index} className="border-t-0">
+                <div className="max-w-2xl space-y-6 text-lg leading-8 text-ink-soft">
+                  {about.whoParagraphs.map((paragraph, i) => (
+                    <p
+                      key={i}
+                      className={
+                        i === 0
+                          ? "font-display text-3xl leading-[1.2] text-ink"
+                          : undefined
+                      }
+                    >
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </Section>
+            </Reveal>
           )}
 
           {about.services.length > 0 && (
-            <Section label={about.whatLabel}>
-              <div className="grid gap-x-10 gap-y-8 sm:grid-cols-2">
-                {about.services.map((service, index) => (
-                  <div
-                    key={index}
-                    className="border-l-2 border-brand/20 pl-5 transition-colors hover:border-brand"
-                  >
-                    <h2 className="font-semibold">{service.title}</h2>
-                    <p className="mt-2 leading-7 text-zinc-600">
-                      {service.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </Section>
+            <Reveal>
+              <Section label={about.whatLabel} index={++index}>
+                <dl className="grid gap-x-12 sm:grid-cols-2">
+                  {about.services.map((service, i) => (
+                    <div key={i} className="border-t border-line py-7">
+                      <dt className="font-display text-2xl">{service.title}</dt>
+                      <dd className="mt-3 leading-7 text-ink-soft">
+                        {service.description}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </Section>
+            </Reveal>
           )}
 
           {(about.thinkTitle || about.thinkText) && (
-            <Section label={about.thinkLabel}>
-              <h2 className="text-2xl font-semibold tracking-tight">
-                {about.thinkTitle}
-              </h2>
-              <p className="mt-4 max-w-2xl text-lg leading-8 text-zinc-600">
-                {about.thinkText}
-              </p>
-            </Section>
+            <Reveal>
+              <Section label={about.thinkLabel} index={++index}>
+                <h2 className="font-display max-w-3xl text-4xl text-balance sm:text-5xl">
+                  {about.thinkTitle}
+                </h2>
+                <p className="mt-6 max-w-2xl text-lg leading-8 text-ink-soft">
+                  {about.thinkText}
+                </p>
+              </Section>
+            </Reveal>
           )}
 
           {(about.journeyTitle || about.journeyText) && (
-            <Section label={about.journeyLabel}>
-              <h2 className="text-2xl font-semibold tracking-tight">
-                {about.journeyTitle}
-              </h2>
-              <p className="mt-4 max-w-2xl text-lg leading-8 text-zinc-600">
-                {about.journeyText}
-              </p>
-            </Section>
+            <Reveal>
+              <Section label={about.journeyLabel} index={++index}>
+                <h2 className="font-display max-w-3xl text-4xl text-balance sm:text-5xl">
+                  {about.journeyTitle}
+                </h2>
+                <p className="mt-6 max-w-2xl text-lg leading-8 text-ink-soft">
+                  {about.journeyText}
+                </p>
+              </Section>
+            </Reveal>
           )}
         </div>
       </Container>
 
       <ContactCTA />
-    </div>
+    </>
   );
 }

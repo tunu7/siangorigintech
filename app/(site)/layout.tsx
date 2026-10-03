@@ -3,6 +3,10 @@ import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { getContent } from "@/lib/content";
 
+// Public pages are static. Admin saves refresh them instantly; this hourly
+// refresh is a safety net for database changes made outside the admin.
+export const revalidate = 3600;
+
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getContent("settings");
 

@@ -56,16 +56,16 @@ export default async function EnquiriesPage({
   return (
     <>
 
-      <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-        <p className="text-xs uppercase tracking-wider text-zinc-500">
-          Contact form
+      <main className="px-6 py-10 lg:px-12">
+        <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
+          Inbox
         </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">
+        <h1 className="mt-2 font-display text-4xl">
           Enquiries
         </h1>
 
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
-          <nav className="flex gap-1 rounded-lg border border-zinc-200 bg-white p-1 text-sm">
+          <nav className="flex gap-1 rounded-lg border border-line bg-white p-1 text-sm">
             {ENQUIRY_VIEWS.map((option) => (
               <Link
                 key={option}
@@ -73,12 +73,12 @@ export default async function EnquiriesPage({
                 aria-current={view === option ? "page" : undefined}
                 className={`rounded-md px-3 py-1.5 capitalize ${
                   view === option
-                    ? "bg-zinc-100 font-medium"
-                    : "text-zinc-500 hover:text-zinc-900"
+                    ? "bg-paper-deep font-medium"
+                    : "text-muted hover:text-ink"
                 }`}
               >
                 {option}{" "}
-                <span className="tabular-nums text-zinc-400">
+                <span className="tabular-nums text-muted">
                   {counts[option]}
                 </span>
               </Link>
@@ -93,11 +93,11 @@ export default async function EnquiriesPage({
               name="q"
               defaultValue={q}
               placeholder="Search name, email or message"
-              className="min-w-0 max-w-sm flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand"
+              className="min-w-0 max-w-sm flex-1 rounded-lg border border-line-strong bg-white px-3 py-2 text-sm outline-none focus:border-ink"
             />
             <button
               type="submit"
-              className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-hover"
+              className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper hover:bg-brand"
             >
               Search
             </button>
@@ -121,9 +121,9 @@ export default async function EnquiriesPage({
           </div>
         )}
 
-        <div className="mt-3 overflow-x-auto rounded-xl border border-zinc-200 bg-white">
+        <div className="mt-3 overflow-x-auto rounded-lg border border-line bg-white">
           <table className="w-full min-w-180 text-left text-sm">
-            <thead className="border-b border-zinc-200 text-xs uppercase tracking-wider text-zinc-500">
+            <thead className="border-b border-line text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
               <tr>
                 <th className="w-10 py-3 pl-4">
                   <SelectAll form="bulk" />
@@ -134,12 +134,12 @@ export default async function EnquiriesPage({
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-line">
               {rows.map((row) => {
                 const unread = !row.read_at;
 
                 return (
-                  <tr key={row.id} className="hover:bg-zinc-50">
+                  <tr key={row.id} className="hover:bg-paper">
                     <td className="py-3 pl-4">
                       <input
                         type="checkbox"
@@ -147,13 +147,13 @@ export default async function EnquiriesPage({
                         value={row.id}
                         form="bulk"
                         aria-label={`Select enquiry from ${row.name}`}
-                        className="h-4 w-4 accent-brand"
+                        className="h-4 w-4 accent-ink"
                       />
                     </td>
                     <td className="px-4 py-3">
                       <Link
                         href={`/admin/enquiries/${row.id}`}
-                        className={`flex items-center gap-2 hover:text-brand ${
+                        className={`flex items-center gap-2 hover:text-ink hover:underline ${
                           unread ? "font-semibold" : ""
                         }`}
                       >
@@ -165,19 +165,19 @@ export default async function EnquiriesPage({
                         )}
                         {row.name}
                       </Link>
-                      <div className="text-xs text-zinc-500">{row.email}</div>
+                      <div className="text-xs text-muted">{row.email}</div>
                     </td>
                     <td className="max-w-md px-4 py-3">
                       <Link
                         href={`/admin/enquiries/${row.id}`}
                         className={`line-clamp-2 ${
-                          unread ? "text-zinc-900" : "text-zinc-500"
+                          unread ? "text-ink" : "text-muted"
                         }`}
                       >
                         {row.message}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-zinc-500 tabular-nums">
+                    <td className="px-4 py-3 whitespace-nowrap text-muted tabular-nums">
                       {dateFormat.format(new Date(row.created_at))}
                     </td>
                   </tr>
@@ -188,7 +188,7 @@ export default async function EnquiriesPage({
                 <tr>
                   <td
                     colSpan={4}
-                    className="px-4 py-16 text-center text-zinc-500"
+                    className="px-4 py-16 text-center text-muted"
                   >
                     {q ? "No enquiries match your search." : "No enquiries here."}
                   </td>
@@ -199,7 +199,7 @@ export default async function EnquiriesPage({
         </div>
 
         {pages > 1 && (
-          <div className="mt-6 flex items-center justify-between text-sm text-zinc-500">
+          <div className="mt-6 flex items-center justify-between text-sm text-muted">
             <span>
               Page {page} of {pages} · {total} results
             </span>
@@ -207,7 +207,7 @@ export default async function EnquiriesPage({
               {page > 1 && (
                 <Link
                   href={href({ page: page - 1 })}
-                  className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 hover:border-brand"
+                  className="rounded-lg border border-line-strong bg-white px-3 py-1.5 hover:border-ink"
                 >
                   Previous
                 </Link>
@@ -215,7 +215,7 @@ export default async function EnquiriesPage({
               {page < pages && (
                 <Link
                   href={href({ page: page + 1 })}
-                  className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 hover:border-brand"
+                  className="rounded-lg border border-line-strong bg-white px-3 py-1.5 hover:border-ink"
                 >
                   Next
                 </Link>

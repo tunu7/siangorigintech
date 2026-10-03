@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { upload } from "@vercel/blob/client";
-import { CheckCircle2, FileText, Loader2, Upload } from "lucide-react";
+import { FileText, Loader2, Upload } from "lucide-react";
 import { Field, FormError, inputClass } from "@/app/components/form";
 import { buttonClass } from "@/app/components/ui";
 import { MAX_RESUME_BYTES, resumePrefix } from "@/lib/applications";
@@ -111,18 +111,15 @@ export default function ApplyForm({ slug }: { slug: string }) {
 
   if (status === "success") {
     return (
-      <div className="animate-fade-up py-4 text-center">
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand/10">
-          <CheckCircle2 className="text-brand" size={28} aria-hidden />
-        </span>
-        <h2 className="mt-4 text-xl font-semibold">Application received</h2>
-        <p className="mt-2 text-zinc-600">
-          Thank you for applying. We will review your application and get
-          back to you if there is a potential match.
+      <div className="animate-fade-up border-t border-ink pt-10">
+        <h2 className="font-display text-4xl">Application received.</h2>
+        <p className="mt-4 max-w-xl text-lg leading-8 text-ink-soft">
+          Thank you for applying. We read every application carefully and will
+          be in touch if there is a fit.
         </p>
         <Link
           href="/careers"
-          className="mt-6 inline-block text-sm font-medium text-brand hover:underline"
+          className="mt-8 inline-block border-b border-ink pb-0.5 text-sm font-medium hover:border-brand hover:text-brand"
         >
           Back to careers
         </Link>
@@ -131,7 +128,7 @@ export default function ApplyForm({ slug }: { slug: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-10">
       {/* Honeypot */}
       <input
         type="text"
@@ -154,7 +151,7 @@ export default function ApplyForm({ slug }: { slug: string }) {
         />
       </Field>
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-10 sm:grid-cols-2">
         <Field id="email" label="Email" required>
           <input
             id="email"
@@ -226,13 +223,13 @@ export default function ApplyForm({ slug }: { slug: string }) {
             setDragging(false);
             selectResume(event.dataTransfer.files[0]);
           }}
-          className={`mt-2 flex cursor-pointer items-center gap-4 rounded-md border border-dashed p-5 transition-colors ${
+          className={`mt-2 flex cursor-pointer items-center gap-4 border border-dashed p-5 transition-colors ${
             dragging
               ? "border-brand bg-brand/5"
-              : "border-zinc-300 hover:border-zinc-400"
+              : "border-line-strong hover:border-ink"
           }`}
         >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-zinc-100 text-zinc-600">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-paper-deep text-ink-soft">
             {resume ? (
               <FileText size={20} aria-hidden />
             ) : (
@@ -245,7 +242,7 @@ export default function ApplyForm({ slug }: { slug: string }) {
               <span className="block truncate font-medium">
                 {resume.name}
               </span>
-              <span className="text-zinc-500">
+              <span className="text-muted">
                 {(resume.size / 1024 / 1024).toFixed(2)} MB · Click to
                 replace
               </span>
@@ -255,7 +252,7 @@ export default function ApplyForm({ slug }: { slug: string }) {
               <span className="block font-medium">
                 Upload your resume
               </span>
-              <span className="text-zinc-500">
+              <span className="text-muted">
                 Drag and drop or click to browse · PDF, max 10MB
               </span>
             </span>
@@ -282,7 +279,7 @@ export default function ApplyForm({ slug }: { slug: string }) {
           aria-valuenow={Math.round(progress)}
           aria-valuemin={0}
           aria-valuemax={100}
-          className="h-1.5 overflow-hidden rounded-full bg-zinc-100"
+          className="h-1.5 overflow-hidden rounded-full bg-paper-deep"
         >
           <div
             className="h-full rounded-full bg-brand transition-[width] duration-200"
@@ -304,7 +301,7 @@ export default function ApplyForm({ slug }: { slug: string }) {
               ? "Submitting…"
               : "Submit application"}
         </button>
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-muted">
           Your details are only used to assess your application.
         </p>
       </div>

@@ -51,7 +51,7 @@ export function SelectAll({ form }: { form: string }) {
     <input
       type="checkbox"
       aria-label="Select all"
-      className="h-4 w-4 accent-brand"
+      className="h-4 w-4 accent-ink"
       onChange={(event) => {
         document
           .querySelectorAll<HTMLInputElement>(
@@ -105,13 +105,13 @@ export function BulkForm({
         }
       }}
     >
-      <label htmlFor={`${id}-op`} className="text-zinc-500">
+      <label htmlFor={`${id}-op`} className="text-muted">
         With selected:
       </label>
       <select
         id={`${id}-op`}
         name="op"
-        className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 outline-none focus:border-brand"
+        className="rounded-lg border border-line-strong bg-white px-3 py-1.5 outline-none focus:border-ink"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -119,7 +119,7 @@ export function BulkForm({
           </option>
         ))}
       </select>
-      <SubmitButton className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 hover:border-brand hover:text-brand">
+      <SubmitButton className="rounded-lg border border-line-strong bg-white px-3 py-1.5 hover:border-ink">
         Apply
       </SubmitButton>
     </form>

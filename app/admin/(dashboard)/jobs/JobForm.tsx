@@ -6,7 +6,7 @@ import type { FormState } from "@/app/admin/actions";
 import { saveJob } from "./actions";
 
 const inputClass =
-  "mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand";
+  "mt-2 w-full rounded-lg border border-line-strong bg-white px-3 py-2 text-sm outline-none focus:border-ink";
 
 function slugify(value: string) {
   return value
@@ -38,7 +38,7 @@ export default function JobForm({ job }: { job?: Job }) {
     >
       <input type="hidden" name="original" value={job?.slug ?? ""} />
 
-      <section className="space-y-4 rounded-xl border border-zinc-200 bg-white p-6">
+      <section className="space-y-4 rounded-lg border border-line bg-white p-6">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Title" htmlFor="title" required>
             <input
@@ -76,7 +76,7 @@ export default function JobForm({ job }: { job?: Job }) {
                 setSlugEdited(true);
                 setSlug(event.target.value.toLowerCase());
               }}
-              className={`${inputClass} disabled:bg-zinc-50 disabled:text-zinc-500`}
+              className={`${inputClass} disabled:bg-paper disabled:text-muted`}
             />
           </Field>
 
@@ -168,8 +168,8 @@ export default function JobForm({ job }: { job?: Job }) {
         </Field>
       </section>
 
-      <section className="space-y-4 rounded-xl border border-zinc-200 bg-white p-6">
-        <p className="text-xs text-zinc-500">One item per line.</p>
+      <section className="space-y-4 rounded-lg border border-line bg-white p-6">
+        <p className="text-xs text-muted">One item per line.</p>
 
         <ListField
           name="responsibilities"
@@ -188,17 +188,17 @@ export default function JobForm({ job }: { job?: Job }) {
         />
       </section>
 
-      <section className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-white p-6">
+      <section className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-line bg-white p-6">
         <label className="flex items-center gap-3 text-sm">
           <input
             type="checkbox"
             name="is_open"
             defaultChecked={job?.is_open ?? true}
-            className="h-4 w-4 accent-brand"
+            className="h-4 w-4 accent-ink"
           />
           <span>
             <span className="font-medium">Open for applications</span>
-            <span className="block text-xs text-zinc-500">
+            <span className="block text-xs text-muted">
               Closed roles are hidden from the careers page.
             </span>
           </span>
@@ -207,7 +207,7 @@ export default function JobForm({ job }: { job?: Job }) {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-brand px-5 py-2 text-sm font-medium text-white hover:bg-brand-hover disabled:opacity-50"
+          className="rounded-md bg-ink px-5 py-2 text-sm font-medium text-paper hover:bg-brand disabled:opacity-50"
         >
           {pending ? "Saving..." : job ? "Save changes" : "Create job"}
         </button>
@@ -242,13 +242,13 @@ function Field({
     <div>
       <label
         htmlFor={htmlFor}
-        className="text-xs uppercase tracking-wider text-zinc-500"
+        className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted"
       >
         {label}
-        {required && <span className="text-brand"> *</span>}
+        {required && <span className="text-red-700"> *</span>}
       </label>
       {children}
-      {hint && <p className="mt-1 text-xs text-zinc-400">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-muted">{hint}</p>}
     </div>
   );
 }

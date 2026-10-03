@@ -1,5 +1,5 @@
 export const inputClass =
-  "mt-2 block w-full rounded-md border border-zinc-300 bg-white px-3.5 py-2.5 text-base text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-brand focus:ring-2 focus:ring-brand/15 sm:text-sm";
+  "mt-1 block w-full rounded-none border-0 border-b border-line-strong bg-transparent px-0 py-3 text-base text-ink outline-none transition-colors placeholder:text-muted/60 focus:border-ink";
 
 export function Field({
   id,
@@ -18,16 +18,20 @@ export function Field({
 }) {
   return (
     <div className={className}>
-      <label htmlFor={id} className="text-sm font-medium text-zinc-900">
+      <label
+        htmlFor={id}
+        className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted"
+      >
         {label}
-        {required ? (
-          <span className="text-brand"> *</span>
-        ) : (
-          <span className="font-normal text-zinc-400"> (optional)</span>
+        {!required && (
+          <span className="normal-case tracking-normal text-muted/70">
+            {" "}
+            — optional
+          </span>
         )}
       </label>
       {children}
-      {hint && <p className="mt-1.5 text-xs text-zinc-500">{hint}</p>}
+      {hint && <p className="mt-2 text-xs text-muted">{hint}</p>}
     </div>
   );
 }
@@ -38,7 +42,7 @@ export function FormError({ message }: { message?: string }) {
   return (
     <p
       role="alert"
-      className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+      className="border-l-2 border-red-600 bg-red-50/60 px-4 py-3 text-sm text-red-800"
     >
       {message}
     </p>

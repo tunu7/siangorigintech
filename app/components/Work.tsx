@@ -13,12 +13,12 @@ export default async function Work() {
   if (!projects.length) return null;
 
   return (
-    <section className="py-24">
+    <section className="py-24 sm:py-32">
       <Container>
-        <Reveal className="mb-12 flex flex-wrap items-end justify-between gap-6">
+        <Reveal className="mb-14 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <Eyebrow>{home.workEyebrow}</Eyebrow>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+            <Eyebrow index={1}>{home.workEyebrow}</Eyebrow>
+            <h2 className="font-display mt-5 text-4xl sm:text-5xl">
               {home.workTitle}
             </h2>
           </div>

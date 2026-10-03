@@ -1,72 +1,65 @@
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import { mediaUrl } from "@/lib/media";
 import type { Project } from "@/lib/projects";
-import { Reveal, TiltCard } from "./motion";
-
-const covers = [
-  "from-brand to-brand-light",
-  "from-zinc-900 to-brand",
-  "from-brand-light to-mint",
-];
+import { Reveal } from "./motion";
 
 export default function ProjectGrid({ projects }: { projects: Project[] }) {
   return (
-    <ul className="grid gap-6 md:grid-cols-3">
+    <ul className="grid gap-x-8 gap-y-16 md:grid-cols-2">
       {projects.map((project, index) => (
-        <Reveal as="li" key={project.id} delay={index * 120}>
-          <TiltCard className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition-shadow hover:shadow-xl hover:shadow-brand/10">
-            <div
-              className={`relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-linear-to-br ${covers[index % covers.length]}`}
-            >
-              <div
-                aria-hidden
-                className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgb(255_255_255/0.15)_1px,transparent_1px),linear-gradient(90deg,rgb(255_255_255/0.15)_1px,transparent_1px)] [background-size:28px_28px]"
-              />
-              <div
-                aria-hidden
-                className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full border border-white/20 transition-transform duration-700 group-hover/tilt:scale-125"
-              />
+        <Reveal as="li" key={project.id} delay={(index % 2) * 100}>
+          <article className="group relative">
+            <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-paper-deep">
               {project.image ? (
                 <Image
                   src={mediaUrl(project.image)}
                   alt={project.title}
                   fill
-                  sizes="(min-width: 768px) 33vw, 100vw"
-                  className="object-cover transition-transform duration-700 group-hover/tilt:scale-105"
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 />
               ) : (
-                <span className="relative text-6xl font-semibold tracking-tighter text-white/90 transition-transform duration-500 [transform:translateZ(40px)] group-hover/tilt:scale-110">
+                <span className="font-display text-8xl text-ink/80 transition-transform duration-700 ease-out group-hover:scale-105">
                   {project.mark}
                 </span>
               )}
-              <span className="absolute left-4 top-4 rounded-full bg-white/15 px-2.5 py-1 text-xs font-medium text-white backdrop-blur">
-                {project.category}
-              </span>
             </div>
 
-            <div className="p-6">
-              <span className="text-xs tabular-nums text-zinc-400">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <h3 className="mt-1 text-lg font-semibold tracking-tight">
-                {project.url ? (
-                  <a
-                    href={project.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="after:absolute after:inset-0 hover:text-brand"
-                  >
-                    {project.title}
-                  </a>
-                ) : (
-                  project.title
+            <div className="mt-5 flex items-start justify-between gap-6">
+              <div>
+                <h3 className="font-display text-3xl">
+                  {project.url ? (
+                    <a
+                      href={project.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="after:absolute after:inset-0"
+                    >
+                      {project.title}
+                    </a>
+                  ) : (
+                    project.title
+                  )}
+                </h3>
+                <p className="mt-2 max-w-md text-sm leading-6 text-ink-soft">
+                  {project.description}
+                </p>
+              </div>
+
+              <div className="flex shrink-0 items-center gap-2 pt-2 text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
+                {project.category}
+                {project.url && (
+                  <ArrowUpRight
+                    size={14}
+                    strokeWidth={1.75}
+                    aria-hidden
+                    className="text-ink transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  />
                 )}
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-zinc-600">
-                {project.description}
-              </p>
+              </div>
             </div>
-          </TiltCard>
+          </article>
         </Reveal>
       ))}
     </ul>

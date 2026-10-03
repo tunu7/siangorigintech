@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/auth";
 import AdminHeader from "@/app/admin/components/AdminHeader";
 
 // Shared chrome for every dashboard page. Layouts persist across client
-// navigations, so the header renders once and only the page area changes.
+// navigations, so the sidebar renders once and only the page area changes.
 export default async function DashboardLayout({
   children,
 }: Readonly<{
@@ -11,9 +11,9 @@ export default async function DashboardLayout({
   await requireAdmin();
 
   return (
-    <>
+    <div className="lg:flex">
       <AdminHeader />
-      {children}
-    </>
+      <div className="min-w-0 flex-1">{children}</div>
+    </div>
   );
 }

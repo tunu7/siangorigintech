@@ -3,60 +3,75 @@ import { getContent } from "@/lib/content";
 import { isExternalLink } from "@/lib/content-schema";
 import { Container } from "./ui";
 
+const labelClass =
+  "text-[11px] font-medium uppercase tracking-[0.18em] text-muted";
+
 export default async function Footer() {
   const site = await getContent("settings");
 
   return (
-    <footer className="border-t border-zinc-200">
-      <Container className="py-12">
-        <div className="flex flex-col justify-between gap-8 md:flex-row">
+    <footer className="border-t border-line">
+      <Container className="pt-16 pb-10">
+        <div className="grid gap-12 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
           <div>
-            <p className="text-sm font-semibold">{site.name}</p>
-            <p className="mt-2 text-sm text-zinc-500">{site.tagline}</p>
-            <p className="text-sm text-zinc-500">{site.location}</p>
+            <p className="font-display text-3xl">{site.name}</p>
+            {site.tagline && (
+              <p className="mt-3 text-sm text-muted">{site.tagline}</p>
+            )}
           </div>
 
-          <nav className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-zinc-500">
-            {site.nav.map((link) =>
-              isExternalLink(link.href) ? (
+          <div>
+            <p className={labelClass}>Explore</p>
+            <ul className="mt-5 space-y-3 text-sm">
+              {site.nav.map((link) => (
+                <li key={`${link.href}-${link.label}`}>
+                  {isExternalLink(link.href) ? (
+                    <a
+                      href={link.href}
+                      target={
+                        link.href.startsWith("mailto:") ? undefined : "_blank"
+                      }
+                      rel="noopener noreferrer"
+                      className="text-ink-soft hover:text-ink"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="text-ink-soft hover:text-ink"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <p className={labelClass}>Contact</p>
+            <ul className="mt-5 space-y-3 text-sm">
+              <li>
                 <a
-                  key={`${link.href}-${link.label}`}
-                  href={link.href}
-                  target={link.href.startsWith("mailto:") ? undefined : "_blank"}
-                  rel="noopener noreferrer"
-                  className="hover:text-zinc-900"
+                  href={`mailto:${site.contactEmail}`}
+                  className="text-ink-soft hover:text-ink"
                 >
-                  {link.label}
+                  {site.contactEmail}
                 </a>
-              ) : (
-                <Link
-                  key={`${link.href}-${link.label}`}
-                  href={link.href}
-                  className="hover:text-zinc-900"
-                >
-                  {link.label}
-                </Link>
-              )
-            )}
-          </nav>
+              </li>
+              {site.location && <li className="text-muted">{site.location}</li>}
+            </ul>
+          </div>
         </div>
 
-        <div className="mt-10 flex flex-col justify-between gap-2 border-t border-zinc-200 pt-6 text-xs text-zinc-500 sm:flex-row">
+        <div className="mt-16 flex flex-col justify-between gap-3 border-t border-line pt-6 text-xs text-muted sm:flex-row">
           <span>
-            © {new Date().getFullYear()} {site.name}. All rights
-            reserved.
+            © {new Date().getFullYear()} {site.name}
           </span>
-          <div className="flex gap-6">
-            <a
-              href={`mailto:${site.contactEmail}`}
-              className="hover:text-zinc-900"
-            >
-              {site.contactEmail}
-            </a>
-            <Link href="/admin" prefetch={false} className="hover:text-zinc-900">
-              Team login
-            </Link>
-          </div>
+          <Link href="/admin" prefetch={false} className="hover:text-ink">
+            Team login
+          </Link>
         </div>
       </Container>
     </footer>

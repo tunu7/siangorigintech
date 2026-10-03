@@ -13,7 +13,7 @@ const dateFormat = new Intl.DateTimeFormat("en-IN", {
 });
 
 const secondaryButton =
-  "w-full rounded-lg border border-zinc-300 px-4 py-2 text-sm hover:border-brand hover:text-brand";
+  "w-full rounded-lg border border-line-strong px-4 py-2 text-sm hover:border-ink";
 
 export default async function EnquiryPage({
   params,
@@ -33,20 +33,20 @@ export default async function EnquiryPage({
     <>
       {!enquiry.read_at && <MarkRead id={enquiry.id} />}
 
-      <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+      <main className="max-w-5xl px-6 py-10 lg:px-12">
         <Link
           href={enquiry.archived ? "/admin/enquiries?view=archived" : "/admin/enquiries"}
-          className="text-xs uppercase tracking-wider text-zinc-500 hover:text-zinc-900"
+          className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted hover:text-ink"
         >
           ← All enquiries
         </Link>
 
         <div className="mt-6">
-          <h1 className="text-3xl font-semibold tracking-tight">
+          <h1 className="font-display text-4xl">
             {enquiry.name}
           </h1>
-          <p className="mt-2 text-zinc-500">
-            <a href={`mailto:${enquiry.email}`} className="hover:text-brand">
+          <p className="mt-2 text-muted">
+            <a href={`mailto:${enquiry.email}`} className="hover:text-ink hover:underline">
               {enquiry.email}
             </a>{" "}
             · {dateFormat.format(new Date(enquiry.created_at))}
@@ -55,8 +55,8 @@ export default async function EnquiryPage({
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_280px]">
-          <section className="rounded-xl border border-zinc-200 bg-white p-6">
-            <h2 className="text-xs uppercase tracking-wider text-zinc-500">
+          <section className="rounded-lg border border-line bg-white p-6">
+            <h2 className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
               Message
             </h2>
             <p className="mt-3 whitespace-pre-wrap leading-7">
@@ -64,10 +64,10 @@ export default async function EnquiryPage({
             </p>
           </section>
 
-          <aside className="space-y-3 rounded-xl border border-zinc-200 bg-white p-4 lg:self-start">
+          <aside className="space-y-3 rounded-lg border border-line bg-white p-4 lg:self-start">
             <a
               href={`mailto:${enquiry.email}?subject=${replySubject}`}
-              className="block w-full rounded-lg bg-brand px-4 py-2 text-center text-sm font-medium text-white hover:bg-brand-hover"
+              className="block w-full rounded-md bg-ink px-4 py-2 text-center text-sm font-medium text-paper hover:bg-brand"
             >
               Reply by email
             </a>

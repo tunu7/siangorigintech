@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import ContactCTA from "@/app/components/ContactCTA";
 import ProjectGrid from "@/app/components/ProjectGrid";
-import { Container, PageBackdrop, PageHeader } from "@/app/components/ui";
+import { Container, PageHeader } from "@/app/components/ui";
 import { getContent } from "@/lib/content";
 import { listPublishedProjects } from "@/lib/projects";
 
@@ -17,21 +17,20 @@ export default async function WorkPage() {
   ]);
 
   return (
-    <div className="relative isolate">
-      <PageBackdrop />
-      <Container className="py-24">
+    <>
+      <Container>
         <PageHeader
           eyebrow={work.eyebrow}
           title={work.title}
           description={work.intro}
         />
 
-        <div className="mt-16">
+        <div className="py-16 sm:py-24">
           <ProjectGrid projects={projects} />
         </div>
       </Container>
 
       <ContactCTA />
-    </div>
+    </>
   );
 }

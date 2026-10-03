@@ -119,8 +119,7 @@ export async function updateApplication(
     return { error: "Unable to save changes." };
   }
 
-  revalidatePath("/admin");
-  revalidatePath(`/admin/applications/${id}`);
+  revalidatePath("/admin", "layout");
 
   return { saved: true };
 }
@@ -154,7 +153,7 @@ export async function deleteApplication(formData: FormData) {
   await removeApplications([id]);
 
   revalidatePath("/admin", "layout");
-  redirect("/admin");
+  redirect("/admin/applications");
 }
 
 export async function bulkUpdateApplications(formData: FormData) {

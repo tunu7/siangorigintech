@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Field, FormError, inputClass } from "@/app/components/form";
 import { buttonClass } from "@/app/components/ui";
 import { sendEnquiry, type ContactState } from "./actions";
@@ -23,12 +23,9 @@ export default function ContactForm({
 
   if (state.sent) {
     return (
-      <div className="animate-fade-up py-4 text-center">
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand/10">
-          <CheckCircle2 className="text-brand" size={28} aria-hidden />
-        </span>
-        <h2 className="mt-4 text-xl font-semibold">{text.successTitle}</h2>
-        <p className="mt-2 text-zinc-600">
+      <div className="animate-fade-up border-t border-ink pt-10">
+        <h2 className="font-display text-4xl">{text.successTitle}</h2>
+        <p className="mt-4 text-lg leading-8 text-ink-soft">
           {text.successText}
         </p>
       </div>
@@ -36,7 +33,7 @@ export default function ContactForm({
   }
 
   return (
-    <form action={action} className="space-y-6">
+    <form action={action} className="space-y-10">
       <input
         type="text"
         name="company_website"
@@ -46,7 +43,7 @@ export default function ContactForm({
         className="hidden"
       />
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-10 sm:grid-cols-2">
         <Field id="name" label="Name" required>
           <input
             id="name"

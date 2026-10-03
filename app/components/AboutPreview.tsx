@@ -6,17 +6,17 @@ export default async function AboutPreview() {
   const home = await getContent("home");
 
   return (
-    <section className="border-t border-zinc-200 py-24">
+    <section className="py-24 sm:py-32">
       <Container>
-        <Reveal className="grid gap-8 md:grid-cols-[1fr_2fr]">
-          <Eyebrow>{home.aboutEyebrow}</Eyebrow>
+        <Reveal className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] md:gap-12">
+          <Eyebrow index={3}>{home.aboutEyebrow}</Eyebrow>
 
           <div>
-            <p className="text-2xl font-medium leading-snug tracking-tight text-balance sm:text-3xl">
+            <p className="font-display text-4xl leading-[1.12] text-balance sm:text-5xl">
               {home.aboutText}
             </p>
 
-            <div className="mt-8">
+            <div className="mt-10">
               <TextLink href="/about">{home.aboutLink}</TextLink>
             </div>
           </div>

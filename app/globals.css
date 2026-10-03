@@ -2,6 +2,16 @@
 
 @theme {
   --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+
+  /* Warm paper and ink. Green is an accent, used sparingly. */
+  --color-paper: #f7f6f2;
+  --color-paper-deep: #efede6;
+  --color-ink: #161614;
+  --color-ink-soft: #3a3935;
+  --color-muted: #75736c;
+  --color-line: #e3e0d8;
+  --color-line-strong: #cfcbc1;
 
   --color-brand: #0b4d2c;
   --color-brand-hover: #0f5f37;
@@ -10,12 +20,9 @@
 
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
 
-  --animate-fade-in: fade-in 1.2s var(--ease-out-expo) both;
+  --animate-fade-in: fade-in 1s var(--ease-out-expo) both;
   --animate-fade-up: fade-up 0.9s var(--ease-out-expo) both;
   --animate-page-in: page-in 0.5s var(--ease-out-expo) both;
-  --animate-marquee: marquee 40s linear infinite;
-  --animate-cube: cube-spin 2.4s var(--ease-out-expo) infinite;
-  --animate-float: float 6s ease-in-out infinite;
 
   @keyframes fade-in {
     from {
@@ -26,42 +33,14 @@
   @keyframes fade-up {
     from {
       opacity: 0;
-      transform: translateY(24px);
+      transform: translateY(14px);
     }
   }
 
   @keyframes page-in {
     from {
       opacity: 0;
-      transform: translateY(8px);
-    }
-  }
-
-  @keyframes marquee {
-    to {
-      transform: translateX(-50%);
-    }
-  }
-
-  @keyframes cube-spin {
-    0% {
-      transform: rotateX(-25deg) rotateY(45deg);
-    }
-    50% {
-      transform: rotateX(-25deg) rotateY(225deg);
-    }
-    100% {
-      transform: rotateX(-25deg) rotateY(405deg);
-    }
-  }
-
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
+      transform: translateY(6px);
     }
   }
 }
@@ -71,20 +50,38 @@ html {
 }
 
 body {
-  background: #ffffff;
-  color: var(--color-zinc-900);
+  background: var(--color-paper);
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: var(--color-brand);
-  color: #ffffff;
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* Display headings set in the serif, tightly tracked. */
+.font-display {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+}
+
+@keyframes loading-bar {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
 }
 
 /* Scroll reveal — toggled by <Reveal>. */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(28px);
+  transform: translateY(14px);
   transition:
     opacity 0.9s var(--ease-out-expo),
     transform 0.9s var(--ease-out-expo);
@@ -96,17 +93,6 @@ body {
   transform: none;
 }
 
-/* Subtle dotted backdrop, faded at the edges. */
-.bg-dots {
-  background-image: radial-gradient(
-    circle,
-    rgb(11 77 44 / 0.14) 1px,
-    transparent 1px
-  );
-  background-size: 22px 22px;
-  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -116,6 +102,7 @@ body {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }

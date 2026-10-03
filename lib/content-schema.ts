@@ -2,21 +2,6 @@
 // the schema drives both the admin editor and server-side validation,
 // and `defaults` is what the site shows until a section is edited.
 
-export const SERVICE_ICONS = [
-  "layout",
-  "growth",
-  "brain",
-  "sparkles",
-  "rocket",
-  "code",
-  "megaphone",
-  "search",
-  "bot",
-  "palette",
-  "cart",
-  "chart",
-] as const;
-
 type TextField = {
   type: "text" | "textarea" | "email" | "link";
   key: string;
@@ -55,149 +40,148 @@ const defaults = {
     name: "Siang Origin Technologies",
     shortName: "Siang Origin",
     logoMark: "SO",
-    tagline: "Technology · Growth · AI",
+    tagline: "Independent technology studio",
     location: "Itanagar, Arunachal Pradesh",
     contactEmail: "hello@siangorigin.com",
     careersEmail: "careers@siangorigin.com",
     nav: [
       { label: "Work", href: "/work" },
-      { label: "About", href: "/about" },
+      { label: "Studio", href: "/about" },
       { label: "Careers", href: "/careers" },
       { label: "Contact", href: "/contact" },
     ],
-    navCta: "Contact us",
+    navCta: "Start a project",
     navCtaHref: "/contact",
     metaDescription:
-      "Siang Origin Technologies is a technology studio building digital experiences, growth systems and intelligent products.",
-    ctaTitle: "Have a project in mind?",
-    ctaText: "Tell us what you're building. We'd love to hear about it.",
+      "Siang Origin is an independent technology studio from Arunachal Pradesh, designing digital products, growth systems and intelligent tools for ambitious businesses.",
+    ctaTitle: "Have something in mind?",
+    ctaText:
+      "Tell us where you are and where you want to go. Every message is read and answered by a person.",
     ctaButton: "Start a conversation",
   },
   home: {
-    heroBadge: "Technology · Growth · AI",
-    heroTitle: "We build digital products that",
-    heroHighlight: "move businesses forward.",
+    heroBadge: "Independent technology studio",
+    heroTitle: "We build the digital side of",
+    heroHighlight: "ambitious businesses.",
     heroText:
-      "Siang Origin Technologies is a technology studio building digital experiences, growth systems and intelligent products.",
+      "Siang Origin designs and builds products, growth systems and intelligent tools — from the first conversation to launch, and long after.",
     heroPrimaryCta: "Start a project",
-    heroSecondaryCta: "View our work",
+    heroSecondaryCta: "See our work",
     marquee: [
-      "Websites",
-      "Digital Platforms",
-      "Social Media",
-      "SEO",
-      "Paid Advertising",
-      "Content Strategy",
-      "AI & Automation",
-      "New Ventures",
+      "Product design",
+      "Web & app development",
+      "Brand & content",
+      "Search & performance",
+      "AI & automation",
+      "New ventures",
     ],
     workEyebrow: "Selected work",
-    workTitle: "Things we've built",
-    workLink: "All work",
+    workTitle: "Recent projects",
+    workLink: "All projects",
     servicesEyebrow: "What we do",
-    servicesTitle: "Technology with a reason behind it",
+    servicesTitle: "Three disciplines, one team.",
     services: [
       {
-        icon: "layout",
-        title: "Digital",
+        title: "Products & platforms",
         description:
-          "Websites, digital products and experiences built around real business objectives.",
+          "Websites, applications and platforms designed around real users and the outcomes that matter to the business.",
       },
       {
-        icon: "growth",
-        title: "Growth",
+        title: "Growth systems",
         description:
-          "Strategy, content and performance systems designed to help businesses grow.",
+          "Strategy, content and performance marketing, built as systems that compound rather than campaigns that fade.",
       },
       {
-        icon: "brain",
-        title: "Intelligence",
+        title: "AI & automation",
         description:
-          "AI and automation systems that make businesses faster and more scalable.",
+          "Practical automation and AI that remove repetitive work and give teams their time back.",
       },
     ],
-    aboutEyebrow: "About us",
+    aboutEyebrow: "The studio",
     aboutText:
-      "We are building a technology company around useful digital products, ambitious businesses and ideas worth exploring.",
-    aboutLink: "More about us",
+      "We are a focused team working where technology, business and craft meet. We would rather do fewer things, and do them properly.",
+    aboutLink: "About the studio",
   },
   about: {
     metaDescription:
-      "Siang Origin Technologies is an independent technology studio building digital products, growth systems and ventures.",
-    eyebrow: "About",
-    title: "We build what matters",
+      "Siang Origin is an independent technology studio in Itanagar, Arunachal Pradesh, building digital products, growth systems and ventures of its own.",
+    eyebrow: "Studio",
+    title: "A studio built on intent.",
     intro:
-      "A technology studio building digital products, growth systems and ventures designed to solve real problems.",
+      "Siang Origin is an independent technology studio based in Itanagar, Arunachal Pradesh. We design and build digital products, growth systems — and ventures of our own.",
     whoLabel: "Who we are",
     whoParagraphs: [
-      "Siang Origin Technologies is an independent technology studio working at the intersection of technology, business and creativity.",
-      "We partner with businesses and founders to turn ideas, challenges and opportunities into useful digital products, systems and experiences.",
-      "We also build our own products and ventures — experimenting, learning and turning promising ideas into real businesses.",
+      "We started Siang Origin to bring thoughtful, well-made technology to the businesses and founders around us, and to the ideas we believe deserve to exist.",
+      "We work closely with a small number of partners at a time, moving from strategy to design to engineering without hand-offs between agencies.",
+      "Alongside client work, we build and run our own products. It keeps us honest about what it takes to launch, grow and maintain something real.",
     ],
     whatLabel: "What we do",
     services: [
       {
-        title: "Digital Products",
+        title: "Products & platforms",
         description:
-          "Websites, platforms and digital experiences built around real users and business needs.",
+          "Websites, applications and platforms shaped around real users and clear business goals.",
       },
       {
-        title: "Growth Systems",
+        title: "Growth systems",
         description:
-          "Marketing, automation and technology systems that help businesses operate and grow more effectively.",
+          "Content, search and performance marketing designed to compound over time.",
       },
       {
-        title: "AI & Automation",
+        title: "AI & automation",
         description:
-          "Intelligent workflows and AI-powered systems that reduce repetitive work and create new possibilities.",
+          "Intelligent workflows that take repetitive work off people's plates.",
       },
       {
-        title: "New Ventures",
+        title: "Ventures",
         description:
-          "Our own products and ideas — built from the ground up and developed into independent ventures.",
+          "Products we conceive, build and operate ourselves — from first idea to independent business.",
       },
     ],
-    thinkLabel: "How we think",
-    thinkTitle: "Start with the problem. Build what solves it.",
+    thinkLabel: "Principles",
+    thinkTitle: "Start with the problem. Build only what solves it.",
     thinkText:
-      "We believe good technology should have a purpose. Instead of building for the sake of building, we start with the problem, understand the people and business behind it, and create solutions that are simple, useful and capable of evolving.",
-    journeyLabel: "The journey",
+      "Good technology is quiet. We begin by understanding the people and the business behind a problem, then design the simplest thing that works — and make it easy to evolve.",
+    journeyLabel: "Where we're headed",
     journeyTitle: "From ideas, to systems, to ventures.",
     journeyText:
-      "We are still early in the journey. That is intentional. Siang Origin is being built to continuously experiment, create and launch — one meaningful problem at a time.",
+      "We are early, and intentionally so. Siang Origin is being built to keep experimenting, shipping and learning — one meaningful problem at a time.",
   },
   work: {
-    metaDescription: "Selected work by Siang Origin Technologies.",
-    eyebrow: "Our work",
-    title: "Built for the real world",
+    metaDescription:
+      "Selected products, platforms and experiences designed and built by Siang Origin.",
+    eyebrow: "Work",
+    title: "Selected projects.",
     intro:
-      "Digital products, platforms and experiences designed to solve real problems and create meaningful business outcomes.",
+      "Products, platforms and experiences we have designed and built with our partners — and a few of our own.",
   },
   careers: {
     metaDescription:
-      "Explore career opportunities at Siang Origin Technologies.",
+      "Open roles at Siang Origin, an independent technology studio in Arunachal Pradesh.",
     eyebrow: "Careers",
-    title: "Build with us",
+    title: "Build with us.",
     intro:
-      "We are building digital products, growth systems and new ventures. Join us if you want to work on meaningful problems and help turn ideas into reality.",
-    listTitle: "Open positions",
-    emptyText: "There are no open positions at the moment.",
-    openEyebrow: "Don't see your role?",
-    openTitle: "Good people don't always fit into job descriptions.",
+      "We are a small team building products, growth systems and new ventures. If you care about craft and want real ownership, we would like to hear from you.",
+    listTitle: "Open roles",
+    emptyText:
+      "There are no open roles right now — but we are always glad to hear from exceptional people.",
+    openEyebrow: "Open application",
+    openTitle: "Don't see the right role?",
     openText:
-      "If you think you can contribute to what we are building, send us a short introduction and your resume.",
+      "Send a short note about yourself and the work you would like to do, with your CV attached.",
   },
   contact: {
-    metaDescription: "Start a project with Siang Origin Technologies.",
+    metaDescription:
+      "Start a conversation with Siang Origin about your product, platform or growth plans.",
     eyebrow: "Contact",
-    title: "Let's talk",
+    title: "Let's talk.",
     intro:
-      "Tell us what you're building, what you're trying to solve, or simply where you want to go next.",
-    messageLabel: "What would you like to build?",
+      "Tell us about your business, the problem you are solving, or simply where you would like to go next.",
+    messageLabel: "How can we help?",
     messagePlaceholder:
       "A few lines about your project, goals and timeline.",
-    successTitle: "Message sent",
-    successText: "Thanks for reaching out. We'll get back to you soon.",
+    successTitle: "Thank you — message received.",
+    successText: "We read every message personally and will be in touch shortly.",
   },
 };
 
@@ -265,18 +249,18 @@ export const SECTIONS: Record<
   },
   home: {
     title: "Home",
-    description: "Hero, scrolling ticker, services and about preview.",
+    description: "Hero, capabilities, services and studio introduction.",
     path: "/",
     fields: [
       { type: "heading", label: "Hero" },
-      { type: "text", key: "heroBadge", label: "Badge" },
+      { type: "text", key: "heroBadge", label: "Eyebrow" },
       { type: "text", key: "heroTitle", label: "Headline", required: true },
       { type: "text", key: "heroHighlight", label: "Headline highlight", hint: "Shown in brand colour after the headline." },
       { type: "textarea", key: "heroText", label: "Intro" },
       { type: "text", key: "heroPrimaryCta", label: "Primary button", required: true },
       { type: "text", key: "heroSecondaryCta", label: "Secondary button", required: true },
-      { type: "heading", label: "Scrolling ticker" },
-      { type: "lines", key: "marquee", label: "Items", hint: "One per line." },
+      { type: "heading", label: "Capabilities" },
+      { type: "lines", key: "marquee", label: "Capabilities", hint: "One per line. Listed under the hero." },
       { type: "heading", label: "Selected work" },
       { type: "text", key: "workEyebrow", label: "Eyebrow" },
       { type: "text", key: "workTitle", label: "Title" },
@@ -291,12 +275,11 @@ export const SECTIONS: Record<
         itemLabel: "Service",
         max: 9,
         fields: [
-          { type: "select", key: "icon", label: "Icon", options: SERVICE_ICONS },
           { type: "text", key: "title", label: "Title", required: true },
           { type: "textarea", key: "description", label: "Description" },
         ],
       },
-      { type: "heading", label: "About preview" },
+      { type: "heading", label: "Studio introduction" },
       { type: "text", key: "aboutEyebrow", label: "Eyebrow" },
       { type: "textarea", key: "aboutText", label: "Text" },
       { type: "text", key: "aboutLink", label: "Link label" },
@@ -304,7 +287,7 @@ export const SECTIONS: Record<
   },
   about: {
     title: "About",
-    description: "Story, services, philosophy and journey.",
+    description: "Story, services, principles and direction.",
     path: "/about",
     fields: [
       { type: "heading", label: "Header" },

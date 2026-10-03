@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { isExternalLink } from "@/lib/content-schema";
 import { buttonClass, Container } from "./ui";
@@ -18,7 +17,6 @@ export default function Navbar({
     nav: { label: string; href: string }[];
   };
 }) {
-  const navLinks = brand.nav;
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -38,51 +36,41 @@ export default function Navbar({
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b backdrop-blur-lg transition-all duration-300 ${
+      className={`sticky top-0 z-50 transition-colors duration-300 ${
         scrolled || menuOpen
-          ? "border-zinc-200 bg-white/85 shadow-sm shadow-zinc-900/5"
-          : "border-transparent bg-white/0"
+          ? "border-b border-line bg-paper/90 backdrop-blur-md"
+          : "border-b border-transparent bg-paper"
       }`}
     >
-      <Container className="flex h-16 items-center justify-between">
-        <Link
-          href="/"
-          onClick={() => setMenuOpen(false)}
-          className="group flex items-center gap-2.5"
-        >
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-[10px] font-bold text-white transition-transform duration-500 group-hover:rotate-[360deg]">
+      <Container className="flex h-16 items-center justify-between sm:h-20">
+        <Link href="/" className="flex items-center gap-3">
+          <span className="flex h-7 w-7 items-center justify-center bg-ink text-[10px] font-semibold tracking-wide text-paper">
             {brand.logoMark}
           </span>
-          <span className="text-sm font-semibold tracking-tight">
+          <span className="text-sm font-medium tracking-tight">
             {brand.shortName}
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
-          {navLinks
+        <nav className="hidden items-center gap-9 md:flex">
+          {brand.nav
             .filter((link) => link.href !== brand.navCtaHref)
             .map((link) => (
               <NavLink
                 key={`${link.href}-${link.label}`}
                 href={link.href}
-                className={`group relative py-1 text-sm transition-colors hover:text-zinc-900 ${
-                  isActive(link.href)
-                    ? "font-medium text-zinc-900"
-                    : "text-zinc-500"
+                className={`text-sm transition-colors hover:text-ink ${
+                  isActive(link.href) ? "text-ink" : "text-muted"
                 }`}
               >
                 {link.label}
-                <span
-                  className={`absolute inset-x-0 -bottom-0.5 h-px origin-left bg-brand transition-transform duration-300 ${
-                    isActive(link.href)
-                      ? "scale-x-100"
-                      : "scale-x-0 group-hover:scale-x-100"
-                  }`}
-                />
               </NavLink>
             ))}
 
-          <NavLink href={brand.navCtaHref} className={buttonClass()}>
+          <NavLink
+            href={brand.navCtaHref}
+            className={`${buttonClass()} px-4! py-2!`}
+          >
             {brand.navCta}
           </NavLink>
         </nav>
@@ -90,11 +78,11 @@ export default function Navbar({
         <button
           type="button"
           onClick={() => setMenuOpen(!menuOpen)}
-          className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md text-zinc-700 hover:bg-zinc-100 md:hidden"
+          className="-mr-2 px-2 py-2 text-sm md:hidden"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
         >
-          {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          {menuOpen ? "Close" : "Menu"}
         </button>
       </Container>
 
@@ -108,24 +96,20 @@ export default function Navbar({
           inert={!menuOpen}
           className="overflow-hidden"
         >
-          <Container className="flex flex-col border-t border-zinc-200 py-2">
-            {navLinks.map((link, index) => (
+          <Container className="flex flex-col pb-8 pt-4">
+            {brand.nav.map((link, index) => (
               <NavLink
                 key={`${link.href}-${link.label}`}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
                 style={{
-                  transitionDelay: menuOpen ? `${index * 50}ms` : "0ms",
+                  transitionDelay: menuOpen ? `${index * 40}ms` : "0ms",
                 }}
-                className={`py-3 text-base transition-all duration-300 ${
+                className={`font-display border-b border-line py-4 text-4xl transition-all duration-300 ${
                   menuOpen
                     ? "translate-y-0 opacity-100"
                     : "-translate-y-2 opacity-0"
-                } ${
-                  isActive(link.href)
-                    ? "font-medium text-zinc-900"
-                    : "text-zinc-600"
-                }`}
+                } ${isActive(link.href) ? "text-ink" : "text-ink-soft"}`}
               >
                 {link.label}
               </NavLink>

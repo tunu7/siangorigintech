@@ -189,3 +189,70 @@ export async function getApplicationWithRelated(id: string) {
 
   return rows[0] ? { application: rows[0], related } : null;
 }
+
+export type OverviewStats = {
+  new_applications: number;
+  active_applications: number;
+  applications_week: number;
+  open_jobs: number;
+  unread_enquiries: number;
+  published_projects: number;
+};
+
+export type RecentEnquiry = {
+  id: string;
+  created_at: string;
+  name: string;
+  message: string;
+  read_at: string | null;
+};
+
+// Everything the overview page shows, in one round trip.
+export async function overviewData() {
+  const [[stats], applications, enquiries, jobs] = await batch<
+    [
+      OverviewStats[],
+      ApplicationRow[],
+      RecentEnquiry[],
+      { slug: string; title: string; applications: number; new_applications: number }[],
+    ]
+  >([
+    sql()`
+      select
+        (select count(*)::int from applications where status = 'new') as new_applications,
+        (select count(*)::int from applications
+          where status in ('reviewing', 'shortlisted')) as active_applications,
+        (select count(*)::int from applications
+          where created_at > now() - interval '7 days') as applications_week,
+        (select count(*)::int from jobs where is_open) as open_jobs,
+        (select count(*)::int from enquiries
+          where read_at is null and not archived) as unread_enquiries,
+        (select count(*)::int from projects where published) as published_projects
+    `,
+    sql()`
+      select id, created_at, job_slug, job_title, name, email, phone, status
+        from applications
+       order by created_at desc
+       limit 6
+    `,
+    sql()`
+      select id, created_at, name, message, read_at
+        from enquiries
+       where not archived
+       order by created_at desc
+       limit 5
+    `,
+    sql()`
+      select j.slug, j.title,
+             count(a.id)::int as applications,
+             count(a.id) filter (where a.status = 'new')::int as new_applications
+        from jobs j
+        left join applications a on a.job_slug = j.slug
+       where j.is_open
+       group by j.slug
+       order by j.sort_order, j.created_at desc
+    `,
+  ]);
+
+  return { stats, applications, enquiries, jobs };
+}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, PageBackdrop, PageHeader } from "@/app/components/ui";
+import { Container, PageHeader } from "@/app/components/ui";
 import { getContent } from "@/lib/content";
 import ContactForm from "./ContactForm";
 
@@ -15,38 +15,39 @@ export default async function ContactPage() {
   ]);
 
   return (
-    <div className="relative isolate">
-      <PageBackdrop />
-      <Container className="grid gap-16 py-24 lg:grid-cols-[1fr_1.25fr]">
-        <div>
-          <PageHeader
-            eyebrow={contact.eyebrow}
-            title={contact.title}
-            description={contact.intro}
-          />
+    <Container className="pb-24 sm:pb-32">
+      <PageHeader
+        eyebrow={contact.eyebrow}
+        title={contact.title}
+        description={contact.intro}
+      />
 
-          <dl className="mt-12 animate-fade-up space-y-6 text-sm [animation-delay:240ms]">
+      <div className="grid gap-16 pt-16 sm:pt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-24">
+        <dl className="animate-fade-up space-y-8 text-sm [animation-delay:200ms]">
+          <div>
+            <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
+              Email
+            </dt>
+            <dd className="mt-3">
+              <a
+                href={`mailto:${site.contactEmail}`}
+                className="font-display border-b border-line-strong pb-0.5 text-2xl hover:border-ink"
+              >
+                {site.contactEmail}
+              </a>
+            </dd>
+          </div>
+          {site.location && (
             <div>
-              <dt className="text-zinc-500">Email</dt>
-              <dd className="mt-1">
-                <a
-                  href={`mailto:${site.contactEmail}`}
-                  className="font-medium hover:text-brand"
-                >
-                  {site.contactEmail}
-                </a>
-              </dd>
+              <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
+                Studio
+              </dt>
+              <dd className="font-display mt-3 text-2xl">{site.location}</dd>
             </div>
-            {site.location && (
-              <div>
-                <dt className="text-zinc-500">Location</dt>
-                <dd className="mt-1 font-medium">{site.location}</dd>
-              </div>
-            )}
-          </dl>
-        </div>
+          )}
+        </dl>
 
-        <div className="animate-fade-up rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm [animation-delay:150ms] sm:p-10">
+        <div className="animate-fade-up [animation-delay:150ms]">
           <ContactForm
             text={{
               messageLabel: contact.messageLabel,
@@ -56,7 +57,7 @@ export default async function ContactPage() {
             }}
           />
         </div>
-      </Container>
-    </div>
+      </div>
+    </Container>
   );
 }

@@ -29,27 +29,27 @@ export default async function EditContentPage({
   return (
     <>
 
-      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+      <main className="max-w-4xl px-6 py-10 lg:px-12">
         <Link
           href="/admin/content"
-          className="text-xs uppercase tracking-wider text-zinc-500 hover:text-zinc-900"
+          className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted hover:text-ink"
         >
           ← All pages
         </Link>
 
         <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight">
+            <h1 className="font-display text-4xl">
               {section.title}
             </h1>
-            <p className="mt-2 text-sm text-zinc-500">{section.description}</p>
+            <p className="mt-2 text-sm text-muted">{section.description}</p>
           </div>
 
           <a
             href={section.path}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-zinc-500 hover:text-zinc-900"
+            className="text-sm text-muted hover:text-ink"
           >
             View live page
           </a>

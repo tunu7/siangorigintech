@@ -14,11 +14,11 @@ export default function LoginForm({ next }: { next: string }) {
   const [visible, setVisible] = useState(false);
 
   return (
-    <form action={action} className="mt-6 space-y-5">
+    <form action={action} className="mt-10 space-y-8">
       <input type="hidden" name="next" value={next} />
 
       <div>
-        <label htmlFor="password" className="text-sm font-medium">
+        <label htmlFor="password" className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
           Password
         </label>
         <div className="relative">
@@ -35,7 +35,7 @@ export default function LoginForm({ next }: { next: string }) {
             type="button"
             onClick={() => setVisible(!visible)}
             aria-label={visible ? "Hide password" : "Show password"}
-            className="absolute inset-y-0 right-0 mt-2 flex w-11 items-center justify-center text-zinc-400 hover:text-zinc-700"
+            className="absolute inset-y-0 right-0 mt-2 flex w-11 items-center justify-center text-muted hover:text-ink"
           >
             {visible ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -47,7 +47,7 @@ export default function LoginForm({ next }: { next: string }) {
       <button
         type="submit"
         disabled={pending}
-        className={`${buttonClass()} w-full`}
+        className={`${buttonClass()} w-full py-3!`}
       >
         {pending && <Loader2 size={16} className="animate-spin" aria-hidden />}
         {pending ? "Signing in…" : "Sign in"}

@@ -21,15 +21,15 @@ export default async function EditProjectPage({
   return (
     <>
 
-      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+      <main className="max-w-4xl px-6 py-10 lg:px-12">
         <Link
           href="/admin/projects"
-          className="text-xs uppercase tracking-wider text-zinc-500 hover:text-zinc-900"
+          className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted hover:text-ink"
         >
           ← All projects
         </Link>
 
-        <h1 className="mt-6 text-3xl font-semibold tracking-tight">
+        <h1 className="mt-6 font-display text-4xl">
           {project.title}
         </h1>
 
@@ -39,10 +39,10 @@ export default async function EditProjectPage({
 
         <form
           action={deleteProject}
-          className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-red-200 bg-white p-6"
+          className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-red-200 bg-white p-6"
         >
           <input type="hidden" name="id" value={project.id} />
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted">
             Permanently delete this project. Hide it instead if you might
             want it back.
           </p>

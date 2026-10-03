@@ -23,23 +23,23 @@ export default async function EditJobPage({
   return (
     <>
 
-      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+      <main className="max-w-4xl px-6 py-10 lg:px-12">
         <Link
           href="/admin/jobs"
-          className="text-xs uppercase tracking-wider text-zinc-500 hover:text-zinc-900"
+          className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted hover:text-ink"
         >
           ← All jobs
         </Link>
 
         <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
-          <h1 className="text-3xl font-semibold tracking-tight">
+          <h1 className="font-display text-4xl">
             {job.title}
           </h1>
 
           <div className="flex items-center gap-4 text-sm">
             <Link
-              href={`/admin?job=${job.slug}`}
-              className="text-zinc-500 hover:text-zinc-900"
+              href={`/admin/applications?job=${job.slug}`}
+              className="text-muted hover:text-ink"
             >
               {count} application{count === 1 ? "" : "s"}
             </Link>
@@ -48,7 +48,7 @@ export default async function EditJobPage({
                 href={`/careers/${job.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-zinc-500 hover:text-zinc-900"
+                className="text-muted hover:text-ink"
               >
                 View live
               </a>
@@ -60,14 +60,14 @@ export default async function EditJobPage({
           <JobForm job={job} />
         </div>
 
-        <div className="mt-6 rounded-xl border border-red-200 bg-white p-6">
+        <div className="mt-6 rounded-lg border border-red-200 bg-white p-6">
           {count === 0 ? (
             <form
               action={deleteJob}
               className="flex flex-wrap items-center justify-between gap-4"
             >
               <input type="hidden" name="slug" value={job.slug} />
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-muted">
                 Permanently delete this job posting.
               </p>
               <ConfirmButton
@@ -78,7 +78,7 @@ export default async function EditJobPage({
               </ConfirmButton>
             </form>
           ) : (
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-muted">
               This job has applications, so it can&apos;t be deleted. Close it
               instead to hide it from the careers page.
             </p>
