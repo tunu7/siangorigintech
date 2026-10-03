@@ -7,7 +7,11 @@ import { useEffect, useState } from "react";
 import { navLinks } from "@/lib/site";
 import { buttonClass, Container } from "./ui";
 
-export default function Navbar() {
+export default function Navbar({
+  brand,
+}: {
+  brand: { shortName: string; logoMark: string; navCta: string };
+}) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -37,10 +41,10 @@ export default function Navbar() {
           className="group flex items-center gap-2.5"
         >
           <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-[10px] font-bold text-white transition-transform duration-500 group-hover:rotate-[360deg]">
-            SO
+            {brand.logoMark}
           </span>
           <span className="text-sm font-semibold tracking-tight">
-            Siang Origin
+            {brand.shortName}
           </span>
         </Link>
 
@@ -69,7 +73,7 @@ export default function Navbar() {
             ))}
 
           <Link href="/contact" className={buttonClass()}>
-            Contact us
+            {brand.navCta}
           </Link>
         </nav>
 

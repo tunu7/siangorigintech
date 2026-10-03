@@ -1,8 +1,11 @@
 import Link from "next/link";
-import { navLinks, site } from "@/lib/site";
+import { getContent } from "@/lib/content";
+import { navLinks } from "@/lib/site";
 import { Container } from "./ui";
 
-export default function Footer() {
+export default async function Footer() {
+  const site = await getContent("settings");
+
   return (
     <footer className="border-t border-zinc-200">
       <Container className="py-12">

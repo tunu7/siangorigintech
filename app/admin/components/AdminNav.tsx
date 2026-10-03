@@ -29,10 +29,20 @@ export default function AdminNav({
       count: counts.enquiries,
       active: pathname.startsWith("/admin/enquiries"),
     },
+    {
+      href: "/admin/content",
+      label: "Content",
+      active: pathname.startsWith("/admin/content"),
+    },
+    {
+      href: "/admin/projects",
+      label: "Projects",
+      active: pathname.startsWith("/admin/projects"),
+    },
   ];
 
   return (
-    <nav className="flex items-center gap-1 text-sm">
+    <nav className="flex flex-wrap items-center gap-1 text-sm">
       {links.map((link) => (
         <Link
           key={link.href}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { getContent } from "@/lib/content";
 import "./globals.css";
 
 const geist = Geist({
@@ -7,14 +8,17 @@ const geist = Geist({
   variable: "--font-geist",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Siang Origin Technologies",
-    template: "%s — Siang Origin",
-  },
-  description:
-    "Siang Origin Technologies is a technology studio building digital experiences, growth systems and intelligent products.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getContent("settings");
+
+  return {
+    title: {
+      default: site.name,
+      template: `%s — ${site.shortName}`,
+    },
+    description: site.metaDescription,
+  };
+}
 
 export default function RootLayout({
   children,

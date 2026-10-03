@@ -9,29 +9,33 @@ import {
   PageHeader,
 } from "@/app/components/ui";
 import { listOpenJobs } from "@/lib/jobs";
-import { site } from "@/lib/site";
+import { getContent } from "@/lib/content";
 
-export const metadata: Metadata = {
-  title: "Careers",
-  description: "Explore career opportunities at Siang Origin Technologies.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const careers = await getContent("careers");
+  return { title: "Careers", description: careers.metaDescription };
+}
 
 export default async function CareersPage() {
-  const jobs = await listOpenJobs();
+  const [jobs, careers, site] = await Promise.all([
+    listOpenJobs(),
+    getContent("careers"),
+    getContent("settings"),
+  ]);
 
   return (
     <div className="relative isolate">
       <PageBackdrop />
       <Container className="py-24">
         <PageHeader
-          eyebrow="Careers"
-          title="Build with us"
-          description="We are building digital products, growth systems and new ventures. Join us if you want to work on meaningful problems and help turn ideas into reality."
+          eyebrow={careers.eyebrow}
+          title={careers.title}
+          description={careers.intro}
         />
 
         <Reveal as="section" className="mt-20">
           <h2 className="text-sm font-medium text-zinc-500">
-            Open positions ({jobs.length})
+            {careers.listTitle} ({jobs.length})
           </h2>
 
           {jobs.length > 0 ? (
@@ -65,7 +69,7 @@ export default async function CareersPage() {
             </ul>
           ) : (
             <p className="mt-4 border-y border-zinc-200 py-10 text-zinc-500">
-              There are no open positions at the moment.
+              {careers.emptyText}
             </p>
           )}
         </Reveal>
@@ -74,14 +78,11 @@ export default async function CareersPage() {
           as="section"
           className="mt-20 rounded-xl border border-zinc-200 bg-zinc-50 p-8 sm:p-10"
         >
-          <Eyebrow>Don&apos;t see your role?</Eyebrow>
+          <Eyebrow>{careers.openEyebrow}</Eyebrow>
           <h2 className="mt-3 text-2xl font-semibold tracking-tight">
-            Good people don&apos;t always fit into job descriptions.
+            {careers.openTitle}
           </h2>
-          <p className="mt-3 max-w-xl text-zinc-600">
-            If you think you can contribute to what we are building, send us a
-            short introduction and your resume.
-          </p>
+          <p className="mt-3 max-w-xl text-zinc-600">{careers.openText}</p>
           <a
             href={`mailto:${site.careersEmail}`}
             className="mt-6 inline-block text-sm font-medium text-brand hover:underline"

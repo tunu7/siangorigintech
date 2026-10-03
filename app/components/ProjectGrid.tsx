@@ -1,4 +1,4 @@
-import { projects } from "@/data/projects";
+import type { Project } from "@/lib/projects";
 import { Reveal, TiltCard } from "./motion";
 
 const covers = [
@@ -7,11 +7,11 @@ const covers = [
   "from-brand-light to-mint",
 ];
 
-export default function ProjectGrid() {
+export default function ProjectGrid({ projects }: { projects: Project[] }) {
   return (
     <ul className="grid gap-6 md:grid-cols-3">
       {projects.map((project, index) => (
-        <Reveal as="li" key={project.title} delay={index * 120}>
+        <Reveal as="li" key={project.id} delay={index * 120}>
           <TiltCard className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition-shadow hover:shadow-xl hover:shadow-brand/10">
             <div
               className={`relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-linear-to-br ${covers[index % covers.length]}`}
@@ -37,7 +37,18 @@ export default function ProjectGrid() {
                 {String(index + 1).padStart(2, "0")}
               </span>
               <h3 className="mt-1 text-lg font-semibold tracking-tight">
-                {project.title}
+                {project.url ? (
+                  <a
+                    href={project.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="after:absolute after:inset-0 hover:text-brand"
+                  >
+                    {project.title}
+                  </a>
+                ) : (
+                  project.title
+                )}
               </h3>
               <p className="mt-2 text-sm leading-6 text-zinc-600">
                 {project.description}

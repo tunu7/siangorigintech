@@ -2,7 +2,8 @@
 
 import { Resend } from "resend";
 import { sql } from "@/lib/db";
-import { site, siteUrl } from "@/lib/site";
+import { getContent } from "@/lib/content";
+import { siteUrl } from "@/lib/site";
 
 export type ContactState = { error?: string; sent?: boolean };
 
@@ -50,6 +51,7 @@ export async function sendEnquiry(
   const emailed = await notifyTeam({ id, name, email, message });
 
   if (!id && !emailed) {
+    const site = await getContent("settings");
     return {
       error: `Unable to send your message right now. Please email us at ${site.contactEmail}.`,
     };

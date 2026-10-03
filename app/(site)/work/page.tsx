@@ -2,25 +2,32 @@ import type { Metadata } from "next";
 import ContactCTA from "@/app/components/ContactCTA";
 import ProjectGrid from "@/app/components/ProjectGrid";
 import { Container, PageBackdrop, PageHeader } from "@/app/components/ui";
+import { getContent } from "@/lib/content";
+import { listPublishedProjects } from "@/lib/projects";
 
-export const metadata: Metadata = {
-  title: "Work",
-  description: "Selected work by Siang Origin Technologies.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const work = await getContent("work");
+  return { title: "Work", description: work.metaDescription };
+}
 
-export default function WorkPage() {
+export default async function WorkPage() {
+  const [work, projects] = await Promise.all([
+    getContent("work"),
+    listPublishedProjects(),
+  ]);
+
   return (
     <div className="relative isolate">
       <PageBackdrop />
       <Container className="py-24">
         <PageHeader
-          eyebrow="Our work"
-          title="Built for the real world"
-          description="Digital products, platforms and experiences designed to solve real problems and create meaningful business outcomes."
+          eyebrow={work.eyebrow}
+          title={work.title}
+          description={work.intro}
         />
 
         <div className="mt-16">
-          <ProjectGrid />
+          <ProjectGrid projects={projects} />
         </div>
       </Container>
 

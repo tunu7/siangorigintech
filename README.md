@@ -20,8 +20,14 @@ Admin ─► /admin (password login, signed HttpOnly cookie)
            │    other applications from the same person, delete (incl. resume)
            ├─ Jobs: create / edit / open / close / delete postings
            │    (changes revalidate /careers immediately)
-           └─ Enquiries: contact-form inbox with unread / archived views,
-                search, bulk actions, reply by email
+           ├─ Enquiries: contact-form inbox with unread / archived views,
+           │    search, bulk actions, reply by email
+           ├─ Content: edit the text of every page + site settings
+           │    (company details, emails, SEO, contact banner)
+           └─ Projects: add / edit / reorder / hide portfolio projects
+
+Every content, project and job change revalidates the public site, so it
+updates immediately while pages stay statically cached.
 ```
 
 Resumes go straight from the browser to Blob, so files never pass through
@@ -63,8 +69,9 @@ the Vercel Function (4.5MB request body limit).
 npm run dev
 ```
 
-Jobs are managed at `/admin/jobs` (stored in the `jobs` table), contact
-enquiries are saved to the `enquiries` table and emailed, projects live in
-`data/projects.ts` and
-site-wide details (contact emails, nav links) in `lib/site.ts`. Schema changes go in `db/migrations/`
+Page text and site settings are edited at `/admin/content`. Each section is
+one JSON row in `site_content`; the editable fields and their default text
+are defined in `lib/content-schema.ts` (add a field there and it appears in
+the editor). Projects (`/admin/projects`) and jobs (`/admin/jobs`) have
+their own tables, and contact enquiries are saved to `enquiries`. Schema changes go in `db/migrations/`
 as idempotent SQL files.

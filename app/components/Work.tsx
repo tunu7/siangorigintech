@@ -1,23 +1,32 @@
+import { getContent } from "@/lib/content";
+import { listPublishedProjects } from "@/lib/projects";
 import ProjectGrid from "./ProjectGrid";
 import { Reveal } from "./motion";
 import { Container, Eyebrow, TextLink } from "./ui";
 
-export default function Work() {
+export default async function Work() {
+  const [home, projects] = await Promise.all([
+    getContent("home"),
+    listPublishedProjects({ featuredOnly: true }),
+  ]);
+
+  if (!projects.length) return null;
+
   return (
     <section className="py-24">
       <Container>
         <Reveal className="mb-12 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <Eyebrow>Selected work</Eyebrow>
+            <Eyebrow>{home.workEyebrow}</Eyebrow>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-              Things we&apos;ve built
+              {home.workTitle}
             </h2>
           </div>
 
-          <TextLink href="/work">All work</TextLink>
+          <TextLink href="/work">{home.workLink}</TextLink>
         </Reveal>
 
-        <ProjectGrid />
+        <ProjectGrid projects={projects} />
       </Container>
     </section>
   );

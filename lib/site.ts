@@ -1,11 +1,5 @@
-export const site = {
-  name: "Siang Origin Technologies",
-  shortName: "Siang Origin",
-  tagline: "Technology · Growth · AI",
-  location: "Itanagar, Arunachal Pradesh",
-  contactEmail: "hello@siangorigin.com",
-  careersEmail: "careers@siangorigin.com",
-};
+// Company details and page text are edited in /admin/content
+// (lib/content-schema.ts).
 
 export const navLinks = [
   { name: "Work", href: "/work" },

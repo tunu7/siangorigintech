@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { getContent } from "@/lib/content";
 import { Reveal } from "./motion";
 import { Container } from "./ui";
 
-export default function ContactCTA() {
+export default async function ContactCTA() {
+  const settings = await getContent("settings");
+
   return (
     <section className="py-24">
       <Container>
@@ -20,11 +23,10 @@ export default function ContactCTA() {
           <div className="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
             <div className="max-w-xl">
               <h2 className="text-3xl font-semibold tracking-tight">
-                Have a project in mind?
+                {settings.ctaTitle}
               </h2>
               <p className="mt-3 text-white/75">
-                Tell us what you&apos;re building. We&apos;d love to hear
-                about it.
+                {settings.ctaText}
               </p>
             </div>
 
@@ -32,7 +34,7 @@ export default function ContactCTA() {
               href="/contact"
               className="group inline-flex shrink-0 items-center gap-2 rounded-md bg-white px-5 py-2.5 text-sm font-medium text-brand transition-all hover:bg-zinc-100 active:scale-[0.98]"
             >
-              Start a conversation
+              {settings.ctaButton}
               <ArrowRight
                 size={16}
                 aria-hidden

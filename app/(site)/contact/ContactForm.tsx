@@ -6,7 +6,16 @@ import { Field, FormError, inputClass } from "@/app/components/form";
 import { buttonClass } from "@/app/components/ui";
 import { sendEnquiry, type ContactState } from "./actions";
 
-export default function ContactForm() {
+export default function ContactForm({
+  text,
+}: {
+  text: {
+    messageLabel: string;
+    messagePlaceholder: string;
+    successTitle: string;
+    successText: string;
+  };
+}) {
   const [state, action, pending] = useActionState<ContactState, FormData>(
     sendEnquiry,
     {}
@@ -18,9 +27,9 @@ export default function ContactForm() {
         <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand/10">
           <CheckCircle2 className="text-brand" size={28} aria-hidden />
         </span>
-        <h2 className="mt-4 text-xl font-semibold">Message sent</h2>
+        <h2 className="mt-4 text-xl font-semibold">{text.successTitle}</h2>
         <p className="mt-2 text-zinc-600">
-          Thanks for reaching out. We&apos;ll get back to you soon.
+          {text.successText}
         </p>
       </div>
     );
@@ -61,14 +70,14 @@ export default function ContactForm() {
         </Field>
       </div>
 
-      <Field id="message" label="What would you like to build?" required>
+      <Field id="message" label={text.messageLabel} required>
         <textarea
           id="message"
           name="message"
           required
           rows={6}
           maxLength={5000}
-          placeholder="A few lines about your project, goals and timeline."
+          placeholder={text.messagePlaceholder}
           className={`${inputClass} resize-y`}
         />
       </Field>
