@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getContent } from "@/lib/content";
-import { navLinks } from "@/lib/site";
+import { isExternalLink } from "@/lib/content-schema";
 import { Container } from "./ui";
 
 export default async function Footer() {
@@ -17,15 +17,27 @@ export default async function Footer() {
           </div>
 
           <nav className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-zinc-500">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="hover:text-zinc-900"
-              >
-                {link.name}
-              </Link>
-            ))}
+            {site.nav.map((link) =>
+              isExternalLink(link.href) ? (
+                <a
+                  key={`${link.href}-${link.label}`}
+                  href={link.href}
+                  target={link.href.startsWith("mailto:") ? undefined : "_blank"}
+                  rel="noopener noreferrer"
+                  className="hover:text-zinc-900"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={`${link.href}-${link.label}`}
+                  href={link.href}
+                  className="hover:text-zinc-900"
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
           </nav>
         </div>
 

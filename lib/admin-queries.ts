@@ -6,7 +6,7 @@ import {
   type Application,
   type ApplicationStatus,
 } from "@/lib/applications";
-import { sql } from "@/lib/db";
+import { batch, sql } from "@/lib/db";
 
 export const PAGE_SIZE = 25;
 
@@ -86,11 +86,14 @@ function where(filters: Omit<ApplicationFilters, "page" | "sort">) {
   };
 }
 
-export async function listApplications(filters: ApplicationFilters) {
+type ListRow = ApplicationRow & { total: string };
+type StatusRow = { status: ApplicationStatus; count: number };
+
+function listQuery(filters: ApplicationFilters) {
   const { clause, params } = where(filters);
   const offset = (filters.page - 1) * PAGE_SIZE;
 
-  const rows = (await sql().query(
+  return sql().query(
     `select id, created_at, job_slug, job_title, name, email, phone, status,
             count(*) over() as total
        from applications
@@ -98,11 +101,48 @@ export async function listApplications(filters: ApplicationFilters) {
       order by ${SORTS[filters.sort ?? "newest"]}
       limit ${PAGE_SIZE} offset ${offset}`,
     params
-  )) as (ApplicationRow & { total: string })[];
+  );
+}
+
+function toStatusCounts(rows: StatusRow[]) {
+  const byStatus = Object.fromEntries(
+    APPLICATION_STATUSES.map((status) => [
+      status,
+      rows.find((row) => row.status === status)?.count ?? 0,
+    ])
+  ) as Record<ApplicationStatus, number>;
+
+  return {
+    total: rows.reduce((sum, row) => sum + row.count, 0),
+    byStatus,
+  };
+}
+
+// Everything the applications dashboard needs, in one round trip.
+export async function dashboardData(filters: ApplicationFilters) {
+  const [rows, statusRows, jobs] = await batch<
+    [ListRow[], StatusRow[], { slug: string; title: string }[]]
+  >([
+    listQuery(filters),
+    sql()`
+      select status, count(*)::int as count
+        from applications
+       group by status
+    `,
+    sql()`
+      select slug, title from jobs
+      union
+      select distinct job_slug, job_title from applications
+       where job_slug not in (select slug from jobs)
+       order by title
+    `,
+  ]);
 
   return {
     rows,
     total: rows.length ? Number(rows[0].total) : 0,
+    counts: toStatusCounts(statusRows),
+    jobs,
   };
 }
 
@@ -118,26 +158,6 @@ export async function exportApplications(
   )) as Application[];
 }
 
-export async function statusCounts() {
-  const rows = (await sql()`
-    select status, count(*)::int as count
-      from applications
-     group by status
-  `) as { status: ApplicationStatus; count: number }[];
-
-  const byStatus = Object.fromEntries(
-    APPLICATION_STATUSES.map((status) => [
-      status,
-      rows.find((row) => row.status === status)?.count ?? 0,
-    ])
-  ) as Record<ApplicationStatus, number>;
-
-  return {
-    total: rows.reduce((sum, row) => sum + row.count, 0),
-    byStatus,
-  };
-}
-
 export async function getApplication(id: string) {
   if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
 
@@ -148,14 +168,24 @@ export async function getApplication(id: string) {
   return rows[0] ?? null;
 }
 
-// Other applications from the same person, newest first.
-export async function relatedApplications(application: Application) {
-  return (await sql()`
-    select id, created_at, job_slug, job_title, name, email, phone, status
-      from applications
-     where lower(email) = lower(${application.email})
-       and id <> ${application.id}
-     order by created_at desc
-     limit 20
-  `) as ApplicationRow[];
+// An application plus other applications from the same person, in one
+// round trip.
+export async function getApplicationWithRelated(id: string) {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+
+  const [rows, related] = await batch<[Application[], ApplicationRow[]]>([
+    sql()`select * from applications where id = ${id}`,
+    sql()`
+      select id, created_at, job_slug, job_title, name, email, phone, status
+        from applications
+       where lower(email) = (
+               select lower(email) from applications where id = ${id}
+             )
+         and id <> ${id}
+       order by created_at desc
+       limit 20
+    `,
+  ]);
+
+  return rows[0] ? { application: rows[0], related } : null;
 }

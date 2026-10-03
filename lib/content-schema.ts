@@ -18,7 +18,7 @@ export const SERVICE_ICONS = [
 ] as const;
 
 type TextField = {
-  type: "text" | "textarea" | "email";
+  type: "text" | "textarea" | "email" | "link";
   key: string;
   label: string;
   hint?: string;
@@ -59,7 +59,14 @@ const defaults = {
     location: "Itanagar, Arunachal Pradesh",
     contactEmail: "hello@siangorigin.com",
     careersEmail: "careers@siangorigin.com",
+    nav: [
+      { label: "Work", href: "/work" },
+      { label: "About", href: "/about" },
+      { label: "Careers", href: "/careers" },
+      { label: "Contact", href: "/contact" },
+    ],
     navCta: "Contact us",
+    navCtaHref: "/contact",
     metaDescription:
       "Siang Origin Technologies is a technology studio building digital experiences, growth systems and intelligent products.",
     ctaTitle: "Have a project in mind?",
@@ -222,7 +229,32 @@ export const SECTIONS: Record<
       { type: "text", key: "location", label: "Location" },
       { type: "email", key: "contactEmail", label: "Contact email", required: true },
       { type: "email", key: "careersEmail", label: "Careers email", required: true },
-      { type: "text", key: "navCta", label: "Navbar button label", required: true },
+      { type: "heading", label: "Navigation" },
+      {
+        type: "group",
+        key: "nav",
+        label: "Menu links",
+        itemLabel: "Link",
+        max: 8,
+        fields: [
+          { type: "text", key: "label", label: "Label", required: true, max: 40 },
+          {
+            type: "link",
+            key: "href",
+            label: "Goes to",
+            required: true,
+            hint: "A page on this site like /about, or a full URL like https://…",
+          },
+        ],
+      },
+      { type: "text", key: "navCta", label: "Button label", required: true, max: 40 },
+      {
+        type: "link",
+        key: "navCtaHref",
+        label: "Button goes to",
+        required: true,
+        hint: "Menu links pointing to the same place are hidden on desktop next to the button.",
+      },
       { type: "heading", label: "SEO" },
       meta("Default SEO description"),
       { type: "heading", label: "Contact banner (home, about, work)" },
@@ -429,6 +461,34 @@ export function normalizeSection<K extends SectionKey>(
   return base as Sections[K];
 }
 
+const LINK_PATTERN = /^(?:\/(?!\/)[^\s]*|https?:\/\/[^\s]+|mailto:[^\s]+)$/i;
+
+export function isExternalLink(href: string) {
+  return /^(?:https?:|mailto:)/i.test(href);
+}
+
+function fieldError(field: SimpleField, value: string, prefix = "") {
+  if (field.type === "select") return null;
+
+  if (field.required && !value) {
+    return `${prefix}${field.label} is required.`;
+  }
+
+  if (
+    field.type === "email" &&
+    value &&
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+  ) {
+    return `${prefix}${field.label} must be a valid email address.`;
+  }
+
+  if (field.type === "link" && value && !LINK_PATTERN.test(value)) {
+    return `${prefix}${field.label} must start with "/" (a page on this site), "https://" or "mailto:".`;
+  }
+
+  return null;
+}
+
 // Returns an error message for missing required fields or bad emails.
 export function validateSection(key: SectionKey, data: unknown) {
   const values = data as Record<string, ContentValue>;
@@ -441,23 +501,19 @@ export function validateSection(key: SectionKey, data: unknown) {
 
       for (const [index, item] of items.entries()) {
         for (const sub of field.fields) {
-          if (sub.type !== "select" && sub.required && !item[sub.key]) {
-            return `${field.itemLabel} ${index + 1}: ${sub.label} is required.`;
-          }
+          const error = fieldError(
+            sub,
+            item[sub.key] ?? "",
+            `${field.itemLabel} ${index + 1}: `
+          );
+          if (error) return error;
         }
       }
       continue;
     }
 
-    const value = values[field.key] as string;
-
-    if (field.type !== "select" && field.required && !value) {
-      return `${field.label} is required.`;
-    }
-
-    if (field.type === "email" && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      return `${field.label} must be a valid email address.`;
-    }
+    const error = fieldError(field, values[field.key] as string);
+    if (error) return error;
   }
 
   return null;

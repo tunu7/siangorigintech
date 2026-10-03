@@ -47,12 +47,17 @@ export const getOpenJob = cache(async (slug: string) => {
   return rows[0] ?? null;
 });
 
-export async function getJob(slug: string) {
+// A job plus how many applications it has, for the admin edit page.
+export async function getJobWithCount(slug: string) {
   if (!SLUG_PATTERN.test(slug)) return null;
 
   const rows = (await sql()`
-    select * from jobs where slug = ${slug}
-  `) as Job[];
+    select j.*,
+           (select count(*)::int from applications a
+             where a.job_slug = j.slug) as applications
+      from jobs j
+     where j.slug = ${slug}
+  `) as (Job & { applications: number })[];
 
   return rows[0] ?? null;
 }
@@ -67,15 +72,4 @@ export async function listJobsWithCounts() {
      group by j.slug
      order by j.is_open desc, j.sort_order, j.created_at desc
   `) as JobWithCounts[];
-}
-
-// Every role that has ever received applications, for admin filters.
-export async function listJobOptions() {
-  return (await sql()`
-    select slug, title from jobs
-    union
-    select distinct job_slug, job_title from applications
-     where job_slug not in (select slug from jobs)
-     order by title
-  `) as { slug: string; title: string }[];
 }

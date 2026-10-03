@@ -4,14 +4,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { navLinks } from "@/lib/site";
+import { isExternalLink } from "@/lib/content-schema";
 import { buttonClass, Container } from "./ui";
 
 export default function Navbar({
   brand,
 }: {
-  brand: { shortName: string; logoMark: string; navCta: string };
+  brand: {
+    shortName: string;
+    logoMark: string;
+    navCta: string;
+    navCtaHref: string;
+    nav: { label: string; href: string }[];
+  };
 }) {
+  const navLinks = brand.nav;
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -24,7 +31,10 @@ export default function Navbar({
   }, []);
 
   const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(`${href}/`);
+    href.startsWith("/") &&
+    (href === "/"
+      ? pathname === "/"
+      : pathname === href || pathname.startsWith(`${href}/`));
 
   return (
     <header
@@ -50,10 +60,10 @@ export default function Navbar({
 
         <nav className="hidden items-center gap-8 md:flex">
           {navLinks
-            .filter((link) => link.href !== "/contact")
+            .filter((link) => link.href !== brand.navCtaHref)
             .map((link) => (
-              <Link
-                key={link.href}
+              <NavLink
+                key={`${link.href}-${link.label}`}
                 href={link.href}
                 className={`group relative py-1 text-sm transition-colors hover:text-zinc-900 ${
                   isActive(link.href)
@@ -61,7 +71,7 @@ export default function Navbar({
                     : "text-zinc-500"
                 }`}
               >
-                {link.name}
+                {link.label}
                 <span
                   className={`absolute inset-x-0 -bottom-0.5 h-px origin-left bg-brand transition-transform duration-300 ${
                     isActive(link.href)
@@ -69,12 +79,12 @@ export default function Navbar({
                       : "scale-x-0 group-hover:scale-x-100"
                   }`}
                 />
-              </Link>
+              </NavLink>
             ))}
 
-          <Link href="/contact" className={buttonClass()}>
+          <NavLink href={brand.navCtaHref} className={buttonClass()}>
             {brand.navCta}
-          </Link>
+          </NavLink>
         </nav>
 
         <button
@@ -100,8 +110,8 @@ export default function Navbar({
         >
           <Container className="flex flex-col border-t border-zinc-200 py-2">
             {navLinks.map((link, index) => (
-              <Link
-                key={link.href}
+              <NavLink
+                key={`${link.href}-${link.label}`}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
                 style={{
@@ -117,12 +127,38 @@ export default function Navbar({
                     : "text-zinc-600"
                 }`}
               >
-                {link.name}
-              </Link>
+                {link.label}
+              </NavLink>
             ))}
           </Container>
         </nav>
       </div>
     </header>
   );
+}
+
+// Internal paths use client-side navigation; external links open in a new
+// tab.
+function NavLink({
+  href,
+  ...props
+}: {
+  href: string;
+  className?: string;
+  style?: React.CSSProperties;
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
+  if (isExternalLink(href)) {
+    return (
+      <a
+        href={href}
+        target={href.startsWith("mailto:") ? undefined : "_blank"}
+        rel="noopener noreferrer"
+        {...props}
+      />
+    );
+  }
+
+  return <Link href={href} {...props} />;
 }

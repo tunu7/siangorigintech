@@ -25,7 +25,7 @@ Admin ─► /admin  (also /login, /dashboard, or "Team login" in the footer)
            ├─ Enquiries: contact-form inbox with unread / archived views,
            │    search, bulk actions, reply by email
            ├─ Content: edit the text of every page + site settings
-           │    (company details, emails, SEO, contact banner)
+           │    (company details, navigation menu, emails, SEO, banner)
            └─ Projects: add / edit / reorder / hide portfolio projects,
                 cover images uploaded straight to Blob (≤5MB) and served
                 via /media/projects/* (only that prefix is ever public)
@@ -36,6 +36,21 @@ updates immediately while pages stay statically cached.
 
 Resumes go straight from the browser to Blob, so files never pass through
 the Vercel Function (4.5MB request body limit).
+
+## Performance notes
+
+- Public pages are static and only re-render when admin content changes
+  (`revalidatePath`), so visitors never wait on the database.
+- Dashboard pages live in `app/admin/(dashboard)/` under one layout: the
+  header persists across navigations, unread counts stream in via
+  `<Suspense>`, and `loading.tsx` shows a skeleton instantly.
+- Each admin page loads its data in a single HTTP round trip to Neon using
+  `batch()` from `lib/db.ts` (a read-only transaction). Prefer adding
+  queries to a page's batch over adding new awaits.
+- Search uses trigram (`pg_trgm`) indexes.
+- Neon suspends idle compute after ~5 minutes; the first request after
+  that pays a cold start. Disable scale-to-zero on the production branch
+  in the Neon console if that matters.
 
 ## Setup
 

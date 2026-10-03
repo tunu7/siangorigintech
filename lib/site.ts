@@ -1,12 +1,5 @@
-// Company details and page text are edited in /admin/content
+// Company details, navigation and page text are edited in /admin/content
 // (lib/content-schema.ts).
-
-export const navLinks = [
-  { name: "Work", href: "/work" },
-  { name: "About", href: "/about" },
-  { name: "Careers", href: "/careers" },
-  { name: "Contact", href: "/contact" },
-];
 
 // Absolute base URL for links in emails.
 export function siteUrl() {

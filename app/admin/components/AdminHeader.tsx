@@ -1,27 +1,28 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { sql } from "@/lib/db";
 import { signOut } from "../actions";
 import AdminNav from "./AdminNav";
 
-async function badgeCounts() {
+async function NavWithCounts() {
+  let counts = { applications: 0, enquiries: 0 };
+
   try {
     const [row] = (await sql()`
       select
         (select count(*)::int from applications where status = 'new') as applications,
         (select count(*)::int from enquiries
           where read_at is null and not archived) as enquiries
-    `) as { applications: number; enquiries: number }[];
-
-    return row;
+    `) as (typeof counts)[];
+    counts = row;
   } catch (error) {
     console.error("ADMIN COUNTS ERROR:", error);
-    return { applications: 0, enquiries: 0 };
   }
+
+  return <AdminNav counts={counts} />;
 }
 
-export default async function AdminHeader() {
-  const counts = await badgeCounts();
-
+export default function AdminHeader() {
   return (
     <header className="border-b border-zinc-200 bg-white">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4 sm:px-6">
@@ -34,7 +35,12 @@ export default async function AdminHeader() {
             <span className="font-normal text-zinc-500">/ Admin</span>
           </Link>
 
-          <AdminNav counts={counts} />
+          {/* Counts stream in without blocking the page. */}
+          <Suspense
+            fallback={<AdminNav counts={{ applications: 0, enquiries: 0 }} />}
+          >
+            <NavWithCounts />
+          </Suspense>
         </div>
 
         <div className="flex items-center gap-4 text-sm">

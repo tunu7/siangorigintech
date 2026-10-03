@@ -4,11 +4,12 @@ import { getContent } from "@/lib/content";
 import { ButtonLink, Container } from "@/app/components/ui";
 
 export default async function NotFound() {
-  const { shortName, logoMark, navCta } = await getContent("settings");
+  const { shortName, logoMark, navCta, navCtaHref, nav } =
+    await getContent("settings");
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar brand={{ shortName, logoMark, navCta }} />
+      <Navbar brand={{ shortName, logoMark, navCta, navCtaHref, nav }} />
 
       <main className="relative flex flex-1 items-center overflow-hidden">
         <div aria-hidden className="bg-dots absolute inset-0" />

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { getContent } from "@/lib/content";
 import "./globals.css";
 
 const geist = Geist({
@@ -8,17 +7,14 @@ const geist = Geist({
   variable: "--font-geist",
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  const site = await getContent("settings");
-
-  return {
-    title: {
-      default: site.name,
-      template: `%s — ${site.shortName}`,
-    },
-    description: site.metaDescription,
-  };
-}
+// Public pages override this with the editable settings in
+// app/(site)/layout.tsx; admin pages keep it to avoid a content query.
+export const metadata: Metadata = {
+  title: {
+    default: "Siang Origin Technologies",
+    template: "%s — Siang Origin",
+  },
+};
 
 export default function RootLayout({
   children,
