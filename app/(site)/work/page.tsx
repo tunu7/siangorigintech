@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import ContactCTA from "@/app/components/ContactCTA";
-import ProjectList from "@/app/components/ProjectList";
-import { Container, PageHeader } from "@/app/components/ui";
+import ProjectGrid from "@/app/components/ProjectGrid";
+import { Container, PageBackdrop, PageHeader } from "@/app/components/ui";
 
 export const metadata: Metadata = {
   title: "Work",
@@ -10,7 +10,8 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
   return (
-    <>
+    <div className="relative isolate">
+      <PageBackdrop />
       <Container className="py-24">
         <PageHeader
           eyebrow="Our work"
@@ -19,11 +20,11 @@ export default function WorkPage() {
         />
 
         <div className="mt-16">
-          <ProjectList />
+          <ProjectGrid />
         </div>
       </Container>
 
       <ContactCTA />
-    </>
+    </div>
   );
 }

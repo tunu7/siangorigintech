@@ -1,11 +1,12 @@
-import ProjectList from "./ProjectList";
+import ProjectGrid from "./ProjectGrid";
+import { Reveal } from "./motion";
 import { Container, Eyebrow, TextLink } from "./ui";
 
 export default function Work() {
   return (
-    <section className="border-t border-zinc-200 py-24">
+    <section className="py-24">
       <Container>
-        <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+        <Reveal className="mb-12 flex flex-wrap items-end justify-between gap-6">
           <div>
             <Eyebrow>Selected work</Eyebrow>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -14,9 +15,9 @@ export default function Work() {
           </div>
 
           <TextLink href="/work">All work</TextLink>
-        </div>
+        </Reveal>
 
-        <ProjectList />
+        <ProjectGrid />
       </Container>
     </section>
   );

@@ -35,7 +35,7 @@ export default function LoginForm() {
         disabled={pending}
         className={`${buttonClass()} w-full`}
       >
-        {pending ? "Signing in..." : "Sign in"}
+        {pending ? "Signing in…" : "Sign in"}
       </button>
     </form>
   );

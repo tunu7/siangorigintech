@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { upload } from "@vercel/blob/client";
-import { CheckCircle2, FileText, Upload } from "lucide-react";
+import { CheckCircle2, FileText, Loader2, Upload } from "lucide-react";
 import { Field, FormError, inputClass } from "@/app/components/form";
 import { buttonClass } from "@/app/components/ui";
 import { MAX_RESUME_BYTES, resumePrefix } from "@/lib/applications";
@@ -30,6 +30,7 @@ export default function ApplyForm({ slug }: { slug: string }) {
   const [error, setError] = useState("");
   const [resume, setResume] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const busy = status === "uploading" || status === "submitting";
 
@@ -57,11 +58,13 @@ export default function ApplyForm({ slug }: { slug: string }) {
     try {
       // 1. Upload the PDF straight to Vercel Blob.
       setStatus("uploading");
+      setProgress(0);
 
       const blob = await upload(`${resumePrefix(slug)}resume.pdf`, resume, {
         access: "private",
         handleUploadUrl: "/api/apply/upload",
         contentType: "application/pdf",
+        onUploadProgress: ({ percentage }) => setProgress(percentage),
       }).catch(() => {
         throw new Error(
           "We couldn't upload your resume. Please check your connection and try again."
@@ -108,8 +111,10 @@ export default function ApplyForm({ slug }: { slug: string }) {
 
   if (status === "success") {
     return (
-      <div className="rounded-xl border border-zinc-200 p-8">
-        <CheckCircle2 className="text-brand" size={28} aria-hidden />
+      <div className="animate-fade-up py-4 text-center">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand/10">
+          <CheckCircle2 className="text-brand" size={28} aria-hidden />
+        </span>
         <h2 className="mt-4 text-xl font-semibold">Application received</h2>
         <p className="mt-2 text-zinc-600">
           Thank you for applying. We will review your application and get
@@ -270,12 +275,31 @@ export default function ApplyForm({ slug }: { slug: string }) {
         </label>
       </Field>
 
+      {status === "uploading" && (
+        <div
+          role="progressbar"
+          aria-label="Resume upload"
+          aria-valuenow={Math.round(progress)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          className="h-1.5 overflow-hidden rounded-full bg-zinc-100"
+        >
+          <div
+            className="h-full rounded-full bg-brand transition-[width] duration-200"
+            style={{ width: `${Math.max(progress, 4)}%` }}
+          />
+        </div>
+      )}
+
       <FormError message={error} />
 
       <div className="flex flex-wrap items-center gap-4 pt-2">
         <button type="submit" disabled={busy} className={buttonClass()}>
+          {busy && (
+            <Loader2 size={16} className="animate-spin" aria-hidden />
+          )}
           {status === "uploading"
-            ? "Uploading resume…"
+            ? `Uploading resume… ${Math.round(progress)}%`
             : status === "submitting"
               ? "Submitting…"
               : "Submit application"}

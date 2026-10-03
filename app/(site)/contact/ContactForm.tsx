@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import { Field, FormError, inputClass } from "@/app/components/form";
 import { buttonClass } from "@/app/components/ui";
 import { sendEnquiry, type ContactState } from "./actions";
@@ -14,8 +14,10 @@ export default function ContactForm() {
 
   if (state.sent) {
     return (
-      <div className="rounded-xl border border-zinc-200 p-8">
-        <CheckCircle2 className="text-brand" size={28} aria-hidden />
+      <div className="animate-fade-up py-4 text-center">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand/10">
+          <CheckCircle2 className="text-brand" size={28} aria-hidden />
+        </span>
         <h2 className="mt-4 text-xl font-semibold">Message sent</h2>
         <p className="mt-2 text-zinc-600">
           Thanks for reaching out. We&apos;ll get back to you soon.
@@ -74,6 +76,9 @@ export default function ContactForm() {
       <FormError message={state.error} />
 
       <button type="submit" disabled={pending} className={buttonClass()}>
+        {pending && (
+          <Loader2 size={16} className="animate-spin" aria-hidden />
+        )}
         {pending ? "Sending…" : "Send message"}
       </button>
     </form>
