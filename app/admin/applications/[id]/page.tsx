@@ -1,9 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getApplication } from "@/lib/admin-queries";
+import {
+  getApplication,
+  relatedApplications,
+} from "@/lib/admin-queries";
 import { requireAdmin } from "@/lib/auth";
 import AdminHeader from "../../components/AdminHeader";
 import StatusBadge from "../../components/StatusBadge";
+import { deleteApplication } from "../../actions";
+import { ConfirmButton } from "../../components/controls";
 import UpdateForm from "./UpdateForm";
 
 const dateFormat = new Intl.DateTimeFormat("en-IN", {
@@ -23,6 +28,11 @@ export default async function ApplicationPage({
   const application = await getApplication(id);
 
   if (!application) notFound();
+
+  const related = await relatedApplications(application);
+  const emailSubject = encodeURIComponent(
+    `Your application for ${application.job_title} at Siang Origin`
+  );
 
   return (
     <>
@@ -45,9 +55,24 @@ export default async function ApplicationPage({
               {application.job_title} · Applied{" "}
               {dateFormat.format(new Date(application.created_at))}
             </p>
+            {new Date(application.updated_at).getTime() !==
+              new Date(application.created_at).getTime() && (
+              <p className="mt-1 text-xs text-zinc-400">
+                Last updated{" "}
+                {dateFormat.format(new Date(application.updated_at))}
+              </p>
+            )}
           </div>
 
-          <StatusBadge status={application.status} />
+          <div className="flex items-center gap-3">
+            <StatusBadge status={application.status} />
+            <a
+              href={`mailto:${application.email}?subject=${emailSubject}`}
+              className="rounded-md border border-zinc-300 bg-white px-4 py-1.5 text-sm transition-colors hover:border-brand hover:text-brand"
+            >
+              Email applicant
+            </a>
+          </div>
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -87,6 +112,33 @@ export default async function ApplicationPage({
                 {application.message}
               </p>
             </div>
+
+            {related.length > 0 && (
+              <div className="rounded-xl border border-zinc-200 bg-white p-6">
+                <h2 className="text-xs uppercase tracking-wider text-zinc-500">
+                  Other applications from this person
+                </h2>
+                <ul className="mt-3 divide-y divide-zinc-100 text-sm">
+                  {related.map((other) => (
+                    <li
+                      key={other.id}
+                      className="flex flex-wrap items-center justify-between gap-3 py-3"
+                    >
+                      <Link
+                        href={`/admin/applications/${other.id}`}
+                        className="font-medium hover:text-brand"
+                      >
+                        {other.job_title}
+                      </Link>
+                      <span className="flex items-center gap-3 text-zinc-500">
+                        {dateFormat.format(new Date(other.created_at))}
+                        <StatusBadge status={other.status} />
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </section>
 
           <aside className="space-y-6">
@@ -114,6 +166,22 @@ export default async function ApplicationPage({
               status={application.status}
               notes={application.notes ?? ""}
             />
+
+            <form
+              action={deleteApplication}
+              className="rounded-xl border border-red-200 bg-white p-4"
+            >
+              <input type="hidden" name="id" value={application.id} />
+              <p className="text-xs text-zinc-500">
+                Permanently removes this application and its resume.
+              </p>
+              <ConfirmButton
+                message={`Delete ${application.name}'s application and resume? This cannot be undone.`}
+                className="mt-3 w-full rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50"
+              >
+                Delete application
+              </ConfirmButton>
+            </form>
           </aside>
         </div>
       </main>

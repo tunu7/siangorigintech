@@ -9,7 +9,7 @@ import {
   Eyebrow,
   PageBackdrop,
 } from "@/app/components/ui";
-import { getJobBySlug, jobs } from "@/data/jobs";
+import { getOpenJob, listOpenJobs } from "@/lib/jobs";
 
 type JobPageProps = {
   params: Promise<{
@@ -17,9 +17,10 @@ type JobPageProps = {
   }>;
 };
 
-export const dynamicParams = false;
-
-export function generateStaticParams() {
+// Open roles are prerendered; roles added later render on first visit.
+// Admin job changes revalidate everything under /careers.
+export async function generateStaticParams() {
+  const jobs = await listOpenJobs();
   return jobs.map((job) => ({ slug: job.slug }));
 }
 
@@ -27,7 +28,7 @@ export async function generateMetadata({
   params,
 }: JobPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const job = getJobBySlug(slug);
+  const job = await getOpenJob(slug);
 
   if (!job) return { title: "Role not found" };
 
@@ -58,7 +59,7 @@ function ListSection({ title, items }: { title: string; items: string[] }) {
 
 export default async function JobPage({ params }: JobPageProps) {
   const { slug } = await params;
-  const job = getJobBySlug(slug);
+  const job = await getOpenJob(slug);
 
   if (!job) notFound();
 

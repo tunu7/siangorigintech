@@ -13,3 +13,13 @@ export const navLinks = [
   { name: "Careers", href: "/careers" },
   { name: "Contact", href: "/contact" },
 ];
+
+// Absolute base URL for links in emails.
+export function siteUrl() {
+  return (
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "http://localhost:3000")
+  );
+}

@@ -3,11 +3,11 @@ import {
   handleUpload,
   type HandleUploadBody,
 } from "@vercel/blob/client";
-import { getJobBySlug } from "@/data/jobs";
 import {
   MAX_RESUME_BYTES,
   resumePrefix,
 } from "@/lib/applications";
+import { getOpenJob } from "@/lib/jobs";
 
 // Issues short-lived client tokens so the browser uploads the resume
 // straight to Vercel Blob. This keeps large files out of the
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
         const jobSlug = pathname.split("/")[1] ?? "";
 
         if (
-          !getJobBySlug(jobSlug) ||
+          !(await getOpenJob(jobSlug)) ||
           !pathname.startsWith(resumePrefix(jobSlug)) ||
           !pathname.toLowerCase().endsWith(".pdf")
         ) {

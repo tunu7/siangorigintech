@@ -1,7 +1,8 @@
 "use server";
 
 import { Resend } from "resend";
-import { site } from "@/lib/site";
+import { sql } from "@/lib/db";
+import { site, siteUrl } from "@/lib/site";
 
 export type ContactState = { error?: string; sent?: boolean };
 
@@ -32,33 +33,65 @@ export async function sendEnquiry(
     return { error: "Please enter a valid email address." };
   }
 
+  // Save first so the enquiry reaches the admin inbox even if email fails.
+  let id: string | undefined;
+
+  try {
+    const rows = (await sql()`
+      insert into enquiries (name, email, message)
+      values (${name}, ${email}, ${message})
+      returning id
+    `) as { id: string }[];
+    id = rows[0]?.id;
+  } catch (error) {
+    console.error("CONTACT SAVE ERROR:", error);
+  }
+
+  const emailed = await notifyTeam({ id, name, email, message });
+
+  if (!id && !emailed) {
+    return {
+      error: `Unable to send your message right now. Please email us at ${site.contactEmail}.`,
+    };
+  }
+
+  return { sent: true };
+}
+
+async function notifyTeam(details: {
+  id?: string;
+  name: string;
+  email: string;
+  message: string;
+}) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
   const to =
     process.env.CONTACT_NOTIFY_EMAIL ??
     process.env.APPLICATIONS_NOTIFY_EMAIL;
 
-  const fallback = `Unable to send your message right now. Please email us at ${site.contactEmail}.`;
-
   if (!apiKey || !from || !to) {
     console.error("CONTACT ERROR: email delivery is not configured");
-    return { error: fallback };
+    return false;
   }
+
+  const link = details.id
+    ? `\n\nView in admin: ${siteUrl()}/admin/enquiries/${details.id}`
+    : "";
 
   try {
     const { error } = await new Resend(apiKey).emails.send({
       from,
       to: to.split(",").map((address) => address.trim()),
-      replyTo: email,
-      subject: `New enquiry from ${name}`,
-      text: `${name} (${email}) wrote:\n\n${message}`,
+      replyTo: details.email,
+      subject: `New enquiry from ${details.name}`,
+      text: `${details.name} (${details.email}) wrote:\n\n${details.message}${link}`,
     });
 
     if (error) throw error;
+    return true;
   } catch (error) {
     console.error("CONTACT ERROR:", error);
-    return { error: fallback };
+    return false;
   }
-
-  return { sent: true };
 }

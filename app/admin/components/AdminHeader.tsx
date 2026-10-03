@@ -1,19 +1,51 @@
 import Link from "next/link";
+import { sql } from "@/lib/db";
 import { signOut } from "../actions";
+import AdminNav from "./AdminNav";
 
-export default function AdminHeader() {
+async function badgeCounts() {
+  try {
+    const [row] = (await sql()`
+      select
+        (select count(*)::int from applications where status = 'new') as applications,
+        (select count(*)::int from enquiries
+          where read_at is null and not archived) as enquiries
+    `) as { applications: number; enquiries: number }[];
+
+    return row;
+  } catch (error) {
+    console.error("ADMIN COUNTS ERROR:", error);
+    return { applications: 0, enquiries: 0 };
+  }
+}
+
+export default async function AdminHeader() {
+  const counts = await badgeCounts();
+
   return (
     <header className="border-b border-zinc-200 bg-white">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-        <Link
-          href="/admin"
-          className="text-sm font-semibold tracking-[-0.02em]"
-        >
-          SIANG ORIGIN{" "}
-          <span className="font-normal text-zinc-500">/ Admin</span>
-        </Link>
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4 sm:px-6">
+        <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+          <Link
+            href="/admin"
+            className="text-sm font-semibold tracking-[-0.02em]"
+          >
+            SIANG ORIGIN{" "}
+            <span className="font-normal text-zinc-500">/ Admin</span>
+          </Link>
+
+          <AdminNav counts={counts} />
+        </div>
 
         <div className="flex items-center gap-4 text-sm">
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-zinc-500 hover:text-zinc-900"
+          >
+            View site
+          </a>
           <form action={signOut}>
             <button
               type="submit"

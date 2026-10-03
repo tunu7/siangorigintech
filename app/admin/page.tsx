@@ -1,15 +1,18 @@
 import Link from "next/link";
-import { jobs } from "@/data/jobs";
 import {
   listApplications,
   PAGE_SIZE,
   parseFilters,
+  SORTS,
   statusCounts,
 } from "@/lib/admin-queries";
 import { APPLICATION_STATUSES } from "@/lib/applications";
 import { requireAdmin } from "@/lib/auth";
+import { listJobOptions } from "@/lib/jobs";
+import { bulkUpdateApplications } from "./actions";
 import AdminHeader from "./components/AdminHeader";
 import StatusBadge from "./components/StatusBadge";
+import { BulkForm, SelectAll } from "./components/controls";
 
 const dateFormat = new Intl.DateTimeFormat("en-IN", {
   dateStyle: "medium",
@@ -25,9 +28,10 @@ export default async function AdminDashboard({
   await requireAdmin();
   const filters = parseFilters(await searchParams);
 
-  const [{ rows, total }, counts] = await Promise.all([
+  const [{ rows, total }, counts, jobs] = await Promise.all([
     listApplications(filters),
     statusCounts(),
+    listJobOptions(),
   ]);
 
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -51,6 +55,7 @@ export default async function AdminDashboard({
       q: filters.q,
       job: filters.job,
       status: filters.status,
+      sort: filters.sort,
     }).filter((entry): entry is [string, string] => Boolean(entry[1]))
   ).toString();
 
@@ -131,6 +136,19 @@ export default async function AdminDashboard({
             ))}
           </select>
 
+          <select
+            name="sort"
+            defaultValue={filters.sort ?? "newest"}
+            aria-label="Sort by"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand"
+          >
+            {Object.keys(SORTS).map((sort) => (
+              <option key={sort} value={sort}>
+                {SORT_LABELS[sort as keyof typeof SORTS]}
+              </option>
+            ))}
+          </select>
+
           <button
             type="submit"
             className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-hover"
@@ -138,7 +156,7 @@ export default async function AdminDashboard({
             Filter
           </button>
 
-          {(filters.q || filters.job || filters.status) && (
+          {(filters.q || filters.job || filters.status || filters.sort) && (
             <Link
               href="/admin"
               className="self-center text-sm text-zinc-500 underline-offset-4 hover:underline"
@@ -148,11 +166,31 @@ export default async function AdminDashboard({
           )}
         </form>
 
+        {/* Bulk actions */}
+        {rows.length > 0 && (
+          <div className="mt-6">
+            <BulkForm
+              id="bulk"
+              action={bulkUpdateApplications}
+              options={[
+                ...APPLICATION_STATUSES.map((status) => ({
+                  value: status,
+                  label: `Mark as ${status}`,
+                })),
+                { value: "delete", label: "Delete" },
+              ]}
+            />
+          </div>
+        )}
+
         {/* Table */}
-        <div className="mt-6 overflow-x-auto rounded-xl border border-zinc-200 bg-white">
+        <div className="mt-3 overflow-x-auto rounded-xl border border-zinc-200 bg-white">
           <table className="w-full min-w-180 text-left text-sm">
             <thead className="border-b border-zinc-200 text-xs uppercase tracking-wider text-zinc-500">
               <tr>
+                <th className="w-10 py-3 pl-4">
+                  <SelectAll form="bulk" />
+                </th>
                 <th className="px-4 py-3 font-medium">Applicant</th>
                 <th className="px-4 py-3 font-medium">Role</th>
                 <th className="px-4 py-3 font-medium">Phone</th>
@@ -164,6 +202,16 @@ export default async function AdminDashboard({
             <tbody className="divide-y divide-zinc-100">
               {rows.map((row) => (
                 <tr key={row.id} className="hover:bg-zinc-50">
+                  <td className="py-3 pl-4">
+                    <input
+                      type="checkbox"
+                      name="ids"
+                      value={row.id}
+                      form="bulk"
+                      aria-label={`Select ${row.name}`}
+                      className="h-4 w-4 accent-brand"
+                    />
+                  </td>
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/applications/${row.id}`}
@@ -189,7 +237,7 @@ export default async function AdminDashboard({
               {rows.length === 0 && (
                 <tr>
                   <td
-                    colSpan={5}
+                    colSpan={6}
                     className="px-4 py-16 text-center text-zinc-500"
                   >
                     No applications found.
@@ -230,6 +278,13 @@ export default async function AdminDashboard({
     </>
   );
 }
+
+const SORT_LABELS: Record<keyof typeof SORTS, string> = {
+  newest: "Newest first",
+  oldest: "Oldest first",
+  name: "Name (A–Z)",
+  updated: "Recently updated",
+};
 
 function StatCard({
   label,

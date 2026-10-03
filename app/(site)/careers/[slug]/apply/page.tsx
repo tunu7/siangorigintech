@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Container, Eyebrow, PageBackdrop } from "@/app/components/ui";
-import { getJobBySlug, jobs } from "@/data/jobs";
+import { getOpenJob, listOpenJobs } from "@/lib/jobs";
 import ApplyForm from "./ApplyForm";
 
 type ApplyPageProps = {
@@ -12,9 +12,10 @@ type ApplyPageProps = {
   }>;
 };
 
-export const dynamicParams = false;
-
-export function generateStaticParams() {
+// Open roles are prerendered; roles added later render on first visit.
+// Admin job changes revalidate everything under /careers.
+export async function generateStaticParams() {
+  const jobs = await listOpenJobs();
   return jobs.map((job) => ({ slug: job.slug }));
 }
 
@@ -22,7 +23,7 @@ export async function generateMetadata({
   params,
 }: ApplyPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const job = getJobBySlug(slug);
+  const job = await getOpenJob(slug);
 
   return {
     title: job ? `Apply — ${job.title}` : "Apply",
@@ -32,7 +33,7 @@ export async function generateMetadata({
 
 export default async function ApplyPage({ params }: ApplyPageProps) {
   const { slug } = await params;
-  const job = getJobBySlug(slug);
+  const job = await getOpenJob(slug);
 
   if (!job) notFound();
 

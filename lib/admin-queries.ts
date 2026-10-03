@@ -10,10 +10,20 @@ import { sql } from "@/lib/db";
 
 export const PAGE_SIZE = 25;
 
+export const SORTS = {
+  newest: "created_at desc",
+  oldest: "created_at asc",
+  name: "lower(name) asc, created_at desc",
+  updated: "updated_at desc",
+} as const;
+
+export type ApplicationSort = keyof typeof SORTS;
+
 export type ApplicationFilters = {
   q?: string;
   job?: string;
   status?: ApplicationStatus;
+  sort?: ApplicationSort;
   page: number;
 };
 
@@ -36,17 +46,19 @@ export function parseFilters(
     (Array.isArray(value) ? value[0] : value)?.trim() || undefined;
 
   const status = first(params.status);
+  const sort = first(params.sort);
 
   return {
     q: first(params.q)?.slice(0, 100),
     job: first(params.job),
     status: isApplicationStatus(status) ? status : undefined,
+    sort: sort && Object.hasOwn(SORTS, sort) ? (sort as ApplicationSort) : undefined,
     page: Math.max(1, Math.floor(Number(first(params.page))) || 1),
   };
 }
 
 // Parameterised WHERE clause shared by the list and the CSV export.
-function where(filters: Omit<ApplicationFilters, "page">) {
+function where(filters: Omit<ApplicationFilters, "page" | "sort">) {
   const clauses: string[] = [];
   const params: unknown[] = [];
 
@@ -83,7 +95,7 @@ export async function listApplications(filters: ApplicationFilters) {
             count(*) over() as total
        from applications
        ${clause}
-      order by created_at desc
+      order by ${SORTS[filters.sort ?? "newest"]}
       limit ${PAGE_SIZE} offset ${offset}`,
     params
   )) as (ApplicationRow & { total: string })[];
@@ -101,7 +113,7 @@ export async function exportApplications(
 
   return (await sql().query(
     `select * from applications ${clause}
-      order by created_at desc limit 5000`,
+      order by ${SORTS[filters.sort ?? "newest"]} limit 5000`,
     params
   )) as Application[];
 }
@@ -134,4 +146,16 @@ export async function getApplication(id: string) {
   `) as Application[];
 
   return rows[0] ?? null;
+}
+
+// Other applications from the same person, newest first.
+export async function relatedApplications(application: Application) {
+  return (await sql()`
+    select id, created_at, job_slug, job_title, name, email, phone, status
+      from applications
+     where lower(email) = lower(${application.email})
+       and id <> ${application.id}
+     order by created_at desc
+     limit 20
+  `) as ApplicationRow[];
 }

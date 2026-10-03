@@ -8,7 +8,7 @@ import {
   PageBackdrop,
   PageHeader,
 } from "@/app/components/ui";
-import { jobs } from "@/data/jobs";
+import { listOpenJobs } from "@/lib/jobs";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -16,7 +16,9 @@ export const metadata: Metadata = {
   description: "Explore career opportunities at Siang Origin Technologies.",
 };
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  const jobs = await listOpenJobs();
+
   return (
     <div className="relative isolate">
       <PageBackdrop />

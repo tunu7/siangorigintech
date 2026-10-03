@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { del } from "@vercel/blob";
 import { isApplicationStatus } from "@/lib/applications";
 import {
   checkPassword,
@@ -12,6 +13,16 @@ import {
 import { sql } from "@/lib/db";
 
 export type FormState = { error?: string; saved?: boolean };
+
+const UUID_PATTERN = /^[0-9a-f-]{36}$/i;
+
+function ids(formData: FormData) {
+  return formData
+    .getAll("ids")
+    .map(String)
+    .filter((id) => UUID_PATTERN.test(id))
+    .slice(0, 500);
+}
 
 export async function signIn(
   _state: FormState,
@@ -44,7 +55,7 @@ export async function updateApplication(
   const status = formData.get("status");
   const notes = String(formData.get("notes") || "").slice(0, 10000);
 
-  if (!/^[0-9a-f-]{36}$/i.test(id) || !isApplicationStatus(status)) {
+  if (!UUID_PATTERN.test(id) || !isApplicationStatus(status)) {
     return { error: "Invalid update." };
   }
 
@@ -63,4 +74,59 @@ export async function updateApplication(
   revalidatePath(`/admin/applications/${id}`);
 
   return { saved: true };
+}
+
+// Deletes the applications and their resumes from Blob.
+async function removeApplications(idList: string[]) {
+  const rows = (await sql()`
+    delete from applications
+     where id = any(${idList}::uuid[])
+    returning resume_pathname
+  `) as { resume_pathname: string }[];
+
+  const pathnames = rows.map((row) => row.resume_pathname);
+
+  if (pathnames.length) {
+    try {
+      await del(pathnames);
+    } catch (error) {
+      // The rows are gone; an orphaned private blob is harmless.
+      console.error("RESUME DELETE ERROR:", error);
+    }
+  }
+}
+
+export async function deleteApplication(formData: FormData) {
+  await requireAdmin();
+
+  const id = String(formData.get("id") || "");
+  if (!UUID_PATTERN.test(id)) return;
+
+  await removeApplications([id]);
+
+  revalidatePath("/admin", "layout");
+  redirect("/admin");
+}
+
+export async function bulkUpdateApplications(formData: FormData) {
+  await requireAdmin();
+
+  const selected = ids(formData);
+  const op = String(formData.get("op") || "");
+
+  if (!selected.length) return;
+
+  if (op === "delete") {
+    await removeApplications(selected);
+  } else if (isApplicationStatus(op)) {
+    await sql()`
+      update applications
+         set status = ${op}
+       where id = any(${selected}::uuid[])
+    `;
+  } else {
+    return;
+  }
+
+  revalidatePath("/admin", "layout");
 }

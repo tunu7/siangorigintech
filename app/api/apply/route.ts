@@ -1,12 +1,13 @@
 import { after, NextResponse } from "next/server";
 import { del, head } from "@vercel/blob";
 import { Resend } from "resend";
-import { getJobBySlug } from "@/data/jobs";
 import {
   MAX_RESUME_BYTES,
   resumePrefix,
 } from "@/lib/applications";
 import { sql } from "@/lib/db";
+import { getOpenJob } from "@/lib/jobs";
+import { siteUrl } from "@/lib/site";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -60,7 +61,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const job = getJobBySlug(jobSlug);
+    const job = await getOpenJob(jobSlug);
 
     if (!job) {
       return NextResponse.json(
@@ -168,13 +169,7 @@ async function notifyTeam(details: {
 
   if (!apiKey || !from || !to) return;
 
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : "http://localhost:3000");
-
-  const link = `${siteUrl}/admin/applications/${details.id}`;
+  const link = `${siteUrl()}/admin/applications/${details.id}`;
 
   try {
     await new Resend(apiKey).emails.send({
