@@ -12,6 +12,8 @@ export type Project = {
   category: string;
   description: string;
   url: string | null;
+  /** Blob pathname under projects/, served via /media. */
+  image: string | null;
   published: boolean;
   /** Shown in "Selected work" on the home page. */
   featured: boolean;

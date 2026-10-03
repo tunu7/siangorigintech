@@ -1,3 +1,5 @@
+import Image from "next/image";
+import { mediaUrl } from "@/lib/media";
 import type { Project } from "@/lib/projects";
 import { Reveal, TiltCard } from "./motion";
 
@@ -24,9 +26,19 @@ export default function ProjectGrid({ projects }: { projects: Project[] }) {
                 aria-hidden
                 className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full border border-white/20 transition-transform duration-700 group-hover/tilt:scale-125"
               />
-              <span className="relative text-6xl font-semibold tracking-tighter text-white/90 transition-transform duration-500 [transform:translateZ(40px)] group-hover/tilt:scale-110">
-                {project.mark}
-              </span>
+              {project.image ? (
+                <Image
+                  src={mediaUrl(project.image)}
+                  alt={project.title}
+                  fill
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  className="object-cover transition-transform duration-700 group-hover/tilt:scale-105"
+                />
+              ) : (
+                <span className="relative text-6xl font-semibold tracking-tighter text-white/90 transition-transform duration-500 [transform:translateZ(40px)] group-hover/tilt:scale-110">
+                  {project.mark}
+                </span>
+              )}
               <span className="absolute left-4 top-4 rounded-full bg-white/15 px-2.5 py-1 text-xs font-medium text-white backdrop-blur">
                 {project.category}
               </span>

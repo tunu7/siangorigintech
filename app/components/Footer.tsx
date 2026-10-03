@@ -34,12 +34,17 @@ export default async function Footer() {
             © {new Date().getFullYear()} {site.name}. All rights
             reserved.
           </span>
-          <a
-            href={`mailto:${site.contactEmail}`}
-            className="hover:text-zinc-900"
-          >
-            {site.contactEmail}
-          </a>
+          <div className="flex gap-6">
+            <a
+              href={`mailto:${site.contactEmail}`}
+              className="hover:text-zinc-900"
+            >
+              {site.contactEmail}
+            </a>
+            <Link href="/admin" prefetch={false} className="hover:text-zinc-900">
+              Team login
+            </Link>
+          </div>
         </div>
       </Container>
     </footer>

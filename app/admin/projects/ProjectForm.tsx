@@ -1,9 +1,10 @@
 "use client";
 
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import type { Project } from "@/lib/projects";
 import type { FormState } from "../actions";
 import { saveProject } from "./actions";
+import ImageField from "./ImageField";
 
 const inputClass =
   "mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand";
@@ -15,6 +16,7 @@ export default function ProjectForm({ project }: { project?: Project }) {
     saveProject,
     {}
   );
+  const [uploading, setUploading] = useState(false);
 
   return (
     <form
@@ -27,6 +29,13 @@ export default function ProjectForm({ project }: { project?: Project }) {
       }}
     >
       <input type="hidden" name="id" value={project?.id ?? ""} />
+
+      <section className="rounded-xl border border-zinc-200 bg-white p-6">
+        <ImageField
+          initial={project?.image ?? null}
+          onUploadingChange={setUploading}
+        />
+      </section>
 
       <section className="grid gap-4 rounded-xl border border-zinc-200 bg-white p-6 sm:grid-cols-2">
         <div>
@@ -60,19 +69,18 @@ export default function ProjectForm({ project }: { project?: Project }) {
 
         <div>
           <label htmlFor="mark" className={labelClass}>
-            Cover letters <span className="text-brand">*</span>
+            Cover letters
           </label>
           <input
             id="mark"
             name="mark"
-            required
             maxLength={3}
             defaultValue={project?.mark}
             placeholder="AB"
             className={`${inputClass} uppercase`}
           />
           <p className="mt-1 text-xs text-zinc-400">
-            Up to 3 letters shown large on the project card.
+            Up to 3 letters shown on the card when there&apos;s no image.
           </p>
         </div>
 
@@ -146,7 +154,7 @@ export default function ProjectForm({ project }: { project?: Project }) {
 
         <button
           type="submit"
-          disabled={pending}
+          disabled={pending || uploading}
           className="rounded-lg bg-brand px-5 py-2 text-sm font-medium text-white hover:bg-brand-hover disabled:opacity-50"
         >
           {pending

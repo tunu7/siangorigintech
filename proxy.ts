@@ -13,7 +13,15 @@ export async function proxy(request: NextRequest) {
   );
 
   if (!valid) {
-    return NextResponse.redirect(new URL("/admin/login", request.url));
+    const login = new URL("/admin/login", request.url);
+    const { pathname, search } = request.nextUrl;
+
+    // Send the admin back where they were going after signing in.
+    if (request.method === "GET" && pathname !== "/admin") {
+      login.searchParams.set("next", `${pathname}${search}`);
+    }
+
+    return NextResponse.redirect(login);
   }
 
   return NextResponse.next();

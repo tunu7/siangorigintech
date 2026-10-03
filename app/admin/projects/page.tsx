@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
+import Image from "next/image";
+import { mediaUrl } from "@/lib/media";
 import { listAllProjects } from "@/lib/projects";
 import AdminHeader from "../components/AdminHeader";
 import { SubmitButton } from "../components/controls";
@@ -85,8 +87,18 @@ export default async function AdminProjectsPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-brand text-xs font-semibold text-white">
-                        {project.mark}
+                      <span className="relative flex h-9 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md bg-brand text-xs font-semibold text-white">
+                        {project.image ? (
+                          <Image
+                            src={mediaUrl(project.image)}
+                            alt=""
+                            fill
+                            sizes="48px"
+                            className="object-cover"
+                          />
+                        ) : (
+                          project.mark
+                        )}
                       </span>
                       <div>
                         <Link

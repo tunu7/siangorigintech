@@ -22,6 +22,15 @@ export async function requireAdmin() {
   }
 }
 
+// Only same-site admin paths are allowed as post-login destinations.
+export function safeNextPath(value: unknown) {
+  return typeof value === "string" &&
+    /^\/admin(?:[/?#]|$)/.test(value) &&
+    !value.startsWith("/admin/login")
+    ? value
+    : "/admin";
+}
+
 export function checkPassword(password: string) {
   const expected = process.env.ADMIN_PASSWORD;
 

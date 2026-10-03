@@ -13,7 +13,9 @@ Browser ──1. upload() ─► /api/apply/upload (client token) ─► Vercel 
    └──2. POST /api/apply (JSON) ─► Vercel Function ─► Neon Postgres (applications)
                                                  └─► after(): Resend email to the team
 
-Admin ─► /admin (password login, signed HttpOnly cookie)
+Admin ─► /admin  (also /login, /dashboard, or "Team login" in the footer)
+           password login, signed HttpOnly cookie, returns you to the page
+           you asked for; 5 failed attempts per IP → 15 min lockout
            ├─ Applications: search / filter / sort / paginate, status counts,
            │    bulk status change + delete, CSV export
            │    detail: status + internal notes, resume via 60s presigned URL,
@@ -24,7 +26,9 @@ Admin ─► /admin (password login, signed HttpOnly cookie)
            │    search, bulk actions, reply by email
            ├─ Content: edit the text of every page + site settings
            │    (company details, emails, SEO, contact banner)
-           └─ Projects: add / edit / reorder / hide portfolio projects
+           └─ Projects: add / edit / reorder / hide portfolio projects,
+                cover images uploaded straight to Blob (≤5MB) and served
+                via /media/projects/* (only that prefix is ever public)
 
 Every content, project and job change revalidates the public site, so it
 updates immediately while pages stay statically cached.

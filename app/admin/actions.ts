@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { del } from "@vercel/blob";
 import { isApplicationStatus } from "@/lib/applications";
@@ -8,6 +9,7 @@ import {
   checkPassword,
   endSession,
   requireAdmin,
+  safeNextPath,
   startSession,
 } from "@/lib/auth";
 import { sql } from "@/lib/db";
@@ -24,20 +26,67 @@ function ids(formData: FormData) {
     .slice(0, 500);
 }
 
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MINUTES = 15;
+
+async function clientIp() {
+  const headerList = await headers();
+  return (
+    headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    headerList.get("x-real-ip") ||
+    "unknown"
+  );
+}
+
 export async function signIn(
   _state: FormState,
   formData: FormData
 ): Promise<FormState> {
   const password = String(formData.get("password") || "");
+  const ip = await clientIp();
+
+  // Lock an IP out after repeated failures. If the database is down, fall
+  // back to the delay below rather than blocking every sign-in.
+  try {
+    const [{ count }] = (await sql()`
+      select count(*)::int as count from admin_login_attempts
+       where ip = ${ip}
+         and created_at > now() - make_interval(mins => ${LOCKOUT_MINUTES})
+    `) as { count: number }[];
+
+    if (count >= MAX_ATTEMPTS) {
+      return {
+        error: `Too many failed attempts. Try again in ${LOCKOUT_MINUTES} minutes.`,
+      };
+    }
+  } catch (error) {
+    console.error("LOGIN RATE LIMIT ERROR:", error);
+  }
 
   if (!checkPassword(password)) {
+    try {
+      await sql()`insert into admin_login_attempts (ip) values (${ip})`;
+      await sql()`
+        delete from admin_login_attempts
+         where created_at < now() - interval '1 day'
+      `;
+    } catch (error) {
+      console.error("LOGIN RATE LIMIT ERROR:", error);
+    }
+
     // Slow down brute-force attempts.
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return { error: "Incorrect password." };
   }
 
+  try {
+    await sql()`delete from admin_login_attempts where ip = ${ip}`;
+  } catch (error) {
+    console.error("LOGIN RATE LIMIT ERROR:", error);
+  }
+
   await startSession();
-  redirect("/admin");
+  redirect(safeNextPath(formData.get("next")));
 }
 
 export async function signOut() {
