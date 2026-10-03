@@ -1,5 +1,5 @@
 import { after, NextResponse } from "next/server";
-import { head } from "@vercel/blob";
+import { del, head } from "@vercel/blob";
 import { Resend } from "resend";
 import { getJobBySlug } from "@/data/jobs";
 import {
@@ -110,6 +110,8 @@ export async function POST(request: Request) {
     `) as { id: string }[];
 
     if (!inserted.length) {
+      after(() => discardOrphanedResume(resumePathname));
+
       return NextResponse.json(
         { error: "You have already applied for this role." },
         { status: 409 }
@@ -137,6 +139,20 @@ export async function POST(request: Request) {
       { error: "Unable to submit application. Please try again." },
       { status: 500 }
     );
+  }
+}
+
+// Deletes an uploaded resume that no application references, e.g. after a
+// duplicate submission. Never touches a resume that is already on file.
+async function discardOrphanedResume(pathname: string) {
+  try {
+    const rows = (await sql()`
+      select 1 from applications where resume_pathname = ${pathname}
+    `) as unknown[];
+
+    if (!rows.length) await del(pathname);
+  } catch (error) {
+    console.error("RESUME CLEANUP ERROR:", error);
   }
 }
 

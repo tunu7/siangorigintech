@@ -18,8 +18,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
 
   experimental: {
-    // Tree-shake icon and animation libraries per import.
-    optimizePackageImports: ["lucide-react", "framer-motion"],
+    // Tree-shake the icon library per import.
+    optimizePackageImports: ["lucide-react"],
   },
 
   async headers() {

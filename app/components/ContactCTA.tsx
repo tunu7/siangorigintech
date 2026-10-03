@@ -1,43 +1,29 @@
 import Link from "next/link";
+import { Container } from "./ui";
 
 export default function ContactCTA() {
   return (
-    <section className="border-t border-[#0B4D2C]/10 bg-[#F7FAF7] py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <section className="border-t border-zinc-200 py-24">
+      <Container>
+        <div className="flex flex-col items-start justify-between gap-8 rounded-xl bg-brand p-10 text-white sm:p-14 md:flex-row md:items-center">
+          <div className="max-w-xl">
+            <h2 className="text-3xl font-semibold tracking-tight">
+              Have a project in mind?
+            </h2>
+            <p className="mt-3 text-white/75">
+              Tell us what you&apos;re building. We&apos;d love to hear
+              about it.
+            </p>
+          </div>
 
-        {/* LABEL */}
-
-        <p className="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-[#617568]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#2F7D46]" />
-          Have a project?
-        </p>
-
-        {/* HEADING */}
-
-        <h2 className="mt-6 text-6xl font-medium tracking-[-0.06em] text-[#06351F] md:text-8xl">
-          LET&apos;S BUILD
-          <br />
-          <span className="text-[#2F7D46]">
-            SOMETHING.
-          </span>
-        </h2>
-
-        {/* CTA */}
-
-        <Link
-          href="/contact"
-          className="group mt-10 inline-flex items-center gap-4 rounded-full bg-[#0B4D2C] px-7 py-4 text-sm font-medium text-white transition-all duration-300 hover:-translate-y-1 hover:bg-[#176B3A]"
-        >
-          <span>
+          <Link
+            href="/contact"
+            className="inline-flex shrink-0 items-center rounded-md bg-white px-5 py-2.5 text-sm font-medium text-brand transition-colors hover:bg-zinc-100"
+          >
             Start a conversation
-          </span>
-
-          <span className="transition-transform duration-300 group-hover:translate-x-1">
-            →
-          </span>
-        </Link>
-
-      </div>
+          </Link>
+        </div>
+      </Container>
     </section>
   );
 }

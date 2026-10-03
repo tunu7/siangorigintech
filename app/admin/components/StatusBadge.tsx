@@ -1,11 +1,11 @@
 import type { ApplicationStatus } from "@/lib/applications";
 
 const styles: Record<ApplicationStatus, string> = {
-  new: "bg-[#2F7D46]/10 text-[#176B3A]",
+  new: "bg-brand/10 text-brand-hover",
   reviewing: "bg-amber-100 text-amber-800",
   shortlisted: "bg-sky-100 text-sky-800",
   rejected: "bg-neutral-200 text-neutral-600",
-  hired: "bg-[#0B4D2C] text-white",
+  hired: "bg-brand text-white",
 };
 
 export default function StatusBadge({

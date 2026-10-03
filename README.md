@@ -45,7 +45,8 @@ the Vercel Function (4.5MB request body limit).
    | `ADMIN_PASSWORD` | Password for `/admin` (use a long random one) |
    | `ADMIN_SESSION_SECRET` | ≥32 random chars used to sign the admin cookie |
    | `APPLICATIONS_NOTIFY_EMAIL` | Where new-application emails go (optional, comma-separated) |
-   | `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | Notification email sender (optional) |
+   | `CONTACT_NOTIFY_EMAIL` | Where contact-form enquiries go (defaults to `APPLICATIONS_NOTIFY_EMAIL`) |
+   | `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | Email sender — required for the contact form, optional for applications |
    | `NEXT_PUBLIC_SITE_URL` | Base URL used in email links (optional) |
 
    `DATABASE_URL` (Neon) and `BLOB_READ_WRITE_TOKEN` (Blob) come from the
@@ -57,5 +58,6 @@ the Vercel Function (4.5MB request body limit).
 npm run dev
 ```
 
-Jobs are defined in `data/jobs.ts`. Schema changes go in `db/migrations/`
+Jobs are defined in `data/jobs.ts`, projects in `data/projects.ts` and
+site-wide details (contact emails, nav links) in `lib/site.ts`. Schema changes go in `db/migrations/`
 as idempotent SQL files.

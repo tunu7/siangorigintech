@@ -61,17 +61,17 @@ export default async function AdminDashboard({
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-[#617568]">
+            <p className="text-xs uppercase tracking-wider text-zinc-500">
               Careers
             </p>
-            <h1 className="mt-2 text-3xl font-medium tracking-[-0.04em]">
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight">
               Applications
             </h1>
           </div>
 
           <a
             href={`/admin/export${exportParams ? `?${exportParams}` : ""}`}
-            className="rounded-full border border-[#0B4D2C]/15 bg-white px-4 py-2 text-sm transition-colors hover:border-[#2F7D46] hover:text-[#2F7D46]"
+            className="rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm transition-colors hover:border-brand hover:text-brand"
           >
             Export CSV
           </a>
@@ -102,13 +102,13 @@ export default async function AdminDashboard({
             name="q"
             defaultValue={filters.q}
             placeholder="Search name, email or phone"
-            className="min-w-0 flex-1 basis-60 rounded-lg border border-[#0B4D2C]/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#2F7D46]"
+            className="min-w-0 flex-1 basis-60 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand"
           />
 
           <select
             name="job"
             defaultValue={filters.job ?? ""}
-            className="rounded-lg border border-[#0B4D2C]/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#2F7D46]"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand"
           >
             <option value="">All roles</option>
             {jobs.map((job) => (
@@ -121,7 +121,7 @@ export default async function AdminDashboard({
           <select
             name="status"
             defaultValue={filters.status ?? ""}
-            className="rounded-lg border border-[#0B4D2C]/15 bg-white px-3 py-2 text-sm capitalize outline-none focus:border-[#2F7D46]"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm capitalize outline-none focus:border-brand"
           >
             <option value="">All statuses</option>
             {APPLICATION_STATUSES.map((status) => (
@@ -133,7 +133,7 @@ export default async function AdminDashboard({
 
           <button
             type="submit"
-            className="rounded-lg bg-[#0B4D2C] px-4 py-2 text-sm font-medium text-white hover:bg-[#176B3A]"
+            className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-hover"
           >
             Filter
           </button>
@@ -141,7 +141,7 @@ export default async function AdminDashboard({
           {(filters.q || filters.job || filters.status) && (
             <Link
               href="/admin"
-              className="self-center text-sm text-[#617568] underline-offset-4 hover:underline"
+              className="self-center text-sm text-zinc-500 underline-offset-4 hover:underline"
             >
               Clear
             </Link>
@@ -149,9 +149,9 @@ export default async function AdminDashboard({
         </form>
 
         {/* Table */}
-        <div className="mt-6 overflow-x-auto rounded-xl border border-[#0B4D2C]/10 bg-white">
+        <div className="mt-6 overflow-x-auto rounded-xl border border-zinc-200 bg-white">
           <table className="w-full min-w-180 text-left text-sm">
-            <thead className="border-b border-[#0B4D2C]/10 text-xs uppercase tracking-wider text-[#617568]">
+            <thead className="border-b border-zinc-200 text-xs uppercase tracking-wider text-zinc-500">
               <tr>
                 <th className="px-4 py-3 font-medium">Applicant</th>
                 <th className="px-4 py-3 font-medium">Role</th>
@@ -161,17 +161,17 @@ export default async function AdminDashboard({
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-[#0B4D2C]/5">
+            <tbody className="divide-y divide-zinc-100">
               {rows.map((row) => (
-                <tr key={row.id} className="hover:bg-[#EAF3EC]/40">
+                <tr key={row.id} className="hover:bg-zinc-50">
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/applications/${row.id}`}
-                      className="font-medium hover:text-[#2F7D46]"
+                      className="font-medium hover:text-brand"
                     >
                       {row.name}
                     </Link>
-                    <div className="text-xs text-[#617568]">
+                    <div className="text-xs text-zinc-500">
                       {row.email}
                     </div>
                   </td>
@@ -180,7 +180,7 @@ export default async function AdminDashboard({
                   <td className="px-4 py-3">
                     <StatusBadge status={row.status} />
                   </td>
-                  <td className="px-4 py-3 text-[#617568] tabular-nums">
+                  <td className="px-4 py-3 text-zinc-500 tabular-nums">
                     {dateFormat.format(new Date(row.created_at))}
                   </td>
                 </tr>
@@ -190,7 +190,7 @@ export default async function AdminDashboard({
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-4 py-16 text-center text-[#617568]"
+                    className="px-4 py-16 text-center text-zinc-500"
                   >
                     No applications found.
                   </td>
@@ -202,7 +202,7 @@ export default async function AdminDashboard({
 
         {/* Pagination */}
         {pages > 1 && (
-          <div className="mt-6 flex items-center justify-between text-sm text-[#617568]">
+          <div className="mt-6 flex items-center justify-between text-sm text-zinc-500">
             <span>
               Page {filters.page} of {pages} · {total} results
             </span>
@@ -210,7 +210,7 @@ export default async function AdminDashboard({
               {filters.page > 1 && (
                 <Link
                   href={query({ page: filters.page - 1 })}
-                  className="rounded-lg border border-[#0B4D2C]/15 bg-white px-3 py-1.5 hover:border-[#2F7D46]"
+                  className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 hover:border-brand"
                 >
                   Previous
                 </Link>
@@ -218,7 +218,7 @@ export default async function AdminDashboard({
               {filters.page < pages && (
                 <Link
                   href={query({ page: filters.page + 1 })}
-                  className="rounded-lg border border-[#0B4D2C]/15 bg-white px-3 py-1.5 hover:border-[#2F7D46]"
+                  className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 hover:border-brand"
                 >
                   Next
                 </Link>
@@ -245,11 +245,11 @@ function StatCard({
   return (
     <Link
       href={href || "/admin"}
-      className={`rounded-xl border bg-white p-4 transition-colors hover:border-[#2F7D46] ${
-        active ? "border-[#2F7D46]" : "border-[#0B4D2C]/10"
+      className={`rounded-xl border bg-white p-4 transition-colors hover:border-brand ${
+        active ? "border-brand" : "border-zinc-200"
       }`}
     >
-      <div className="text-xs uppercase tracking-wider text-[#617568] capitalize">
+      <div className="text-xs uppercase tracking-wider text-zinc-500 capitalize">
         {label}
       </div>
       <div className="mt-1 text-2xl font-medium tabular-nums">
