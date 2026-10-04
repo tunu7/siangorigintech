@@ -4,12 +4,12 @@ import { getContent } from "@/lib/content";
 import { ButtonLink, Container } from "@/app/components/ui";
 
 export default async function NotFound() {
-  const { shortName, logoMark, navCta, navCtaHref, nav } =
+  const { shortName, navCta, navCtaHref, nav } =
     await getContent("settings");
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar brand={{ shortName, logoMark, navCta, navCtaHref, nav }} />
+      <Navbar brand={{ shortName, navCta, navCtaHref, nav }} />
 
       <main className="flex flex-1 items-center">
         <Container className="py-24 sm:py-32">

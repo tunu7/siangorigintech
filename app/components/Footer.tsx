@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getContent } from "@/lib/content";
 import { isExternalLink } from "@/lib/content-schema";
+import Logo from "./Logo";
 import { Container } from "./ui";
 
 const labelClass =
@@ -14,7 +15,8 @@ export default async function Footer() {
       <Container className="pt-16 pb-10">
         <div className="grid gap-12 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
           <div>
-            <p className="font-display text-3xl">{site.name}</p>
+            <Logo className="h-9 w-auto" />
+            <p className="font-display mt-5 text-3xl">{site.name}</p>
             {site.tagline && (
               <p className="mt-3 text-sm text-muted">{site.tagline}</p>
             )}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { isExternalLink } from "@/lib/content-schema";
+import Logo from "./Logo";
 import { buttonClass, Container } from "./ui";
 
 export default function Navbar({
@@ -11,7 +12,6 @@ export default function Navbar({
 }: {
   brand: {
     shortName: string;
-    logoMark: string;
     navCta: string;
     navCtaHref: string;
     nav: { label: string; href: string }[];
@@ -44,9 +44,7 @@ export default function Navbar({
     >
       <Container className="flex h-16 items-center justify-between sm:h-20">
         <Link href="/" className="flex items-center gap-3">
-          <span className="flex h-7 w-7 items-center justify-center bg-ink text-[10px] font-semibold tracking-wide text-paper">
-            {brand.logoMark}
-          </span>
+          <Logo className="h-6 w-auto" />
           <span className="text-sm font-medium tracking-tight">
             {brand.shortName}
           </span>

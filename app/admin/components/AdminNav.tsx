@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Logo from "@/app/components/Logo";
 import {
   Briefcase,
   ExternalLink,
@@ -98,10 +99,8 @@ const groups: { label?: string; items: Item[] }[] = [
 
 export default function AdminNav({
   counts,
-  brand,
 }: {
   counts: Counts;
-  brand: string;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -182,9 +181,7 @@ export default function AdminNav({
 
   const logo = (
     <Link href="/admin" className="flex items-center gap-3">
-      <span className="flex h-7 w-7 items-center justify-center bg-ink text-[10px] font-semibold text-paper">
-        {brand}
-      </span>
+      <Logo className="h-6 w-auto" />
       <span className="text-sm font-medium">Admin</span>
     </Link>
   );

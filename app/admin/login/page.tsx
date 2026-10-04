@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { isAdmin, safeNextPath } from "@/lib/auth";
 import { getContent } from "@/lib/content";
+import Logo from "@/app/components/Logo";
 import LoginForm from "./LoginForm";
 
 export const metadata: Metadata = {
@@ -28,9 +29,7 @@ export default async function AdminLoginPage({
     <main className="grid min-h-screen lg:grid-cols-2">
       <section className="hidden flex-col justify-between bg-ink p-12 text-paper lg:flex">
         <div className="flex items-center gap-3">
-          <span className="flex h-7 w-7 items-center justify-center bg-paper text-[10px] font-semibold text-ink">
-            {site.logoMark}
-          </span>
+          <Logo className="h-6 w-auto" />
           <span className="text-sm font-medium">{site.shortName}</span>
         </div>
         <p className="font-display max-w-md text-5xl leading-[1.05]">

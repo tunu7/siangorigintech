@@ -24,12 +24,12 @@ export default async function SiteLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { shortName, logoMark, navCta, navCtaHref, nav } =
+  const { shortName, navCta, navCtaHref, nav } =
     await getContent("settings");
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar brand={{ shortName, logoMark, navCta, navCtaHref, nav }} />
+      <Navbar brand={{ shortName, navCta, navCtaHref, nav }} />
 
       <main className="flex-1">{children}</main>
 

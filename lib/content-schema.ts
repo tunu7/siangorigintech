@@ -39,7 +39,6 @@ const defaults = {
   settings: {
     name: "Siang Origin Technologies",
     shortName: "Siang Origin",
-    logoMark: "SO",
     tagline: "Independent technology studio",
     location: "Itanagar, Arunachal Pradesh",
     contactEmail: "hello@siangorigin.com",
@@ -208,7 +207,6 @@ export const SECTIONS: Record<
       { type: "heading", label: "Company" },
       { type: "text", key: "name", label: "Company name", required: true },
       { type: "text", key: "shortName", label: "Short name", hint: "Shown in the navbar.", required: true },
-      { type: "text", key: "logoMark", label: "Logo letters", max: 3, required: true },
       { type: "text", key: "tagline", label: "Tagline" },
       { type: "text", key: "location", label: "Location" },
       { type: "email", key: "contactEmail", label: "Contact email", required: true },
