@@ -48,6 +48,23 @@ the Vercel Function (4.5MB request body limit).
   that pays a cold start. Disable scale-to-zero on the production branch
   in the Neon console if that matters.
 
+## SEO
+
+- The primary domain is `https://www.siangorigintechnologies.com` (Vercel
+  redirects the apex to it). `lib/site.ts` uses it for canonical URLs,
+  the sitemap and social previews; override with `NEXT_PUBLIC_SITE_URL`.
+- `app/sitemap.ts`, `app/robots.ts` and `app/manifest.ts` are generated
+  from the database and refresh with admin saves. Preview deployments
+  disallow all crawling.
+- Every public page sets a canonical URL, Open Graph and Twitter tags via
+  `pageMetadata()` in `lib/seo.tsx`, plus JSON-LD: Organization and
+  WebSite site-wide, breadcrumbs per page, and `JobPosting` on each role
+  (eligible for Google for Jobs).
+- Share images are generated per page (`opengraph-image.tsx`, rendered by
+  `lib/og.tsx` with the font in `assets/fonts/`).
+- Keywords, social profile links and Google/Bing verification codes are
+  edited under Site settings → SEO.
+
 ## Setup
 
 1. Provision storage (one-time; sets env vars on the Vercel project):

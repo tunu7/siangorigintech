@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import { Container, PageHeader } from "@/app/components/ui";
 import { getContent } from "@/lib/content";
+import { JsonLd, pageMetadata, webPageJsonLd } from "@/lib/seo";
 import ContactForm from "./ContactForm";
 
 export async function generateMetadata(): Promise<Metadata> {
   const contact = await getContent("contact");
-  return { title: "Contact", description: contact.metaDescription };
+  return pageMetadata({
+    title: "Contact",
+    description: contact.metaDescription,
+    path: "/contact",
+  });
 }
 
 export default async function ContactPage() {
@@ -16,6 +21,15 @@ export default async function ContactPage() {
 
   return (
     <Container className="pb-24 sm:pb-32">
+      <JsonLd
+        data={webPageJsonLd({
+          type: "ContactPage",
+          name: contact.title,
+          description: contact.metaDescription,
+          path: "/contact",
+          breadcrumb: [{ name: "Contact", path: "/contact" }],
+        })}
+      />
       <PageHeader
         eyebrow={contact.eyebrow}
         title={contact.title}

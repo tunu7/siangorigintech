@@ -4,7 +4,15 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Reveal } from "@/app/components/motion";
 import { ButtonLink, Container, Eyebrow } from "@/app/components/ui";
-import { getOpenJob, listOpenJobs } from "@/lib/jobs";
+import { getContent } from "@/lib/content";
+import { getOpenJob, listOpenJobs, type Job } from "@/lib/jobs";
+import {
+  breadcrumbJsonLd,
+  JsonLd,
+  ORGANIZATION_ID,
+  pageMetadata,
+} from "@/lib/seo";
+import { absoluteUrl } from "@/lib/site";
 
 type JobPageProps = {
   params: Promise<{
@@ -27,9 +35,105 @@ export async function generateMetadata({
 
   if (!job) return { title: "Role not found" };
 
-  return {
+  return pageMetadata({
     title: `${job.title} — Careers`,
     description: job.description,
+    path: `/careers/${job.slug}`,
+  });
+}
+
+const EMPLOYMENT_TYPES: [RegExp, string][] = [
+  [/full/i, "FULL_TIME"],
+  [/part/i, "PART_TIME"],
+  [/contract|freelance/i, "CONTRACTOR"],
+  [/intern/i, "INTERN"],
+  [/temp/i, "TEMPORARY"],
+];
+
+const escapeHtml = (text: string) =>
+  text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+const htmlList = (title: string, items: string[]) =>
+  items.length
+    ? `<h3>${title}</h3><ul>${items
+        .map((item) => `<li>${escapeHtml(item)}</li>`)
+        .join("")}</ul>`
+    : "";
+
+// Google for Jobs structured data. Free-text fields are mapped to the
+// schema.org vocabulary on a best-effort basis.
+function jobPostingJsonLd(
+  job: Job,
+  site: { name: string; location: string }
+) {
+  const remote = /remote/i.test(job.location);
+  const employmentType = EMPLOYMENT_TYPES.find(([pattern]) =>
+    pattern.test(job.type)
+  )?.[1];
+
+  // "Itanagar / Hybrid" → locality "Itanagar"; the studio's own region is
+  // filled in when the role is at the studio's city.
+  const [siteLocality, siteRegion] = site.location
+    .split(",")
+    .map((part) => part.trim());
+  const [jobLocality, jobRegion] = job.location
+    .replace(/\b(?:hybrid|remote|on-?site|in-office|wfh)\b/gi, "")
+    .split(/[,/|·()]/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  const locality = jobLocality ?? siteLocality;
+  const region =
+    jobRegion ?? (locality === siteLocality ? siteRegion : undefined);
+  const years = job.experience.match(/\d+/)?.[0];
+
+  return {
+    "@type": "JobPosting",
+    title: job.title,
+    description: [
+      `<p>${escapeHtml(job.description)}</p>`,
+      htmlList("Responsibilities", job.responsibilities),
+      htmlList("Requirements", job.requirements),
+      htmlList("What we offer", job.benefits),
+    ].join(""),
+    identifier: { "@type": "PropertyValue", name: site.name, value: job.slug },
+    datePosted: new Date(job.created_at).toISOString(),
+    // Listings are re-checked well within this window; closed roles 404.
+    validThrough: new Date(
+      new Date(job.updated_at).getTime() + 1000 * 60 * 60 * 24 * 90
+    ).toISOString(),
+    ...(employmentType && { employmentType }),
+    hiringOrganization: {
+      "@type": "Organization",
+      "@id": ORGANIZATION_ID,
+      name: site.name,
+      sameAs: absoluteUrl("/"),
+      logo: absoluteUrl("/apple-icon.png"),
+    },
+    directApply: true,
+    url: absoluteUrl(`/careers/${job.slug}`),
+    occupationalCategory: job.department,
+    ...(years && {
+      experienceRequirements: {
+        "@type": "OccupationalExperienceRequirements",
+        monthsOfExperience: Number(years) * 12,
+      },
+    }),
+    ...(remote && {
+      jobLocationType: "TELECOMMUTE",
+      applicantLocationRequirements: { "@type": "Country", name: "India" },
+    }),
+    // Fully remote roles have no office; hybrid ones list both.
+    ...((jobLocality || !remote) && {
+      jobLocation: {
+        "@type": "Place",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: locality,
+          ...(region && { addressRegion: region }),
+          addressCountry: "IN",
+        },
+      },
+    }),
   };
 }
 
@@ -51,7 +155,10 @@ function ListSection({ title, items }: { title: string; items: string[] }) {
 
 export default async function JobPage({ params }: JobPageProps) {
   const { slug } = await params;
-  const job = await getOpenJob(slug);
+  const [job, site] = await Promise.all([
+    getOpenJob(slug),
+    getContent("settings"),
+  ]);
 
   if (!job) notFound();
 
@@ -65,6 +172,17 @@ export default async function JobPage({ params }: JobPageProps) {
 
   return (
     <Container className="pb-24 sm:pb-32">
+      <JsonLd
+        data={{
+          "@graph": [
+            jobPostingJsonLd(job, site),
+            breadcrumbJsonLd([
+              { name: "Careers", path: "/careers" },
+              { name: job.title, path: `/careers/${job.slug}` },
+            ]),
+          ],
+        }}
+      />
       <div className="pt-12 sm:pt-16">
         <Link
           href="/careers"

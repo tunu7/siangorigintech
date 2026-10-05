@@ -22,6 +22,7 @@ function lines(formData: FormData, key: string) {
 
 function revalidateJobs() {
   revalidatePath("/careers", "layout");
+  revalidatePath("/sitemap.xml");
   revalidatePath("/admin", "layout");
 }
 

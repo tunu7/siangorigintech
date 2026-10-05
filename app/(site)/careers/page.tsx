@@ -5,10 +5,15 @@ import { Reveal } from "@/app/components/motion";
 import { Container, Eyebrow, PageHeader } from "@/app/components/ui";
 import { getContent } from "@/lib/content";
 import { listOpenJobs } from "@/lib/jobs";
+import { JsonLd, pageMetadata, webPageJsonLd } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const careers = await getContent("careers");
-  return { title: "Careers", description: careers.metaDescription };
+  return pageMetadata({
+    title: "Careers",
+    description: careers.metaDescription,
+    path: "/careers",
+  });
 }
 
 export default async function CareersPage() {
@@ -20,6 +25,15 @@ export default async function CareersPage() {
 
   return (
     <Container className="pb-24 sm:pb-32">
+      <JsonLd
+        data={webPageJsonLd({
+          type: "CollectionPage",
+          name: careers.title,
+          description: careers.metaDescription,
+          path: "/careers",
+          breadcrumb: [{ name: "Careers", path: "/careers" }],
+        })}
+      />
       <PageHeader
         eyebrow={careers.eyebrow}
         title={careers.title}

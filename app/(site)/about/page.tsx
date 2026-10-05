@@ -3,10 +3,15 @@ import ContactCTA from "@/app/components/ContactCTA";
 import { Reveal } from "@/app/components/motion";
 import { Container, PageHeader, Section } from "@/app/components/ui";
 import { getContent } from "@/lib/content";
+import { JsonLd, pageMetadata, webPageJsonLd } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const about = await getContent("about");
-  return { title: "Studio", description: about.metaDescription };
+  return pageMetadata({
+    title: "Studio",
+    description: about.metaDescription,
+    path: "/about",
+  });
 }
 
 export default async function AboutPage() {
@@ -15,6 +20,15 @@ export default async function AboutPage() {
 
   return (
     <>
+      <JsonLd
+        data={webPageJsonLd({
+          type: "AboutPage",
+          name: about.title,
+          description: about.metaDescription,
+          path: "/about",
+          breadcrumb: [{ name: "Studio", path: "/about" }],
+        })}
+      />
       <Container>
         <PageHeader
           eyebrow={about.eyebrow}

@@ -27,7 +27,8 @@ export async function generateMetadata({
 
   return {
     title: job ? `Apply — ${job.title}` : "Apply",
-    robots: { index: false },
+    robots: { index: false, follow: true },
+    alternates: { canonical: `/careers/${slug}` },
   };
 }
 

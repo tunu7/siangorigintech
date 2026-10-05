@@ -10,8 +10,10 @@ const securityHeaders = [
   },
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=()",
+    value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
   },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  { key: "X-DNS-Prefetch-Control", value: "on" },
 ];
 
 const nextConfig: NextConfig = {
@@ -20,6 +22,16 @@ const nextConfig: NextConfig = {
   images: {
     // Only project images served from the private Blob store.
     localPatterns: [{ pathname: "/media/projects/**", search: "" }],
+    // AVIF first: roughly 20% smaller than WebP for photos.
+    formats: ["image/avif", "image/webp"],
+    // Source images never change (random-suffixed pathnames), so
+    // optimized variants can be cached for a month.
+    minimumCacheTTL: 2592000,
+  },
+
+  // The Open Graph image font is read from disk at request time.
+  outputFileTracingIncludes: {
+    "/**/opengraph-image*": ["./assets/fonts/**/*"],
   },
 
   experimental: {
