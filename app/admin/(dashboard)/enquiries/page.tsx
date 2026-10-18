@@ -92,7 +92,7 @@ export default async function EnquiriesPage({
             <input
               name="q"
               defaultValue={q}
-              placeholder="Search name, email or message"
+              placeholder="Search name, email, message or service"
               className="min-w-0 max-w-sm flex-1 rounded-lg border border-line-strong bg-white px-3 py-2 text-sm outline-none focus:border-ink"
             />
             <button
@@ -176,6 +176,18 @@ export default async function EnquiriesPage({
                       >
                         {row.message}
                       </Link>
+                      {row.services.length > 0 && (
+                        <div className="mt-1.5 flex flex-wrap gap-1">
+                          {row.services.map((service) => (
+                            <span
+                              key={service}
+                              className="rounded-full bg-paper-deep px-2 py-0.5 text-[11px] text-ink-soft"
+                            >
+                              {service}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-muted tabular-nums">
                       {dateFormat.format(new Date(row.created_at))}

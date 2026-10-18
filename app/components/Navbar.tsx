@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { isExternalLink } from "@/lib/content-schema";
+import { contactHref, isExternalLink } from "@/lib/content-schema";
 import Logo from "./Logo";
 import { buttonClass, Container } from "./ui";
 
@@ -27,6 +27,13 @@ export default function Navbar({
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Contact links record the page the visitor came from, so the form can
+  // preselect a service and the enquiry shows where it started.
+  const withSource = (href: string) =>
+    href === "/contact" && !pathname.startsWith("/contact")
+      ? contactHref({ from: pathname })
+      : href;
 
   const isActive = (href: string) =>
     href.startsWith("/") &&
@@ -56,7 +63,7 @@ export default function Navbar({
             .map((link) => (
               <NavLink
                 key={`${link.href}-${link.label}`}
-                href={link.href}
+                href={withSource(link.href)}
                 className={`text-sm transition-colors hover:text-ink ${
                   isActive(link.href) ? "text-ink" : "text-muted"
                 }`}
@@ -66,7 +73,7 @@ export default function Navbar({
             ))}
 
           <NavLink
-            href={brand.navCtaHref}
+            href={withSource(brand.navCtaHref)}
             className={`${buttonClass()} px-4! py-2!`}
           >
             {brand.navCta}
@@ -98,7 +105,7 @@ export default function Navbar({
             {brand.nav.map((link, index) => (
               <NavLink
                 key={`${link.href}-${link.label}`}
-                href={link.href}
+                href={withSource(link.href)}
                 onClick={() => setMenuOpen(false)}
                 style={{
                   transitionDelay: menuOpen ? `${index * 40}ms` : "0ms",

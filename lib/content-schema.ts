@@ -51,6 +51,14 @@ export const SERVICE_ICONS = [
   "graduation",
 ] as const;
 
+// The four jobs every business has to get right; services belong to one.
+export const SERVICE_PILLARS = [
+  "brand",
+  "growth",
+  "technology",
+  "intelligence",
+] as const;
+
 const defaults = {
   settings: {
     name: "Siang Origin Technologies",
@@ -152,9 +160,9 @@ const defaults = {
       },
     ],
     servicesEyebrow: "Services",
-    servicesTitle: "Twelve disciplines. One accountable team.",
+    servicesTitle: "Four jobs every business has to get right.",
     servicesText:
-      "From a first logo to a full ad programme, from a landing page to a SaaS platform — pick one service or let us run the whole stack.",
+      "Earn trust, win customers, run on solid systems and keep getting smarter. Our twelve services are organised around those four jobs — use one, or let one team handle all of them.",
     servicesLink: "View all services",
     goalsEyebrow: "Where to start",
     goalsTitle: "Tell us the goal. We'll assemble the team.",
@@ -276,58 +284,44 @@ const defaults = {
   },
   services: {
     metaDescription:
-      "Digital marketing, creative production, websites, software, AI automation, branding, analytics, e-commerce, AR/VR, cloud and consulting from Siang Origin Technologies.",
+      "Brand, growth, technology and AI services from Siang Origin Technologies — digital marketing, creative production, websites, software, automation, cloud and consulting.",
     eyebrow: "Services",
-    title: "Everything you need to grow, under one roof.",
+    title: "Twelve services. Four jobs. One team.",
     intro:
-      "Twelve service lines spanning marketing, creative, technology and AI. Use one, combine several, or hand us the whole roadmap — for local businesses and international brands alike.",
+      "Every business has to earn trust, win customers, run on solid systems and keep getting smarter. Our twelve services are organised around those four jobs — so you can see exactly where each one fits, and what to fix first.",
+    pillars: [
+      {
+        key: "brand",
+        title: "Brand",
+        question: "How do people see you?",
+        description:
+          "Before anyone buys, they decide whether to trust you. Identity, design and content that make you recognisable and credible.",
+      },
+      {
+        key: "growth",
+        title: "Growth",
+        question: "How do customers find and choose you?",
+        description:
+          "Attention, conversion and retention — the marketing, sales and data systems that turn strangers into repeat customers.",
+      },
+      {
+        key: "technology",
+        title: "Technology",
+        question: "What does your business run on?",
+        description:
+          "The websites, software and infrastructure your customers and team use every day — fast, secure and built to scale.",
+      },
+      {
+        key: "intelligence",
+        title: "Intelligence",
+        question: "How does your business get smarter?",
+        description:
+          "AI, automation and expert guidance that remove repetitive work and help your team make better decisions.",
+      },
+    ],
     categories: [
       {
-        icon: "megaphone",
-        title: "Digital Marketing",
-        summary: "Get found, get chosen, get results.",
-        description:
-          "Data-led campaigns across search, social and email that bring in qualified customers — not just clicks. We plan, run and optimise everything from local SEO to international paid media.",
-        items:
-          "Social media management, SEO, Local SEO, Google Ads, Meta Ads, Paid advertising, Email marketing, Influencer marketing, Lead generation, Content marketing, Digital strategy",
-      },
-      {
-        icon: "clapperboard",
-        title: "Creative Production",
-        summary: "Content that stops the scroll.",
-        description:
-          "Photography, video, motion and 3D that make your brand impossible to ignore — produced for Reels, YouTube, ads, websites and commercials.",
-        items:
-          "Graphic design, Branding, Video editing, Photography, Videography, Reels, YouTube content, Motion graphics, 2D animation, 3D modelling, CGI, Product visualisation, Commercial production",
-      },
-      {
-        icon: "monitor",
-        title: "Website Development",
-        summary: "Websites that load fast and sell.",
-        description:
-          "Business websites, landing pages and online stores designed around your customers and built to convert — easy for your team to update and simple to grow.",
-        items:
-          "Business websites, Landing pages, E-commerce, CMS, UI/UX design, Website maintenance, Conversion optimisation",
-      },
-      {
-        icon: "code",
-        title: "Software Development",
-        summary: "Custom software, built to scale.",
-        description:
-          "Web apps, mobile apps and SaaS platforms engineered for real users and real load — from a first MVP to CRM, ERP and marketplace systems that run your business.",
-        items:
-          "Web apps, Mobile apps, SaaS, Custom software, CRM, ERP, Marketplaces, APIs, Dashboards",
-      },
-      {
-        icon: "bot",
-        title: "AI & Automation",
-        summary: "Put repetitive work on autopilot.",
-        description:
-          "AI agents, chatbots and automated workflows that answer customers around the clock, qualify leads and connect your tools — so your team can focus on work that matters.",
-        items:
-          "AI agents, Chatbots, Voice agents, WhatsApp automation, Workflow automation, n8n integrations, CRM automation, Custom AI solutions",
-      },
-      {
+        pillar: "brand",
         icon: "pen",
         title: "Branding & Design",
         summary: "A brand people remember.",
@@ -335,26 +329,55 @@ const defaults = {
           "Strategic identities with the logo, guidelines and collateral to keep every touchpoint consistent — from business cards to packaging to pitch decks.",
         items:
           "Logo design, Brand identity, Brand guidelines, Packaging, Presentations, Marketing collateral",
+        outcomes:
+          "A distinctive and consistent identity, Guidelines your team can actually use, Ready-made assets for print and digital, A brand that looks as good as your work",
+        idealFor:
+          "New businesses getting ready to launch, and established ones whose look no longer matches the quality of what they do.",
       },
       {
+        pillar: "brand",
+        icon: "clapperboard",
+        title: "Creative Production",
+        summary: "Content that stops the scroll.",
+        description:
+          "Photography, video, motion and 3D that make your brand impossible to ignore — produced for Reels, YouTube, ads, websites and commercials.",
+        items:
+          "Graphic design, Photography, Videography, Video editing, Reels, YouTube content, Motion graphics, 2D animation, 3D modelling, CGI, Product visualisation, Commercial production",
+        outcomes:
+          "A steady pipeline of on-brand content, Video and visuals made for each platform, Product imagery that sells without a showroom, Assets you can reuse across ads and social",
+        idealFor:
+          "Brands that need regular, high-quality content for social, ads and launches — without hiring an in-house production team.",
+      },
+      {
+        pillar: "growth",
+        icon: "megaphone",
+        title: "Digital Marketing",
+        summary: "Get found, get chosen, get results.",
+        description:
+          "Data-led campaigns across search and social that bring in qualified customers — not just clicks. We plan, run and optimise everything from local SEO to international paid media.",
+        items:
+          "Digital strategy, SEO, Local SEO, Google Ads, Meta Ads, Paid social & display, Social media management, Content marketing, Influencer marketing, Lead generation",
+        outcomes:
+          "More qualified enquiries and sales, Higher visibility on Google and Maps, Lower cost per lead over time, Clear monthly reporting",
+        idealFor:
+          "Local businesses that want more calls and walk-ins, and growing brands ready to scale demand in new markets.",
+      },
+      {
+        pillar: "growth",
         icon: "trending",
         title: "Sales & Growth",
         summary: "Turn interest into revenue.",
         description:
           "Funnels, CRM pipelines and follow-up campaigns that capture every lead, nurture it properly and bring past customers back.",
         items:
-          "Sales funnels, CRM setup, Email campaigns, Customer acquisition, Retargeting, Conversion optimisation",
+          "Sales funnels, CRM setup, Email marketing, Nurture campaigns, Customer acquisition, Retargeting",
+        outcomes:
+          "No more leads slipping through the cracks, Follow-up that runs itself but feels personal, More repeat and referral business, A pipeline you can forecast",
+        idealFor:
+          "Businesses getting enquiries but not converting enough of them — or losing touch with customers after the first sale.",
       },
       {
-        icon: "chart",
-        title: "Analytics & Data",
-        summary: "Know exactly what's working.",
-        description:
-          "Clean tracking, clear dashboards and honest attribution, so every decision about your marketing and product is backed by data.",
-        items:
-          "Google Analytics, Tracking, Dashboards, Attribution, Reporting, A/B testing",
-      },
-      {
+        pillar: "growth",
         icon: "cart",
         title: "E-commerce & Online Business",
         summary: "Sell more, on your store and beyond.",
@@ -362,8 +385,55 @@ const defaults = {
           "Shopify and WooCommerce stores, optimised marketplace listings and retention programmes that grow order value and repeat purchases.",
         items:
           "Shopify, WooCommerce, Product listings, Marketplace optimisation, Retention marketing",
+        outcomes:
+          "A fast store customers trust, Listings that rank and convert on marketplaces, Higher order value and repeat purchases, Operations that scale with demand",
+        idealFor:
+          "Brands selling online for the first time, and established sellers ready to grow beyond a single channel.",
       },
       {
+        pillar: "growth",
+        icon: "chart",
+        title: "Analytics & Data",
+        summary: "Know exactly what's working.",
+        description:
+          "Clean tracking, clear dashboards and honest attribution, so every decision about your marketing and product is backed by data.",
+        items:
+          "Google Analytics, Tracking setup, Dashboards, Attribution, Reporting, A/B testing",
+        outcomes:
+          "Tracking you can trust, One dashboard for the numbers that matter, Clear answers on which channels pay off, Decisions backed by evidence",
+        idealFor:
+          "Teams spending on marketing or product without a clear picture of what's actually working.",
+      },
+      {
+        pillar: "technology",
+        icon: "monitor",
+        title: "Website Development",
+        summary: "Websites that load fast and sell.",
+        description:
+          "Business websites and landing pages designed around your customers and built to convert — easy for your team to update and simple to grow.",
+        items:
+          "Business websites, Landing pages, UI/UX design, CMS, Conversion optimisation, Website maintenance",
+        outcomes:
+          "A fast mobile-first website, More enquiries from the same traffic, Easy updates without a developer, SEO foundations built in",
+        idealFor:
+          "Businesses that need a first website, a redesign that finally converts, or a campaign landing page live quickly.",
+      },
+      {
+        pillar: "technology",
+        icon: "code",
+        title: "Software Development",
+        summary: "Custom software, built to scale.",
+        description:
+          "Web apps, mobile apps and SaaS platforms engineered for real users and real load — from a first MVP to CRM, ERP and marketplace systems that run your business.",
+        items:
+          "Web apps, Mobile apps, SaaS, Custom software, CRM, ERP, Marketplaces, APIs, Dashboards",
+        outcomes:
+          "Software shaped around your workflow, Architecture that scales from day one, Clean and documented code you own, Ongoing support and improvements",
+        idealFor:
+          "Founders launching a product, and businesses outgrowing spreadsheets and off-the-shelf tools.",
+      },
+      {
+        pillar: "technology",
         icon: "glasses",
         title: "Advanced Technology",
         summary: "Immersive experiences that impress.",
@@ -371,8 +441,13 @@ const defaults = {
           "AR/VR, interactive 3D and architectural visualisation that let customers explore products and spaces before they exist — online, in showrooms and on screens.",
         items:
           "AR/VR, Interactive 3D, Architectural visualisation, Digital signage, Immersive experiences",
+        outcomes:
+          "Products customers can explore in 3D, Spaces that sell before they're built, Memorable showroom and event experiences, Content that stands apart from competitors",
+        idealFor:
+          "Real estate, architecture, retail, tourism and brands launching products that deserve more than a photo.",
       },
       {
+        pillar: "technology",
         icon: "cloud",
         title: "Cloud & IT",
         summary: "Reliable, secure infrastructure.",
@@ -380,8 +455,27 @@ const defaults = {
           "Hosting, deployments and the everyday IT that keeps a modern business running — set up properly, monitored and backed up.",
         items:
           "Hosting, Deployment, CI/CD, Integrations, Business email, Backups, Security hardening, Infrastructure management",
+        outcomes:
+          "Fast and reliable hosting, Safe and automated deployments, Regular backups and a recovery plan, Hardened security and monitoring",
+        idealFor:
+          "Businesses that depend on their website, apps or email and can't afford downtime or data loss.",
       },
       {
+        pillar: "intelligence",
+        icon: "bot",
+        title: "AI & Automation",
+        summary: "Put repetitive work on autopilot.",
+        description:
+          "AI agents, chatbots and automated workflows that answer customers around the clock, qualify leads and connect your tools — so your team can focus on work that matters.",
+        items:
+          "AI agents, Chatbots, Voice agents, WhatsApp automation, Workflow automation, n8n integrations, CRM automation, Custom AI solutions",
+        outcomes:
+          "Instant replies to customers at any hour, Manual work removed from every week, Leads qualified and routed automatically, Tools that finally talk to each other",
+        idealFor:
+          "Teams buried in repetitive messages, data entry and follow-ups — and businesses ready to put AI to practical use.",
+      },
+      {
+        pillar: "intelligence",
         icon: "graduation",
         title: "Consulting & Training",
         summary: "Expert guidance for your next move.",
@@ -389,9 +483,13 @@ const defaults = {
           "Audits, roadmaps and hands-on training that help your team adopt digital tools and AI with confidence — and get real value from them quickly.",
         items:
           "Digital transformation, Marketing audits, Business consulting, AI implementation, Team training",
+        outcomes:
+          "A clear and prioritised digital roadmap, An honest audit of what's working, A team confident with new tools and AI, Faster adoption with fewer costly mistakes",
+        idealFor:
+          "Owners and leadership teams planning a digital shift, and teams who need hands-on training to adopt new tools.",
       },
     ],
-    ctaTitle: "Not sure which service you need?",
+    ctaTitle: "Not sure where to start?",
     ctaText:
       "Tell us what you're trying to achieve. We'll recommend the right mix — and tell you honestly if you don't need us.",
   },
@@ -634,7 +732,7 @@ export const SECTIONS: Record<
   },
   services: {
     title: "Services",
-    description: "The service catalogue shown on the services, home and about pages.",
+    description: "Pillars and the service catalogue, including each service's own page.",
     path: "/services",
     fields: [
       { type: "heading", label: "Header" },
@@ -642,6 +740,25 @@ export const SECTIONS: Record<
       { type: "text", key: "title", label: "Title", required: true },
       { type: "textarea", key: "intro", label: "Intro" },
       meta(),
+      { type: "heading", label: "Pillars" },
+      {
+        type: "group",
+        key: "pillars",
+        label: "Pillars",
+        itemLabel: "Pillar",
+        max: SERVICE_PILLARS.length,
+        fields: [
+          {
+            type: "select",
+            key: "key",
+            label: "Pillar",
+            options: SERVICE_PILLARS,
+          },
+          { type: "text", key: "title", label: "Title", required: true },
+          { type: "text", key: "question", label: "Question it answers" },
+          { type: "textarea", key: "description", label: "Description" },
+        ],
+      },
       { type: "heading", label: "Catalogue" },
       {
         type: "group",
@@ -650,11 +767,20 @@ export const SECTIONS: Record<
         itemLabel: "Service",
         max: 16,
         fields: [
+          { type: "select", key: "pillar", label: "Pillar", options: SERVICE_PILLARS },
           { type: "select", key: "icon", label: "Icon", options: SERVICE_ICONS },
-          { type: "text", key: "title", label: "Title", required: true },
+          {
+            type: "text",
+            key: "title",
+            label: "Title",
+            required: true,
+            hint: "Also sets the page address, e.g. /services/ai-automation.",
+          },
           { type: "text", key: "summary", label: "One-line pitch" },
           { type: "textarea", key: "description", label: "Description" },
           itemsField("What's included"),
+          { ...itemsField("What you get"), key: "outcomes" },
+          { type: "textarea", key: "idealFor", label: "Ideal for" },
         ],
       },
       { type: "heading", label: "Closing banner" },
@@ -883,4 +1009,56 @@ export function serviceSlug(title: string) {
     .replace(/&/g, " ")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+export type Service = Sections["services"]["categories"][number];
+
+// Services grouped under their pillars, in pillar order. Services whose
+// pillar isn't listed are collected at the end so none go missing.
+export function servicesByPillar(content: Sections["services"]) {
+  const known = new Set(content.pillars.map((pillar) => pillar.key));
+  const groups = content.pillars.map((pillar) => ({
+    ...pillar,
+    services: content.categories.filter(
+      (service) => service.pillar === pillar.key
+    ),
+  }));
+  const rest = content.categories.filter(
+    (service) => !known.has(service.pillar)
+  );
+
+  if (rest.length) {
+    groups.push({
+      key: "more",
+      title: "More services",
+      question: "",
+      description: "",
+      services: rest,
+    });
+  }
+
+  return groups.filter((group) => group.services.length > 0);
+}
+
+export function findService(content: Sections["services"], slug: string) {
+  return content.categories.find(
+    (service) => serviceSlug(service.title) === slug
+  );
+}
+
+// Link to the contact form with services preselected and the page the
+// visitor came from, both recorded on the enquiry.
+export function contactHref({
+  services = [],
+  from,
+}: {
+  services?: string[];
+  from?: string;
+} = {}) {
+  const search = new URLSearchParams();
+  for (const slug of services) search.append("service", slug);
+  if (from) search.set("from", from);
+
+  const query = search.toString();
+  return `/contact${query ? `?${query}` : ""}`;
 }

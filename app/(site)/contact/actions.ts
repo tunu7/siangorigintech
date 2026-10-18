@@ -3,6 +3,7 @@
 import { Resend } from "resend";
 import { sql } from "@/lib/db";
 import { getContent } from "@/lib/content";
+import { serviceSlug } from "@/lib/content-schema";
 import { siteUrl } from "@/lib/site";
 
 export type ContactState = { error?: string; sent?: boolean };
@@ -25,6 +26,14 @@ export async function sendEnquiry(
   const name = text(formData.get("name"), 200);
   const email = text(formData.get("email"), 320);
   const message = text(formData.get("message"), 5000);
+  const source = cleanSource(text(formData.get("source"), 300));
+
+  // Only services that exist in the catalogue, stored by title.
+  const catalogue = (await getContent("services")).categories;
+  const picked = new Set(formData.getAll("services").map(String));
+  const services = catalogue
+    .map((service) => service.title)
+    .filter((title) => picked.has(serviceSlug(title)));
 
   if (!name || !email || !message) {
     return { error: "Please fill in all required fields." };
@@ -39,8 +48,8 @@ export async function sendEnquiry(
 
   try {
     const rows = (await sql()`
-      insert into enquiries (name, email, message)
-      values (${name}, ${email}, ${message})
+      insert into enquiries (name, email, message, services, source)
+      values (${name}, ${email}, ${message}, ${services}, ${source})
       returning id
     `) as { id: string }[];
     id = rows[0]?.id;
@@ -48,7 +57,7 @@ export async function sendEnquiry(
     console.error("CONTACT SAVE ERROR:", error);
   }
 
-  const emailed = await notifyTeam({ id, name, email, message });
+  const emailed = await notifyTeam({ id, name, email, message, services, source });
 
   if (!id && !emailed) {
     const site = await getContent("settings");
@@ -60,11 +69,18 @@ export async function sendEnquiry(
   return { sent: true };
 }
 
+// Keeps only a same-site path like "/services/seo"; anything else is dropped.
+function cleanSource(value: string) {
+  return /^\/(?!\/)[\w\-./]*$/.test(value) ? value : null;
+}
+
 async function notifyTeam(details: {
   id?: string;
   name: string;
   email: string;
   message: string;
+  services: string[];
+  source: string | null;
 }) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
@@ -77,6 +93,13 @@ async function notifyTeam(details: {
     return false;
   }
 
+  const context = [
+    details.services.length && `Interested in: ${details.services.join(", ")}`,
+    details.source && `Came from: ${siteUrl()}${details.source}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
   const link = details.id
     ? `\n\nView in admin: ${siteUrl()}/admin/enquiries/${details.id}`
     : "";
@@ -86,8 +109,12 @@ async function notifyTeam(details: {
       from,
       to: to.split(",").map((address) => address.trim()),
       replyTo: details.email,
-      subject: `New enquiry from ${details.name}`,
-      text: `${details.name} (${details.email}) wrote:\n\n${details.message}${link}`,
+      subject: details.services.length
+        ? `New ${details.services.join(", ")} enquiry from ${details.name}`
+        : `New enquiry from ${details.name}`,
+      text: `${details.name} (${details.email}) wrote:\n\n${details.message}${
+        context ? `\n\n${context}` : ""
+      }${link}`,
     });
 
     if (error) throw error;

@@ -72,7 +72,7 @@ export default async function AboutPage() {
                   {services.categories.map((service) => (
                     <li key={service.title} className="border-t border-line">
                       <Link
-                        href={`/services#${serviceSlug(service.title)}`}
+                        href={`/services/${serviceSlug(service.title)}`}
                         className="group flex items-start gap-4 py-6"
                       >
                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-paper-deep text-brand transition-colors group-hover:bg-forest group-hover:text-lime">

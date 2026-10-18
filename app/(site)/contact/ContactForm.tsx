@@ -6,9 +6,20 @@ import { Field, FormError, inputClass } from "@/app/components/form";
 import { buttonClass } from "@/app/components/ui";
 import { sendEnquiry, type ContactState } from "./actions";
 
+export type ServiceOption = { slug: string; title: string };
+export type ServiceGroup = { title: string; services: ServiceOption[] };
+
 export default function ContactForm({
   text,
+  groups,
+  selected = [],
+  source = "",
 }: {
+  groups: ServiceGroup[];
+  // Slugs ticked when the form opens, e.g. from /contact?service=seo.
+  selected?: string[];
+  // The page the visitor came from.
+  source?: string;
   text: {
     messageLabel: string;
     messagePlaceholder: string;
@@ -42,6 +53,43 @@ export default function ContactForm({
         aria-hidden="true"
         className="hidden"
       />
+      <input type="hidden" name="source" value={source} />
+
+      {groups.length > 0 && (
+        <fieldset>
+          <legend className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
+            What can we help with?
+            <span className="normal-case tracking-normal text-muted/70">
+              {" "}
+              — pick any that apply
+            </span>
+          </legend>
+
+          <div className="mt-5 space-y-5">
+            {groups.map((group) => (
+              <div key={group.title}>
+                <p className="text-xs text-muted">{group.title}</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {group.services.map((service) => (
+                    <label key={service.slug} className="cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="services"
+                        value={service.slug}
+                        defaultChecked={selected.includes(service.slug)}
+                        className="peer sr-only"
+                      />
+                      <span className="inline-flex items-center rounded-full border border-line-strong px-3.5 py-1.5 text-sm text-ink-soft transition-colors hover:border-ink peer-checked:border-ink peer-checked:bg-ink peer-checked:text-paper peer-focus-visible:ring-2 peer-focus-visible:ring-brand peer-focus-visible:ring-offset-2">
+                        {service.title}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </fieldset>
+      )}
 
       <div className="grid gap-10 sm:grid-cols-2">
         <Field id="name" label="Name" required>

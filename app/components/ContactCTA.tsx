@@ -1,4 +1,5 @@
 import { getContent } from "@/lib/content";
+import { contactHref } from "@/lib/content-schema";
 import Logo from "./Logo";
 import { Reveal } from "./motion";
 import { ButtonLink } from "./ui";
@@ -6,10 +7,16 @@ import { ButtonLink } from "./ui";
 export default async function ContactCTA({
   title,
   text,
+  services,
+  from,
 }: {
   // Overrides the site-wide banner text, e.g. on the services page.
   title?: string;
   text?: string;
+  // Service slugs to preselect on the contact form, and the page the
+  // visitor is on, recorded with their enquiry.
+  services?: string[];
+  from?: string;
 } = {}) {
   const site = await getContent("settings");
 
@@ -33,7 +40,7 @@ export default async function ContactCTA({
           )}
 
           <div className="mt-10 flex flex-col items-center gap-6">
-            <ButtonLink href="/contact" variant="lime" arrow>
+            <ButtonLink href={contactHref({ services, from })} variant="lime" arrow>
               {site.ctaButton}
             </ButtonLink>
             <a

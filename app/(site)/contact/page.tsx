@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Container, PageHeader } from "@/app/components/ui";
 import { getContent } from "@/lib/content";
+import { serviceSlug, servicesByPillar } from "@/lib/content-schema";
 import { JsonLd, pageMetadata, webPageJsonLd } from "@/lib/seo";
-import ContactForm from "./ContactForm";
+import ContactForm, { type ServiceGroup } from "./ContactForm";
+import ContactFormFromUrl from "./ContactFormFromUrl";
 
 export async function generateMetadata(): Promise<Metadata> {
   const contact = await getContent("contact");
@@ -14,10 +17,26 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
-  const [contact, site] = await Promise.all([
+  const [contact, site, services] = await Promise.all([
     getContent("contact"),
     getContent("settings"),
+    getContent("services"),
   ]);
+
+  const groups: ServiceGroup[] = servicesByPillar(services).map((pillar) => ({
+    title: pillar.title,
+    services: pillar.services.map((service) => ({
+      slug: serviceSlug(service.title),
+      title: service.title,
+    })),
+  }));
+
+  const formText = {
+    messageLabel: contact.messageLabel,
+    messagePlaceholder: contact.messagePlaceholder,
+    successTitle: contact.successTitle,
+    successText: contact.successText,
+  };
 
   return (
     <Container className="pb-24 sm:pb-32">
@@ -62,14 +81,11 @@ export default async function ContactPage() {
         </dl>
 
         <div className="animate-fade-up [animation-delay:150ms]">
-          <ContactForm
-            text={{
-              messageLabel: contact.messageLabel,
-              messagePlaceholder: contact.messagePlaceholder,
-              successTitle: contact.successTitle,
-              successText: contact.successText,
-            }}
-          />
+          {/* The page stays static; the URL-aware form takes over in the
+              browser, with the plain form in the prerendered HTML. */}
+          <Suspense fallback={<ContactForm text={formText} groups={groups} />}>
+            <ContactFormFromUrl text={formText} groups={groups} />
+          </Suspense>
         </div>
       </div>
     </Container>

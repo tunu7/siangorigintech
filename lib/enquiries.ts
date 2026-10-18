@@ -8,6 +8,8 @@ export type Enquiry = {
   name: string;
   email: string;
   message: string;
+  services: string[];
+  source: string | null;
   read_at: string | null;
   archived: boolean;
 };
@@ -41,7 +43,8 @@ export async function enquiryInbox({
   if (q) {
     params.push(`%${q.replace(/[\\%_]/g, "\\$&")}%`);
     clauses.push(
-      `(name ilike $1 or email ilike $1 or message ilike $1)`
+      `(name ilike $1 or email ilike $1 or message ilike $1
+        or array_to_string(services, ' ') ilike $1)`
     );
   }
 

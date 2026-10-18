@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { getContent } from "@/lib/content";
-import { serviceSlug } from "@/lib/content-schema";
+import {
+  contactHref,
+  serviceSlug,
+  servicesByPillar,
+} from "@/lib/content-schema";
 import ServiceIcon from "./ServiceIcon";
 import { ButtonLink } from "./ui";
 
@@ -11,6 +15,7 @@ export default async function Hero() {
     getContent("settings"),
     getContent("services"),
   ]);
+  const pillars = servicesByPillar(services);
 
   return (
     <section className="px-3 pt-3 sm:px-4">
@@ -55,7 +60,11 @@ export default async function Hero() {
             </p>
 
             <div className="mt-10 flex animate-fade-up flex-wrap items-center gap-3 [animation-delay:220ms]">
-              <ButtonLink href="/contact" variant="lime" arrow>
+              <ButtonLink
+                href={contactHref({ from: "/" })}
+                variant="lime"
+                arrow
+              >
                 {home.heroPrimaryCta}
               </ButtonLink>
               <ButtonLink href="/services" variant="outline">
@@ -77,27 +86,41 @@ export default async function Hero() {
                   </span>
                 </p>
               )}
-              <ul className="grid grid-cols-1 sm:grid-cols-2">
-                {services.categories.map((service) => (
-                  <li key={service.title}>
+              <div className="gap-2 sm:columns-2">
+                {pillars.map((pillar) => (
+                  <div key={pillar.key} className="break-inside-avoid pb-2">
                     <Link
-                      href={`/services#${serviceSlug(service.title)}`}
-                      className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm text-paper/80 transition-colors hover:bg-paper/[0.07] hover:text-paper"
+                      href={`/services#${pillar.key}`}
+                      className="block px-3 pb-1 pt-3 text-[10px] font-medium uppercase tracking-[0.2em] text-lime/70 hover:text-lime"
                     >
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-paper/[0.06] text-lime transition-colors group-hover:bg-lime group-hover:text-forest">
-                        <ServiceIcon name={service.icon} size={16} />
-                      </span>
-                      <span className="min-w-0 flex-1 leading-snug">{service.title}</span>
-                      <ArrowUpRight
-                        size={14}
-                        strokeWidth={1.75}
-                        aria-hidden
-                        className="shrink-0 opacity-0 transition-opacity group-hover:opacity-60"
-                      />
+                      {pillar.title}
                     </Link>
-                  </li>
+                    <ul>
+                      {pillar.services.map((service) => (
+                        <li key={service.title}>
+                          <Link
+                            href={`/services/${serviceSlug(service.title)}`}
+                            className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm text-paper/80 transition-colors hover:bg-paper/[0.07] hover:text-paper"
+                          >
+                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-paper/[0.06] text-lime transition-colors group-hover:bg-lime group-hover:text-forest">
+                              <ServiceIcon name={service.icon} size={16} />
+                            </span>
+                            <span className="min-w-0 flex-1 leading-snug">
+                              {service.title}
+                            </span>
+                            <ArrowUpRight
+                              size={14}
+                              strokeWidth={1.75}
+                              aria-hidden
+                              className="shrink-0 opacity-0 transition-opacity group-hover:opacity-60"
+                            />
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </nav>
           )}
         </div>

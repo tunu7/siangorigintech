@@ -1,14 +1,28 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { getContent } from "@/lib/content";
-import { splitItems } from "@/lib/content-schema";
+import { contactHref, serviceSlug, splitItems } from "@/lib/content-schema";
 import { Reveal } from "./motion";
 import { Container, SectionHeading, Tag } from "./ui";
 
 export default async function Goals() {
-  const home = await getContent("home");
+  const [home, services] = await Promise.all([
+    getContent("home"),
+    getContent("services"),
+  ]);
 
   if (!home.goals.length) return null;
+
+  const titles = new Set(services.categories.map((service) => service.title));
+
+  // Preselects the goal's services that exist in the catalogue.
+  const goalHref = (items: string) =>
+    contactHref({
+      services: splitItems(items)
+        .filter((item) => titles.has(item))
+        .map(serviceSlug),
+      from: "/",
+    });
 
   return (
     <section className="py-24 sm:py-32">
@@ -21,7 +35,7 @@ export default async function Goals() {
           {home.goals.map((goal, index) => (
             <Reveal as="li" key={index} delay={index * 60}>
               <Link
-                href="/contact"
+                href={goalHref(goal.items)}
                 className="group grid items-start gap-6 border-b border-line-strong py-9 transition-colors md:grid-cols-[4rem_minmax(0,1.1fr)_minmax(0,1.4fr)_auto] md:items-center md:gap-10"
               >
                 <span className="text-xs tabular-nums text-muted">

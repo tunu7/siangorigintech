@@ -12,6 +12,9 @@ const dateFormat = new Intl.DateTimeFormat("en-IN", {
   timeZone: "Asia/Kolkata",
 });
 
+const labelClass =
+  "text-[11px] font-medium uppercase tracking-[0.16em] text-muted";
+
 const secondaryButton =
   "w-full rounded-lg border border-line-strong px-4 py-2 text-sm hover:border-ink";
 
@@ -27,7 +30,11 @@ export default async function EnquiryPage({
 
   if (!enquiry) notFound();
 
-  const replySubject = encodeURIComponent("Re: Your enquiry to Siang Origin");
+  const replySubject = encodeURIComponent(
+    enquiry.services.length
+      ? `Re: Your ${enquiry.services.join(", ")} enquiry to Siang Origin`
+      : "Re: Your enquiry to Siang Origin"
+  );
 
   return (
     <>
@@ -55,14 +62,47 @@ export default async function EnquiryPage({
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_280px]">
-          <section className="rounded-lg border border-line bg-white p-6">
-            <h2 className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
-              Message
-            </h2>
-            <p className="mt-3 whitespace-pre-wrap leading-7">
-              {enquiry.message}
-            </p>
-          </section>
+          <div className="space-y-6">
+            {(enquiry.services.length > 0 || enquiry.source) && (
+              <section className="grid gap-6 rounded-lg border border-line bg-white p-6 sm:grid-cols-2">
+                {enquiry.services.length > 0 && (
+                  <div>
+                    <h2 className={labelClass}>Interested in</h2>
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {enquiry.services.map((service) => (
+                        <span
+                          key={service}
+                          className="rounded-full bg-paper-deep px-2.5 py-1 text-xs"
+                        >
+                          {service}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {enquiry.source && (
+                  <div>
+                    <h2 className={labelClass}>Came from</h2>
+                    <a
+                      href={enquiry.source}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-block break-all text-sm hover:underline"
+                    >
+                      {enquiry.source}
+                    </a>
+                  </div>
+                )}
+              </section>
+            )}
+
+            <section className="rounded-lg border border-line bg-white p-6">
+              <h2 className={labelClass}>Message</h2>
+              <p className="mt-3 whitespace-pre-wrap leading-7">
+                {enquiry.message}
+              </p>
+            </section>
+          </div>
 
           <aside className="space-y-3 rounded-lg border border-line bg-white p-4 lg:self-start">
             <a

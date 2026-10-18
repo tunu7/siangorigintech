@@ -1,4 +1,6 @@
 import type { MetadataRoute } from "next";
+import { getContent } from "@/lib/content";
+import { serviceSlug } from "@/lib/content-schema";
 import { batch, sql } from "@/lib/db";
 import { mediaUrl } from "@/lib/media";
 import { absoluteUrl } from "@/lib/site";
@@ -31,7 +33,7 @@ const latest = (...dates: (string | Date | null | undefined)[]) => {
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const data = await load();
+  const [data, services] = await Promise.all([load(), getContent("services")]);
   const [content, jobs, projects] = data ?? [[], [], []];
 
   const contentUpdated = content[0]?.updated_at;
@@ -59,6 +61,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...(images.length > 0 && { images }),
     },
     page("/services", 0.9, "monthly", latest(contentUpdated)),
+    ...services.categories.map((service) =>
+      page(
+        `/services/${serviceSlug(service.title)}`,
+        0.8,
+        "monthly",
+        latest(contentUpdated)
+      )
+    ),
     {
       ...page("/work", 0.9, "monthly", latest(contentUpdated, projectsUpdated)),
       ...(images.length > 0 && { images }),

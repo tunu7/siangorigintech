@@ -32,7 +32,7 @@ export default async function Footer() {
                 {services.categories.map((service) => (
                   <li key={service.title}>
                     <Link
-                      href={`/services#${serviceSlug(service.title)}`}
+                      href={`/services/${serviceSlug(service.title)}`}
                       className="text-ink-soft hover:text-ink"
                     >
                       {service.title}
