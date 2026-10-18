@@ -207,14 +207,20 @@ export function ButtonLink({
 export function TextLink({
   href,
   children,
+  tone = "light",
 }: {
   href: string;
   children: React.ReactNode;
+  tone?: "light" | "dark";
 }) {
   return (
     <Link
       href={href}
-      className="group inline-flex items-center gap-2 border-b border-ink pb-0.5 text-sm font-medium text-ink transition-colors hover:border-brand hover:text-brand"
+      className={`group inline-flex items-center gap-2 border-b pb-0.5 text-sm font-medium transition-colors ${
+        tone === "dark"
+          ? "border-paper/40 text-paper hover:border-lime hover:text-lime"
+          : "border-ink text-ink hover:border-brand hover:text-brand"
+      }`}
     >
       {children}
       <ArrowRight

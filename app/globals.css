@@ -30,7 +30,6 @@
   --animate-fade-up: fade-up 0.9s var(--ease-out-expo) both;
   --animate-page-in: page-in 0.5s var(--ease-out-expo) both;
   --animate-marquee: marquee 40s linear infinite;
-  --animate-float: float 8s ease-in-out infinite;
 
   @keyframes fade-in {
     from {
@@ -55,12 +54,6 @@
   @keyframes marquee {
     to {
       transform: translateX(-50%);
-    }
-  }
-
-  @keyframes float {
-    50% {
-      transform: translate3d(0, -18px, 0) scale(1.04);
     }
   }
 }
@@ -89,24 +82,18 @@ body {
   line-height: 1.02;
 }
 
-/* Faint grid for dark panels, faded out towards the edges. */
-.bg-grid {
-  background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse at 30% 20%, black 30%, transparent 75%);
-}
-
-/* Soft film grain over dark panels. */
-.bg-grain::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.12;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+/* Dark stage for the 3D scenes. The gradient is the dawn glow the scenes
+   draw, so the panel still reads without WebGL. */
+.dark-panel {
+  background:
+    radial-gradient(
+      60% 55% at 78% 62%,
+      rgb(63 154 74 / 0.32),
+      transparent 70%
+    ),
+    radial-gradient(90% 70% at 50% 120%, rgb(11 77 44 / 0.6), transparent),
+    var(--color-forest);
+  color: var(--color-paper);
 }
 
 /* Fades a scrolling row out at both ends. */

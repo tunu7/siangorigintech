@@ -7,7 +7,7 @@ export default async function WhyUs() {
   const home = await getContent("home");
 
   return (
-    <section className="py-24 sm:py-32">
+    <section className="border-t border-line py-28 sm:py-36">
       <Container>
         <div className="grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:gap-20">
           <Reveal className="lg:sticky lg:top-32 lg:self-start">
@@ -28,18 +28,18 @@ export default async function WhyUs() {
           </Reveal>
 
           {home.reasons.length > 0 && (
-            <ul className="grid gap-3 sm:grid-cols-2">
+            <ul className="grid gap-x-10 gap-y-12 sm:grid-cols-2">
               {home.reasons.map((reason, index) => (
                 <Reveal
                   as="li"
                   key={index}
                   delay={(index % 2) * 100}
-                  className="rounded-3xl border border-line bg-paper-deep/60 p-7 sm:p-8"
+                  className="border-t border-line-strong pt-6"
                 >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ink text-xs tabular-nums text-paper">
+                  <p className="text-xs tabular-nums text-brand">
                     {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="font-display mt-10 text-2xl sm:text-3xl">
+                  </p>
+                  <h3 className="font-display mt-4 text-2xl sm:text-3xl">
                     {reason.title}
                   </h3>
                   <p className="mt-3 leading-7 text-ink-soft">

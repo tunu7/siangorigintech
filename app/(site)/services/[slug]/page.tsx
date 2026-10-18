@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import ContactCTA from "@/app/components/ContactCTA";
 import ServiceCard from "@/app/components/ServiceCard";
 import ServiceIcon from "@/app/components/ServiceIcon";
+import Scene3D from "@/app/components/three/Scene3D";
 import { Reveal } from "@/app/components/motion";
 import { ButtonLink, Container, Eyebrow } from "@/app/components/ui";
 import { getContent } from "@/lib/content";
@@ -102,12 +103,8 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
       {/* Header panel. */}
       <section className="px-3 pt-3 sm:px-4">
-        <div className="bg-grain relative isolate overflow-hidden rounded-[1.75rem] bg-forest text-paper sm:rounded-[2.5rem]">
-          <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-            <div className="bg-grid absolute inset-0" />
-            <div className="absolute -left-40 -top-40 h-[30rem] w-[30rem] animate-float rounded-full bg-brand-light/40 blur-[120px]" />
-            <div className="absolute -bottom-48 right-[-10%] h-[26rem] w-[26rem] animate-float rounded-full bg-lime/15 blur-[120px] [animation-delay:-4s]" />
-          </div>
+        <div className="dark-panel relative isolate overflow-hidden rounded-[1.75rem] sm:rounded-[2.5rem]">
+          <Scene3D variant="field" className="absolute inset-0 -z-10" />
 
           <div className="mx-auto grid max-w-[1280px] gap-12 px-6 py-14 sm:px-10 sm:py-20 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-16 lg:py-24">
             <div>
@@ -128,9 +125,11 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 )}
               </nav>
 
-              <span className="mt-10 flex h-14 w-14 animate-fade-up items-center justify-center rounded-2xl bg-paper/[0.07] text-lime">
-                <ServiceIcon name={service.icon} size={26} />
-              </span>
+              <ServiceIcon
+                name={service.icon}
+                size={30}
+                className="mt-12 animate-fade-up text-lime"
+              />
 
               <h1 className="font-display mt-8 animate-fade-up text-5xl text-balance [animation-delay:80ms] sm:text-7xl">
                 {service.title}
@@ -157,16 +156,19 @@ export default async function ServicePage({ params }: ServicePageProps) {
             </div>
 
             {outcomes.length > 0 && (
-              <div className="animate-fade-up self-end rounded-3xl border border-paper/10 bg-paper/[0.04] p-7 backdrop-blur-md [animation-delay:260ms] sm:p-8">
+              <div className="animate-fade-up self-end border-l border-paper/15 pl-8 [animation-delay:260ms]">
                 <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-paper/50">
                   What you get
                 </p>
                 <ul className="mt-6 space-y-4">
                   {outcomes.map((outcome) => (
                     <li key={outcome} className="flex items-start gap-3 leading-7">
-                      <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-lime text-forest">
-                        <Check size={12} strokeWidth={3} aria-hidden />
-                      </span>
+                      <Check
+                        size={16}
+                        strokeWidth={2}
+                        aria-hidden
+                        className="mt-1.5 shrink-0 text-lime"
+                      />
                       {outcome}
                     </li>
                   ))}
@@ -193,13 +195,13 @@ export default async function ServicePage({ params }: ServicePageProps) {
               </p>
             </Reveal>
 
-            <ul className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-12 grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
               {included.map((item, index) => (
                 <Reveal
                   as="li"
                   key={item}
                   delay={(index % 3) * 60}
-                  className="flex items-center gap-5 rounded-2xl border border-line bg-paper-deep/60 px-6 py-5"
+                  className="flex items-baseline gap-5 border-t border-line-strong py-5"
                 >
                   <span className="text-xs tabular-nums text-muted">
                     {String(index + 1).padStart(2, "0")}
@@ -228,13 +230,13 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 {home.processTitle}
               </h2>
             </Reveal>
-            <ol className="mt-12 grid gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+            <ol className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
               {home.steps.map((step, index) => (
                 <Reveal
                   as="li"
                   key={index}
                   delay={index * 80}
-                  className="bg-paper p-7"
+                  className="border-t border-line-strong pt-6"
                 >
                   <span className="font-display text-5xl text-brand">
                     {String(index + 1).padStart(2, "0")}
@@ -259,7 +261,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 </h2>
               )}
             </Reveal>
-            <ul className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-12 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((item, index) => (
                 <Reveal as="li" key={item.title} delay={(index % 3) * 80}>
                   <ServiceCard service={item} />
