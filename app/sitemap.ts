@@ -58,6 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...page("/", 1, "weekly", latest(contentUpdated, projectsUpdated)),
       ...(images.length > 0 && { images }),
     },
+    page("/services", 0.9, "monthly", latest(contentUpdated)),
     {
       ...page("/work", 0.9, "monthly", latest(contentUpdated, projectsUpdated)),
       ...(images.length > 0 && { images }),

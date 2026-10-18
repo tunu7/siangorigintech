@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import Hero from "@/app/components/Hero";
-import Work from "@/app/components/Work";
+import Audiences from "@/app/components/Audiences";
 import Services from "@/app/components/Services";
-import AboutPreview from "@/app/components/AboutPreview";
+import Goals from "@/app/components/Goals";
+import Work from "@/app/components/Work";
+import Process from "@/app/components/Process";
+import WhyUs from "@/app/components/WhyUs";
+import Faq from "@/app/components/Faq";
 import ContactCTA from "@/app/components/ContactCTA";
 import { getContent } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
@@ -16,9 +20,13 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <Work />
+      <Audiences />
       <Services />
-      <AboutPreview />
+      <Goals />
+      <Work />
+      <Process />
+      <WhyUs />
+      <Faq />
       <ContactCTA />
     </>
   );

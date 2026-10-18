@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import ContactCTA from "@/app/components/ContactCTA";
+import ServiceIcon from "@/app/components/ServiceIcon";
 import { Reveal } from "@/app/components/motion";
 import { Container, PageHeader, Section } from "@/app/components/ui";
 import { getContent } from "@/lib/content";
+import { serviceSlug } from "@/lib/content-schema";
 import { JsonLd, pageMetadata, webPageJsonLd } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,7 +19,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const about = await getContent("about");
+  const [about, services] = await Promise.all([
+    getContent("about"),
+    getContent("services"),
+  ]);
   let index = 0;
 
   return (
@@ -58,19 +65,39 @@ export default async function AboutPage() {
             </Reveal>
           )}
 
-          {about.services.length > 0 && (
+          {services.categories.length > 0 && (
             <Reveal>
               <Section label={about.whatLabel} index={++index}>
-                <dl className="grid gap-x-12 sm:grid-cols-2">
-                  {about.services.map((service, i) => (
-                    <div key={i} className="border-t border-line py-7">
-                      <dt className="font-display text-2xl">{service.title}</dt>
-                      <dd className="mt-3 leading-7 text-ink-soft">
-                        {service.description}
-                      </dd>
-                    </div>
+                <ul className="grid gap-x-10 sm:grid-cols-2">
+                  {services.categories.map((service) => (
+                    <li key={service.title} className="border-t border-line">
+                      <Link
+                        href={`/services#${serviceSlug(service.title)}`}
+                        className="group flex items-start gap-4 py-6"
+                      >
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-paper-deep text-brand transition-colors group-hover:bg-forest group-hover:text-lime">
+                          <ServiceIcon name={service.icon} size={18} />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="font-display block text-2xl transition-colors group-hover:text-brand">
+                            {service.title}
+                          </span>
+                          {service.summary && (
+                            <span className="mt-1 block text-sm leading-6 text-ink-soft">
+                              {service.summary}
+                            </span>
+                          )}
+                        </span>
+                        <ArrowUpRight
+                          size={16}
+                          strokeWidth={1.75}
+                          aria-hidden
+                          className="mt-2 shrink-0 text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
+                        />
+                      </Link>
+                    </li>
                   ))}
-                </dl>
+                </ul>
               </Section>
             </Reveal>
           )}

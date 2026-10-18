@@ -2,7 +2,7 @@ import { getContent } from "@/lib/content";
 import { listPublishedProjects } from "@/lib/projects";
 import ProjectGrid from "./ProjectGrid";
 import { Reveal } from "./motion";
-import { Container, Eyebrow, TextLink } from "./ui";
+import { Container, SectionHeading, TextLink } from "./ui";
 
 export default async function Work() {
   const [home, projects] = await Promise.all([
@@ -13,17 +13,12 @@ export default async function Work() {
   if (!projects.length) return null;
 
   return (
-    <section className="py-24 sm:py-32">
+    <section className="border-t border-line py-24 sm:py-32">
       <Container>
-        <Reveal className="mb-14 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <Eyebrow index={1}>{home.workEyebrow}</Eyebrow>
-            <h2 className="font-display mt-5 text-4xl sm:text-5xl">
-              {home.workTitle}
-            </h2>
-          </div>
-
-          <TextLink href="/work">{home.workLink}</TextLink>
+        <Reveal className="mb-14">
+          <SectionHeading eyebrow={home.workEyebrow} title={home.workTitle}>
+            <TextLink href="/work">{home.workLink}</TextLink>
+          </SectionHeading>
         </Reveal>
 
         <ProjectGrid projects={projects} />

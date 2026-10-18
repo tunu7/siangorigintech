@@ -10,7 +10,7 @@ export default function ProjectGrid({ projects }: { projects: Project[] }) {
       {projects.map((project, index) => (
         <Reveal as="li" key={project.id} delay={(index % 2) * 100}>
           <article className="group relative">
-            <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-paper-deep">
+            <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-3xl bg-paper-deep">
               {project.image ? (
                 <Image
                   src={mediaUrl(project.image)}

@@ -40,6 +40,76 @@ export function Eyebrow({
   );
 }
 
+// Eyebrow, display title and optional intro, used to open home sections.
+export function SectionHeading({
+  eyebrow,
+  index,
+  title,
+  text,
+  tone = "light",
+  className = "",
+  children,
+}: {
+  eyebrow: string;
+  index?: number;
+  title: React.ReactNode;
+  text?: React.ReactNode;
+  tone?: "light" | "dark";
+  className?: string;
+  children?: React.ReactNode;
+}) {
+  const dark = tone === "dark";
+
+  return (
+    <div
+      className={`flex flex-wrap items-end justify-between gap-x-12 gap-y-8 ${className}`}
+    >
+      <div className="max-w-3xl">
+        <Eyebrow
+          index={index}
+          className={dark ? "text-paper/55 [&>span]:text-lime" : ""}
+        >
+          {eyebrow}
+        </Eyebrow>
+        <h2 className="font-display mt-5 text-4xl text-balance sm:text-6xl">
+          {title}
+        </h2>
+        {text && (
+          <p
+            className={`mt-6 max-w-2xl text-lg leading-8 ${
+              dark ? "text-paper/65" : "text-ink-soft"
+            }`}
+          >
+            {text}
+          </p>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// Small rounded label for sub-services and highlights.
+export function Tag({
+  children,
+  tone = "light",
+}: {
+  children: React.ReactNode;
+  tone?: "light" | "dark";
+}) {
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-3 py-1 text-xs ${
+        tone === "dark"
+          ? "border-paper/15 text-paper/75"
+          : "border-line-strong bg-paper/60 text-ink-soft"
+      }`}
+    >
+      {children}
+    </span>
+  );
+}
+
 export function PageHeader({
   eyebrow,
   title,
@@ -97,6 +167,9 @@ const buttonStyles = {
   secondary:
     "border border-line-strong text-ink hover:border-ink",
   inverse: "bg-paper text-ink hover:bg-mint",
+  // For forest panels.
+  lime: "bg-lime text-forest hover:bg-paper",
+  outline: "border border-paper/25 text-paper hover:border-paper",
 };
 
 export function buttonClass(

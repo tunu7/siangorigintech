@@ -18,11 +18,19 @@
   --color-brand-light: #2f7d46;
   --color-mint: #a8d5b4;
 
+  /* Deep forest for feature panels, with a lime highlight used only on it. */
+  --color-forest: #08180f;
+  --color-forest-soft: #0f2719;
+  --color-forest-line: #1f3a2a;
+  --color-lime: #c8f27a;
+
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
 
   --animate-fade-in: fade-in 1s var(--ease-out-expo) both;
   --animate-fade-up: fade-up 0.9s var(--ease-out-expo) both;
   --animate-page-in: page-in 0.5s var(--ease-out-expo) both;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-float: float 8s ease-in-out infinite;
 
   @keyframes fade-in {
     from {
@@ -41,6 +49,18 @@
     from {
       opacity: 0;
       transform: translateY(6px);
+    }
+  }
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes float {
+    50% {
+      transform: translate3d(0, -18px, 0) scale(1.04);
     }
   }
 }
@@ -67,6 +87,37 @@ body {
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.02;
+}
+
+/* Faint grid for dark panels, faded out towards the edges. */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at 30% 20%, black 30%, transparent 75%);
+}
+
+/* Soft film grain over dark panels. */
+.bg-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Fades a scrolling row out at both ends. */
+.mask-fade-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
 }
 
 @keyframes loading-bar {
@@ -110,5 +161,9 @@ body {
   [data-reveal] {
     opacity: 1;
     transform: none;
+  }
+
+  .animate-marquee {
+    animation: none !important;
   }
 }
