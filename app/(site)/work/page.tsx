@@ -58,12 +58,13 @@ export default async function WorkPage() {
           ],
         }}
       />
+      <PageHeader
+        eyebrow={work.eyebrow}
+        title={work.title}
+        description={work.intro}
+      />
+
       <Container>
-        <PageHeader
-          eyebrow={work.eyebrow}
-          title={work.title}
-          description={work.intro}
-        />
 
         <div className="py-16 sm:py-24">
           <ProjectGrid projects={projects} />

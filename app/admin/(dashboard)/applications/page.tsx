@@ -105,7 +105,7 @@ export default async function AdminDashboard({
           <select
             name="job"
             defaultValue={filters.job ?? ""}
-            className="rounded-lg border border-line-strong bg-white px-3 py-2 text-sm outline-none focus:border-ink"
+            className="min-w-0 flex-1 basis-36 rounded-lg border border-line-strong bg-white px-3 py-2 text-sm sm:flex-none outline-none focus:border-ink"
           >
             <option value="">All roles</option>
             {jobs.map((job) => (
@@ -118,7 +118,7 @@ export default async function AdminDashboard({
           <select
             name="status"
             defaultValue={filters.status ?? ""}
-            className="rounded-lg border border-line-strong bg-white px-3 py-2 text-sm capitalize outline-none focus:border-ink"
+            className="min-w-0 flex-1 basis-36 rounded-lg border border-line-strong bg-white px-3 py-2 text-sm sm:flex-none capitalize outline-none focus:border-ink"
           >
             <option value="">All statuses</option>
             {APPLICATION_STATUSES.map((status) => (
@@ -132,7 +132,7 @@ export default async function AdminDashboard({
             name="sort"
             defaultValue={filters.sort ?? "newest"}
             aria-label="Sort by"
-            className="rounded-lg border border-line-strong bg-white px-3 py-2 text-sm outline-none focus:border-ink"
+            className="min-w-0 flex-1 basis-36 rounded-lg border border-line-strong bg-white px-3 py-2 text-sm sm:flex-none outline-none focus:border-ink"
           >
             {Object.keys(SORTS).map((sort) => (
               <option key={sort} value={sort}>
@@ -176,18 +176,18 @@ export default async function AdminDashboard({
         )}
 
         {/* Table */}
-        <div className="mt-3 overflow-x-auto rounded-lg border border-line bg-white">
-          <table className="w-full min-w-180 text-left text-sm">
+        <div className="relative mt-3 overflow-x-auto rounded-lg border border-line bg-white">
+          <table className="w-full text-left text-sm md:min-w-180">
             <thead className="border-b border-line text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
               <tr>
                 <th className="w-10 py-3 pl-4">
                   <SelectAll form="bulk" />
                 </th>
                 <th className="px-4 py-3 font-medium">Applicant</th>
-                <th className="px-4 py-3 font-medium">Role</th>
-                <th className="px-4 py-3 font-medium">Phone</th>
+                <th className="hidden px-4 py-3 font-medium md:table-cell">Role</th>
+                <th className="hidden px-4 py-3 font-medium lg:table-cell">Phone</th>
                 <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Applied</th>
+                <th className="hidden px-4 py-3 font-medium md:table-cell">Applied</th>
               </tr>
             </thead>
 
@@ -211,16 +211,20 @@ export default async function AdminDashboard({
                     >
                       {row.name}
                     </Link>
-                    <div className="text-xs text-muted">
+                    <div className="break-all text-xs text-muted">
                       {row.email}
                     </div>
+                    <div className="mt-1 text-xs text-ink-soft md:hidden">
+                      {row.job_title} ·{" "}
+                      {dateFormat.format(new Date(row.created_at))}
+                    </div>
                   </td>
-                  <td className="px-4 py-3">{row.job_title}</td>
-                  <td className="px-4 py-3 tabular-nums">{row.phone}</td>
+                  <td className="hidden px-4 py-3 md:table-cell">{row.job_title}</td>
+                  <td className="hidden px-4 py-3 tabular-nums lg:table-cell">{row.phone}</td>
                   <td className="px-4 py-3">
                     <StatusBadge status={row.status} />
                   </td>
-                  <td className="px-4 py-3 text-muted tabular-nums">
+                  <td className="hidden px-4 py-3 text-muted tabular-nums md:table-cell">
                     {dateFormat.format(new Date(row.created_at))}
                   </td>
                 </tr>

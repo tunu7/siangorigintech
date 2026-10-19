@@ -40,14 +40,14 @@ export default async function AdminJobsPage() {
           </Link>
         </div>
 
-        <div className="mt-8 overflow-x-auto rounded-lg border border-line bg-white">
-          <table className="w-full min-w-180 text-left text-sm">
+        <div className="relative mt-8 overflow-x-auto rounded-lg border border-line bg-white">
+          <table className="w-full text-left text-sm md:min-w-180">
             <thead className="border-b border-line text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
               <tr>
                 <th className="px-4 py-3 font-medium">Role</th>
                 <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Applications</th>
-                <th className="px-4 py-3 font-medium">Updated</th>
+                <th className="hidden px-4 py-3 font-medium md:table-cell">Applications</th>
+                <th className="hidden px-4 py-3 font-medium md:table-cell">Updated</th>
                 <th className="px-4 py-3 font-medium">
                   <span className="sr-only">Actions</span>
                 </th>
@@ -67,6 +67,13 @@ export default async function AdminJobsPage() {
                     <div className="text-xs text-muted">
                       {[job.department, job.type, job.location].join(" · ")}
                     </div>
+                    <Link
+                      href={`/admin/applications?job=${job.slug}`}
+                      className="mt-1 block text-xs text-ink-soft md:hidden"
+                    >
+                      {job.applications} applied
+                      {job.new_applications > 0 && ` · ${job.new_applications} new`}
+                    </Link>
                   </td>
                   <td className="px-4 py-3">
                     <span
@@ -79,7 +86,7 @@ export default async function AdminJobsPage() {
                       {job.is_open ? "Open" : "Closed"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 tabular-nums">
+                  <td className="hidden px-4 py-3 tabular-nums md:table-cell">
                     <Link
                       href={`/admin/applications?job=${job.slug}`}
                       className="hover:text-ink hover:underline"
@@ -93,11 +100,11 @@ export default async function AdminJobsPage() {
                       )}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-muted tabular-nums">
+                  <td className="hidden px-4 py-3 text-muted tabular-nums md:table-cell">
                     {dateFormat.format(new Date(job.updated_at))}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-3">
+                    <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-2">
                       {job.is_open && (
                         <a
                           href={`/careers/${job.slug}`}

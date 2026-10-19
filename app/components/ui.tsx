@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import Scene3D from "./three/Scene3D";
+import type { SceneVariant } from "./three/engine";
 
 export function Container({
   children,
@@ -110,32 +112,62 @@ export function Tag({
   );
 }
 
+// Dark page header with a 3D scene behind it. Renders full width, so
+// pages place it outside their <Container>. "hero" and "globe" put a
+// focal object beside the text on wide screens and above it on phones.
 export function PageHeader({
   eyebrow,
   title,
   description,
+  back,
+  scene = "field",
   children,
 }: {
   eyebrow: string;
   title: React.ReactNode;
   description?: React.ReactNode;
+  back?: { href: string; label: string };
+  scene?: SceneVariant;
   children?: React.ReactNode;
 }) {
+  const focus = scene === "hero" || scene === "globe";
+
   return (
-    <header className="border-b border-line pb-14 pt-20 sm:pb-20 sm:pt-28">
-      <div className="animate-fade-up">
-        <Eyebrow>{eyebrow}</Eyebrow>
+    <section className="px-3 pt-3 sm:px-4">
+      <div className="dark-panel relative isolate overflow-hidden rounded-[1.75rem] sm:rounded-[2.5rem]">
+        <Scene3D variant={scene} className="absolute inset-0 -z-10" />
+
+        <div
+          className={`mx-auto max-w-[1280px] px-6 pb-16 sm:px-10 sm:pb-24 ${
+            focus ? "pt-[min(80vw,21rem)] lg:pt-28" : "pt-16 sm:pt-28"
+          }`}
+        >
+          <div className={focus ? "lg:max-w-[54%]" : ""}>
+            {back && (
+              <Link
+                href={back.href}
+                className="mb-10 inline-flex items-center gap-2 text-sm text-paper/55 transition-colors hover:text-paper"
+              >
+                <ArrowLeft size={15} strokeWidth={1.75} aria-hidden />
+                {back.label}
+              </Link>
+            )}
+            <p className="animate-fade-up text-[11px] font-medium uppercase tracking-[0.2em] text-paper/50">
+              {eyebrow}
+            </p>
+            <h1 className="font-display mt-6 max-w-4xl animate-fade-up text-5xl text-balance [animation-delay:80ms] sm:text-7xl">
+              {title}
+            </h1>
+            {description && (
+              <p className="mt-8 max-w-2xl animate-fade-up text-lg leading-8 text-paper/65 [animation-delay:160ms]">
+                {description}
+              </p>
+            )}
+            {children}
+          </div>
+        </div>
       </div>
-      <h1 className="font-display mt-6 max-w-4xl animate-fade-up text-5xl text-balance [animation-delay:80ms] sm:text-7xl">
-        {title}
-      </h1>
-      {description && (
-        <p className="mt-8 max-w-2xl animate-fade-up text-lg leading-8 text-ink-soft [animation-delay:160ms]">
-          {description}
-        </p>
-      )}
-      {children}
-    </header>
+    </section>
   );
 }
 

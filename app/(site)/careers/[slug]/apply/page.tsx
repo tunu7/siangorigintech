@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import { Container, Eyebrow } from "@/app/components/ui";
+import { Container, PageHeader } from "@/app/components/ui";
 import { getOpenJob, listOpenJobs } from "@/lib/jobs";
 import ApplyForm from "./ApplyForm";
 
@@ -39,30 +37,19 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
   if (!job) notFound();
 
   return (
-    <Container className="max-w-3xl! pb-24 sm:pb-32">
-      <div className="pt-12 sm:pt-16">
-        <Link
-          href={`/careers/${slug}`}
-          className="inline-flex items-center gap-2 text-sm text-muted hover:text-ink"
-        >
-          <ArrowLeft size={15} strokeWidth={1.75} aria-hidden />
-          Back to role
-        </Link>
-      </div>
+    <>
+      <PageHeader
+        eyebrow="Application"
+        title={job.title}
+        description={[job.type, job.location].join(" · ")}
+        back={{ href: `/careers/${slug}`, label: "Back to role" }}
+      />
 
-      <header className="border-b border-line pb-12 pt-12 animate-fade-up">
-        <Eyebrow>Application</Eyebrow>
-        <h1 className="font-display mt-6 text-5xl text-balance sm:text-6xl">
-          {job.title}
-        </h1>
-        <p className="mt-4 text-muted">
-          {[job.type, job.location].join(" · ")}
-        </p>
-      </header>
-
-      <div className="animate-fade-up pt-12 [animation-delay:150ms]">
-        <ApplyForm slug={slug} />
-      </div>
-    </Container>
+      <Container className="max-w-3xl! pb-24 sm:pb-32">
+        <div className="animate-fade-up pt-12 sm:pt-16 [animation-delay:150ms]">
+          <ApplyForm slug={slug} />
+        </div>
+      </Container>
+    </>
   );
 }

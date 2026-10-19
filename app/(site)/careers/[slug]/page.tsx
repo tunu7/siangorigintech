@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { Reveal } from "@/app/components/motion";
-import { ButtonLink, Container, Eyebrow } from "@/app/components/ui";
+import {
+  ButtonLink,
+  Container,
+  Eyebrow,
+  PageHeader,
+} from "@/app/components/ui";
 import { getContent } from "@/lib/content";
 import { getOpenJob, listOpenJobs, type Job } from "@/lib/jobs";
 import {
@@ -62,10 +65,7 @@ const htmlList = (title: string, items: string[]) =>
 
 // Google for Jobs structured data. Free-text fields are mapped to the
 // schema.org vocabulary on a best-effort basis.
-function jobPostingJsonLd(
-  job: Job,
-  site: { name: string; location: string }
-) {
+function jobPostingJsonLd(job: Job, site: { name: string; location: string }) {
   const remote = /remote/i.test(job.location);
   const employmentType = EMPLOYMENT_TYPES.find(([pattern]) =>
     pattern.test(job.type)
@@ -139,12 +139,18 @@ function jobPostingJsonLd(
 
 function ListSection({ title, items }: { title: string; items: string[] }) {
   return (
-    <Reveal as="section" className="border-t border-line py-12 first:border-t-0">
+    <Reveal
+      as="section"
+      className="border-t border-line py-12 first:border-t-0"
+    >
       <Eyebrow>{title}</Eyebrow>
       <ul className="mt-6 space-y-4">
         {items.map((item) => (
           <li key={item} className="flex gap-4 text-lg leading-8 text-ink-soft">
-            <span aria-hidden className="mt-[0.95rem] h-px w-4 shrink-0 bg-ink" />
+            <span
+              aria-hidden
+              className="mt-[0.95rem] h-px w-4 shrink-0 bg-ink"
+            />
             {item}
           </li>
         ))}
@@ -171,7 +177,7 @@ export default async function JobPage({ params }: JobPageProps) {
   ];
 
   return (
-    <Container className="pb-24 sm:pb-32">
+    <>
       <JsonLd
         data={{
           "@graph": [
@@ -183,54 +189,47 @@ export default async function JobPage({ params }: JobPageProps) {
           ],
         }}
       />
-      <div className="pt-12 sm:pt-16">
-        <Link
-          href="/careers"
-          className="inline-flex items-center gap-2 text-sm text-muted hover:text-ink"
-        >
-          <ArrowLeft size={15} strokeWidth={1.75} aria-hidden />
-          All roles
-        </Link>
-      </div>
+      <PageHeader
+        eyebrow={job.department}
+        title={job.title}
+        description={job.description}
+        back={{ href: "/careers", label: "All roles" }}
+      />
 
-      <header className="border-b border-line pb-14 pt-12 sm:pb-20">
-        <div className="animate-fade-up">
-          <Eyebrow>{job.department}</Eyebrow>
-        </div>
-        <h1 className="font-display mt-6 max-w-4xl animate-fade-up text-5xl text-balance [animation-delay:80ms] sm:text-7xl">
-          {job.title}
-        </h1>
-        <p className="mt-8 max-w-2xl animate-fade-up text-lg leading-8 text-ink-soft [animation-delay:160ms]">
-          {job.description}
-        </p>
-      </header>
-
-      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-20">
-        <div>
-          <ListSection title="Responsibilities" items={job.responsibilities} />
-          <ListSection title="Requirements" items={job.requirements} />
-          {job.benefits.length > 0 && (
-            <ListSection title="What we offer" items={job.benefits} />
-          )}
-        </div>
-
-        <aside className="lg:sticky lg:top-28 lg:self-start lg:pt-12">
-          <dl className="divide-y divide-line border-y border-line text-sm">
-            {facts.map((fact) => (
-              <div key={fact.label} className="flex justify-between gap-6 py-4">
-                <dt className="text-muted">{fact.label}</dt>
-                <dd className="text-right font-medium">{fact.value}</dd>
-              </div>
-            ))}
-          </dl>
-
-          <div className="mt-8 [&>a]:w-full">
-            <ButtonLink href={`/careers/${job.slug}/apply`} arrow>
-              Apply for this role
-            </ButtonLink>
+      <Container className="pb-24 sm:pb-32">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-20">
+          <div>
+            <ListSection
+              title="Responsibilities"
+              items={job.responsibilities}
+            />
+            <ListSection title="Requirements" items={job.requirements} />
+            {job.benefits.length > 0 && (
+              <ListSection title="What we offer" items={job.benefits} />
+            )}
           </div>
-        </aside>
-      </div>
-    </Container>
+
+          <aside className="lg:sticky lg:top-28 lg:self-start lg:pt-12">
+            <dl className="divide-y divide-line border-y border-line text-sm">
+              {facts.map((fact) => (
+                <div
+                  key={fact.label}
+                  className="flex justify-between gap-6 py-4"
+                >
+                  <dt className="text-muted">{fact.label}</dt>
+                  <dd className="text-right font-medium">{fact.value}</dd>
+                </div>
+              ))}
+            </dl>
+
+            <div className="mt-8 [&>a]:w-full">
+              <ButtonLink href={`/careers/${job.slug}/apply`} arrow>
+                Apply for this role
+              </ButtonLink>
+            </div>
+          </aside>
+        </div>
+      </Container>
+    </>
   );
 }

@@ -39,13 +39,13 @@ export default async function AdminProjectsPage() {
           </Link>
         </div>
 
-        <div className="mt-8 overflow-x-auto rounded-lg border border-line bg-white">
-          <table className="w-full min-w-180 text-left text-sm">
+        <div className="relative mt-8 overflow-x-auto rounded-lg border border-line bg-white">
+          <table className="w-full text-left text-sm md:min-w-180">
             <thead className="border-b border-line text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
               <tr>
-                <th className="w-24 px-4 py-3 font-medium">Order</th>
+                <th className="w-20 px-4 py-3 font-medium sm:w-24">Order</th>
                 <th className="px-4 py-3 font-medium">Project</th>
-                <th className="px-4 py-3 font-medium">Status</th>
+                <th className="hidden px-4 py-3 font-medium md:table-cell">Status</th>
                 <th className="px-4 py-3 font-medium">
                   <span className="sr-only">Actions</span>
                 </th>
@@ -107,11 +107,16 @@ export default async function AdminProjectsPage() {
                         </Link>
                         <div className="text-xs text-muted">
                           {project.category}
+                          <span className="md:hidden">
+                            {" · "}
+                            {project.published ? "Published" : "Hidden"}
+                            {project.published && project.featured && " · Featured"}
+                          </span>
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="hidden px-4 py-3 md:table-cell">
                     <div className="flex flex-wrap gap-1.5">
                       <span
                         className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${
@@ -130,7 +135,7 @@ export default async function AdminProjectsPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-3">
+                    <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-2">
                       <Link
                         href={`/admin/projects/${project.id}`}
                         className="text-muted hover:text-ink"

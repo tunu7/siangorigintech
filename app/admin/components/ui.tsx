@@ -25,8 +25,8 @@ export function button(
 }
 
 export const table = {
-  wrap: `${card} overflow-x-auto`,
-  table: "w-full min-w-180 text-left text-sm",
+  wrap: `${card} relative overflow-x-auto`,
+  table: "w-full text-left text-sm md:min-w-180",
   head: "border-b border-line text-[11px] uppercase tracking-[0.14em] text-muted",
   th: "px-4 py-3 font-medium",
   body: "divide-y divide-line",

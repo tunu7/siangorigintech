@@ -121,16 +121,16 @@ export default async function EnquiriesPage({
           </div>
         )}
 
-        <div className="mt-3 overflow-x-auto rounded-lg border border-line bg-white">
-          <table className="w-full min-w-180 text-left text-sm">
+        <div className="relative mt-3 overflow-x-auto rounded-lg border border-line bg-white">
+          <table className="w-full text-left text-sm md:min-w-180">
             <thead className="border-b border-line text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
               <tr>
                 <th className="w-10 py-3 pl-4">
                   <SelectAll form="bulk" />
                 </th>
                 <th className="px-4 py-3 font-medium">From</th>
-                <th className="px-4 py-3 font-medium">Message</th>
-                <th className="px-4 py-3 font-medium">Received</th>
+                <th className="hidden px-4 py-3 font-medium md:table-cell">Message</th>
+                <th className="hidden px-4 py-3 font-medium md:table-cell">Received</th>
               </tr>
             </thead>
 
@@ -165,9 +165,25 @@ export default async function EnquiriesPage({
                         )}
                         {row.name}
                       </Link>
-                      <div className="text-xs text-muted">{row.email}</div>
+                      <div className="break-all text-xs text-muted">{row.email}</div>
+
+                      {/* Message, services and date sit here on phones. */}
+                      <div className="md:hidden">
+                        <Link
+                          href={`/admin/enquiries/${row.id}`}
+                          className={`mt-2 line-clamp-2 ${
+                            unread ? "text-ink" : "text-muted"
+                          }`}
+                        >
+                          {row.message}
+                        </Link>
+                        <ServiceTags services={row.services} />
+                        <p className="mt-1.5 text-xs text-muted tabular-nums">
+                          {dateFormat.format(new Date(row.created_at))}
+                        </p>
+                      </div>
                     </td>
-                    <td className="max-w-md px-4 py-3">
+                    <td className="hidden max-w-md px-4 py-3 md:table-cell">
                       <Link
                         href={`/admin/enquiries/${row.id}`}
                         className={`line-clamp-2 ${
@@ -176,20 +192,9 @@ export default async function EnquiriesPage({
                       >
                         {row.message}
                       </Link>
-                      {row.services.length > 0 && (
-                        <div className="mt-1.5 flex flex-wrap gap-1">
-                          {row.services.map((service) => (
-                            <span
-                              key={service}
-                              className="rounded-full bg-paper-deep px-2 py-0.5 text-[11px] text-ink-soft"
-                            >
-                              {service}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                      <ServiceTags services={row.services} />
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-muted tabular-nums">
+                    <td className="hidden px-4 py-3 whitespace-nowrap text-muted tabular-nums md:table-cell">
                       {dateFormat.format(new Date(row.created_at))}
                     </td>
                   </tr>
@@ -237,5 +242,22 @@ export default async function EnquiriesPage({
         )}
       </main>
     </>
+  );
+}
+
+function ServiceTags({ services }: { services: string[] }) {
+  if (!services.length) return null;
+
+  return (
+    <div className="mt-1.5 flex flex-wrap gap-1">
+      {services.map((service) => (
+        <span
+          key={service}
+          className="rounded-full bg-paper-deep px-2 py-0.5 text-[11px] text-ink-soft"
+        >
+          {service}
+        </span>
+      ))}
+    </div>
   );
 }

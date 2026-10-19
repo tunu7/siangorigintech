@@ -97,7 +97,7 @@ export default async function OverviewPage() {
         ))}
       </div>
 
-      <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+      <div className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <Panel title="Latest applications" href="/admin/applications">
           {applications.length ? (
             <ul className="divide-y divide-line">
@@ -128,7 +128,7 @@ export default async function OverviewPage() {
           )}
         </Panel>
 
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <Panel title="Inbox" href="/admin/enquiries">
             {enquiries.length ? (
               <ul className="divide-y divide-line">

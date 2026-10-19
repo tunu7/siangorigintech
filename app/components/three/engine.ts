@@ -1,19 +1,54 @@
-import * as THREE from "three";
+import {
+  ACESFilmicToneMapping,
+  AdditiveBlending,
+  AmbientLight,
+  BufferAttribute,
+  BufferGeometry,
+  Color,
+  CylinderGeometry,
+  DirectionalLight,
+  DoubleSide,
+  EdgesGeometry,
+  ExtrudeGeometry,
+  Group,
+  LineBasicMaterial,
+  LineSegments,
+  Material,
+  MathUtils,
+  Mesh,
+  MeshBasicMaterial,
+  MeshPhysicalMaterial,
+  PMREMGenerator,
+  PerspectiveCamera,
+  PlaneGeometry,
+  PointLight,
+  QuadraticBezierCurve3,
+  RingGeometry,
+  SphereGeometry,
+  Points,
+  Scene,
+  ShaderMaterial,
+  Shape,
+  TorusGeometry,
+  Vector2,
+  Vector3,
+  WebGLRenderer,
+} from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
 // Brand palette (see app/globals.css).
 const C = {
-  forest: new THREE.Color("#08180f"),
-  ink: new THREE.Color("#101a14"),
-  brand: new THREE.Color("#0b4d2c"),
-  leaf: new THREE.Color("#3f9a4a"),
-  mint: new THREE.Color("#a8d5b4"),
-  lime: new THREE.Color("#c8f27a"),
+  forest: new Color("#08180f"),
+  ink: new Color("#101a14"),
+  brand: new Color("#0b4d2c"),
+  leaf: new Color("#3f9a4a"),
+  mint: new Color("#a8d5b4"),
+  lime: new Color("#c8f27a"),
 };
 
-export type SceneVariant = "hero" | "pillars" | "field";
+export type SceneVariant = "hero" | "pillars" | "field" | "globe";
 
-type Frame = { time: number; delta: number; pointer: THREE.Vector2 };
+type Frame = { time: number; delta: number; pointer: Vector2 };
 
 type World = {
   update: (frame: Frame) => void;
@@ -21,10 +56,40 @@ type World = {
 };
 
 // Visible size of the camera's view at a given distance.
-function viewSize(camera: THREE.PerspectiveCamera, distance: number) {
-  const height =
-    2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * distance;
+function viewSize(camera: PerspectiveCamera, distance: number) {
+  const height = 2 * Math.tan(MathUtils.degToRad(camera.fov) / 2) * distance;
   return { width: height * camera.aspect, height };
+}
+
+// Places a focal object beside the headline on wide screens and in the
+// space above it on narrow ones (see the hero and PageHeader padding),
+// with the dawn glow rising directly behind it.
+function placeFocus(
+  camera: PerspectiveCamera,
+  width: number,
+  height: number,
+  anchor: Group,
+  naturalWidth: number,
+  sun?: ReturnType<typeof dawn>
+) {
+  const view = viewSize(camera, camera.position.z);
+  const unit = view.width / width; // World units per CSS pixel.
+  const wide = width >= 1024;
+
+  const x = wide ? width * 0.74 : width / 2;
+  const y = wide ? Math.min(height * 0.45, 420) : Math.min(width * 0.39, 176);
+  const size = wide ? Math.min(width * 0.3, 440) : Math.min(width * 0.5, 230);
+
+  anchor.position.set((x - width / 2) * unit, 0.6 + (height / 2 - y) * unit, 0);
+  anchor.scale.setScalar((size * unit) / naturalWidth);
+
+  if (sun) {
+    const depth =
+      (camera.position.z - sun.object.position.z) / camera.position.z;
+    sun.object.position.x = anchor.position.x * depth;
+    sun.object.position.y = 1.2 + (anchor.position.y - 1.2) * depth;
+    sun.object.scale.setScalar(anchor.scale.x * 1.4);
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -64,13 +129,13 @@ function terrain({
   speed = 0.6,
   fade = 46,
 }: { height?: number; speed?: number; fade?: number } = {}) {
-  const geometry = new THREE.PlaneGeometry(90, 70, 180, 140);
+  const geometry = new PlaneGeometry(90, 70, 180, 140);
   geometry.rotateX(-Math.PI / 2);
 
-  const material = new THREE.ShaderMaterial({
+  const material = new ShaderMaterial({
     transparent: true,
     depthWrite: false,
-    side: THREE.DoubleSide,
+    side: DoubleSide,
     uniforms: {
       uTime: { value: 0 },
       uSpeed: { value: speed },
@@ -120,7 +185,7 @@ function terrain({
     `,
   });
 
-  const mesh = new THREE.Mesh(geometry, material);
+  const mesh = new Mesh(geometry, material);
   return {
     object: mesh,
     update: (time: number) => {
@@ -155,14 +220,14 @@ function risingParticles({
     seeds[i] = Math.random();
   }
 
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  geometry.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 1));
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new BufferAttribute(positions, 3));
+  geometry.setAttribute("aSeed", new BufferAttribute(seeds, 1));
 
-  const material = new THREE.ShaderMaterial({
+  const material = new ShaderMaterial({
     transparent: true,
     depthWrite: false,
-    blending: THREE.AdditiveBlending,
+    blending: AdditiveBlending,
     uniforms: {
       uTime: { value: 0 },
       uHeight: { value: height },
@@ -207,7 +272,7 @@ function risingParticles({
     `,
   });
 
-  const points = new THREE.Points(geometry, material);
+  const points = new Points(geometry, material);
   return {
     object: points,
     setPixelRatio: (ratio: number) => {
@@ -221,10 +286,10 @@ function risingParticles({
 
 // The dawn glow behind the mountains; `disc` 0 leaves only the halo.
 function dawn(radius = 9, disc = 1) {
-  const material = new THREE.ShaderMaterial({
+  const material = new ShaderMaterial({
     transparent: true,
     depthWrite: false,
-    blending: THREE.AdditiveBlending,
+    blending: AdditiveBlending,
     uniforms: {
       uTime: { value: 0 },
       uDisc: { value: disc },
@@ -257,10 +322,7 @@ function dawn(radius = 9, disc = 1) {
     `,
   });
 
-  const mesh = new THREE.Mesh(
-    new THREE.PlaneGeometry(radius * 2, radius * 2),
-    material,
-  );
+  const mesh = new Mesh(new PlaneGeometry(radius * 2, radius * 2), material);
   return {
     object: mesh,
     update: (time: number) => {
@@ -272,7 +334,7 @@ function dawn(radius = 9, disc = 1) {
 // The Siang Origin mountain mark (app/components/Logo.tsx), extruded.
 function brandMark() {
   const shape = (points: [number, number][]) =>
-    new THREE.Shape(points.map(([x, y]) => new THREE.Vector2(x - 50, 31 - y)));
+    new Shape(points.map(([x, y]) => new Vector2(x - 50, 31 - y)));
 
   const extrude = {
     depth: 12,
@@ -282,14 +344,14 @@ function brandMark() {
     bevelSegments: 4,
     curveSegments: 1,
   };
-  const dark = new THREE.MeshPhysicalMaterial({
+  const dark = new MeshPhysicalMaterial({
     color: C.ink,
     metalness: 0.75,
     roughness: 0.22,
     clearcoat: 1,
     clearcoatRoughness: 0.08,
   });
-  const green = new THREE.MeshPhysicalMaterial({
+  const green = new MeshPhysicalMaterial({
     color: C.leaf,
     emissive: C.brand,
     emissiveIntensity: 1.2,
@@ -299,14 +361,14 @@ function brandMark() {
     clearcoatRoughness: 0.1,
     envMapIntensity: 0.5,
   });
-  const edges = new THREE.LineBasicMaterial({
+  const edges = new LineBasicMaterial({
     color: C.lime,
     transparent: true,
     opacity: 0.45,
   });
 
-  const group = new THREE.Group();
-  const parts: [THREE.Shape, THREE.Material][] = [
+  const group = new Group();
+  const parts: [Shape, Material][] = [
     [
       shape([
         [40, 0],
@@ -337,12 +399,10 @@ function brandMark() {
   ];
 
   for (const [outline, material] of parts) {
-    const geometry = new THREE.ExtrudeGeometry(outline, extrude);
+    const geometry = new ExtrudeGeometry(outline, extrude);
     geometry.translate(0, 0, -extrude.depth / 2);
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.add(
-      new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 30), edges),
-    );
+    const mesh = new Mesh(geometry, material);
+    mesh.add(new LineSegments(new EdgesGeometry(geometry, 30), edges));
     group.add(mesh);
   }
 
@@ -350,14 +410,14 @@ function brandMark() {
   return group;
 }
 
-function lights(scene: THREE.Scene) {
-  const key = new THREE.DirectionalLight("#ffffff", 2.2);
+function lights(scene: Scene) {
+  const key = new DirectionalLight("#ffffff", 2.2);
   key.position.set(4, 6, 8);
-  const rim = new THREE.DirectionalLight(C.lime, 3);
+  const rim = new DirectionalLight(C.lime, 3);
   rim.position.set(-6, 3, -6);
-  const fill = new THREE.PointLight(C.leaf, 30, 30);
+  const fill = new PointLight(C.leaf, 30, 30);
   fill.position.set(0, -1, 4);
-  scene.add(key, rim, fill, new THREE.AmbientLight("#ffffff", 0.15));
+  scene.add(key, rim, fill, new AmbientLight("#ffffff", 0.15));
 }
 
 /* ------------------------------------------------------------------ */
@@ -365,9 +425,9 @@ function lights(scene: THREE.Scene) {
 /* ------------------------------------------------------------------ */
 
 function heroWorld(
-  scene: THREE.Scene,
-  camera: THREE.PerspectiveCamera,
-  particles: ReturnType<typeof risingParticles>,
+  scene: Scene,
+  camera: PerspectiveCamera,
+  particles: ReturnType<typeof risingParticles>
 ): World {
   camera.position.set(0, 1.2, 12);
   camera.lookAt(0, 0.6, 0);
@@ -376,45 +436,18 @@ function heroWorld(
   const ground = terrain();
   ground.object.position.set(0, -2.6, -18);
   const sun = dawn(16);
+  sun.object.position.z = -40;
   particles.object.position.set(0, -2.5, -4);
 
   const mark = brandMark();
-  const anchor = new THREE.Group();
+  const anchor = new Group();
   anchor.add(mark);
 
   scene.add(ground.object, sun.object, particles.object, anchor);
 
   return {
     resize(width, height) {
-      const view = viewSize(camera, camera.position.z);
-      const unit = view.width / width; // World units per CSS pixel.
-      const wide = width >= 1024;
-
-      // Beside the headline on wide screens; in the space above it on
-      // narrow ones (see the hero's top padding).
-      const x = wide ? width * 0.74 : width / 2;
-      const y = wide
-        ? Math.min(height * 0.42, 420)
-        : Math.min(width * 0.39, 176);
-      const size = wide
-        ? Math.min(width * 0.3, 440)
-        : Math.min(width * 0.5, 230);
-
-      anchor.position.set(
-        (x - width / 2) * unit,
-        0.6 + (height / 2 - y) * unit,
-        0,
-      );
-      anchor.scale.setScalar((size * unit) / 5); // The mark is 5 units wide.
-
-      // Rise the dawn directly behind the mark.
-      const depth = (camera.position.z + 40) / camera.position.z;
-      sun.object.position.set(
-        anchor.position.x * depth,
-        1.2 + (anchor.position.y - 1.2) * depth,
-        -40,
-      );
-      sun.object.scale.setScalar(anchor.scale.x * 1.4);
+      placeFocus(camera, width, height, anchor, 5, sun); // The mark is 5 units wide.
     },
     update({ time, pointer }) {
       ground.update(time);
@@ -432,9 +465,9 @@ function heroWorld(
 
 // Four glass pillars rising in steps — the four pillars of growth.
 function pillarsWorld(
-  scene: THREE.Scene,
-  camera: THREE.PerspectiveCamera,
-  particles: ReturnType<typeof risingParticles>,
+  scene: Scene,
+  camera: PerspectiveCamera,
+  particles: ReturnType<typeof risingParticles>
 ): World {
   camera.position.set(0, 2.4, 15);
   camera.lookAt(0, 2.4, 0);
@@ -447,7 +480,7 @@ function pillarsWorld(
   const heights = [2.2, 3.4, 4.6, 5.8];
   // Translucent rather than refractive glass: cheaper, and it shows the
   // glowing core through every face.
-  const glass = new THREE.MeshPhysicalMaterial({
+  const glass = new MeshPhysicalMaterial({
     color: C.leaf,
     emissive: C.brand,
     emissiveIntensity: 0.6,
@@ -457,30 +490,30 @@ function pillarsWorld(
     transparent: true,
     opacity: 0.28,
     depthWrite: false,
-    side: THREE.DoubleSide,
+    side: DoubleSide,
   });
-  const core = new THREE.MeshBasicMaterial({ color: C.lime });
-  const cap = new THREE.MeshBasicMaterial({
+  const core = new MeshBasicMaterial({ color: C.lime });
+  const cap = new MeshBasicMaterial({
     color: C.lime,
     transparent: true,
     opacity: 0.9,
   });
-  const edge = new THREE.LineBasicMaterial({
+  const edge = new LineBasicMaterial({
     color: C.lime,
     transparent: true,
     opacity: 0.55,
   });
 
   const pillars = heights.map((height) => {
-    const group = new THREE.Group();
-    const body = new THREE.CylinderGeometry(0.85, 0.85, 1, 6);
+    const group = new Group();
+    const body = new CylinderGeometry(0.85, 0.85, 1, 6);
     body.translate(0, 0.5, 0);
-    const shell = new THREE.Mesh(body, glass);
-    shell.add(new THREE.LineSegments(new THREE.EdgesGeometry(body), edge));
-    const inner = new THREE.CylinderGeometry(0.08, 0.08, 1, 8);
+    const shell = new Mesh(body, glass);
+    shell.add(new LineSegments(new EdgesGeometry(body), edge));
+    const inner = new CylinderGeometry(0.08, 0.08, 1, 8);
     inner.translate(0, 0.5, 0);
-    const glow = new THREE.Mesh(inner, core);
-    const top = new THREE.Mesh(new THREE.TorusGeometry(0.7, 0.035, 8, 6), cap);
+    const glow = new Mesh(inner, core);
+    const top = new Mesh(new TorusGeometry(0.7, 0.035, 8, 6), cap);
     top.rotation.x = Math.PI / 2;
     top.rotation.z = Math.PI / 6;
     group.add(shell, glow, top);
@@ -513,7 +546,7 @@ function pillarsWorld(
         delta >= 1 ? 1 : Math.min(1, (performance.now() - started) / 2400);
 
       pillars.forEach((pillar, index) => {
-        const local = THREE.MathUtils.clamp(grow * 1.6 - index * 0.2, 0, 1);
+        const local = MathUtils.clamp(grow * 1.6 - index * 0.2, 0, 1);
         const eased = 1 - Math.pow(1 - local, 4);
         const height = Math.max(0.001, pillar.height * eased);
         pillar.shell.scale.y = height;
@@ -531,9 +564,9 @@ function pillarsWorld(
 
 // Mountains, dawn and rising particles without the mark.
 function fieldWorld(
-  scene: THREE.Scene,
-  camera: THREE.PerspectiveCamera,
-  particles: ReturnType<typeof risingParticles>,
+  scene: Scene,
+  camera: PerspectiveCamera,
+  particles: ReturnType<typeof risingParticles>
 ): World {
   camera.position.set(0, 1.4, 12);
   camera.lookAt(0, 0.4, 0);
@@ -558,22 +591,334 @@ function fieldWorld(
   };
 }
 
-const WORLDS = { hero: heroWorld, pillars: pillarsWorld, field: fieldWorld };
+/* ------------------------------------------------------------------ */
+/* Globe                                                               */
+/* ------------------------------------------------------------------ */
+
+const DEG = Math.PI / 180;
+
+// Itanagar, and some of the places we work with.
+const ORIGIN: [number, number] = [27.08, 93.61];
+const DESTINATIONS: [number, number][] = [
+  [28.61, 77.21], // Delhi
+  [19.08, 72.88], // Mumbai
+  [12.97, 77.59], // Bengaluru
+  [25.2, 55.27], // Dubai
+  [51.51, -0.13], // London
+  [40.71, -74.01], // New York
+  [1.35, 103.82], // Singapore
+  [-33.87, 151.21], // Sydney
+  [35.68, 139.69], // Tokyo
+];
+
+function latLon([lat, lon]: [number, number], radius: number) {
+  const phi = (90 - lat) * DEG;
+  const theta = (lon + 180) * DEG;
+  return new Vector3(
+    -radius * Math.sin(phi) * Math.cos(theta),
+    radius * Math.cos(phi),
+    radius * Math.sin(phi) * Math.sin(theta)
+  );
+}
+
+// A dotted globe with arcs travelling out from Itanagar — local roots,
+// international reach.
+function globe(radius = 2.5) {
+  const group = new Group();
+
+  // Evenly spread dots (Fibonacci sphere), brighter on the side facing us.
+  const count = 2600;
+  const positions = new Float32Array(count * 3);
+  const seeds = new Float32Array(count);
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  for (let i = 0; i < count; i++) {
+    const y = 1 - (i / (count - 1)) * 2;
+    const r = Math.sqrt(1 - y * y);
+    positions[i * 3] = Math.cos(golden * i) * r * radius;
+    positions[i * 3 + 1] = y * radius;
+    positions[i * 3 + 2] = Math.sin(golden * i) * r * radius;
+    seeds[i] = Math.random();
+  }
+  const dotGeometry = new BufferGeometry();
+  dotGeometry.setAttribute("position", new BufferAttribute(positions, 3));
+  dotGeometry.setAttribute("aSeed", new BufferAttribute(seeds, 1));
+  const dotMaterial = new ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    uniforms: {
+      uTime: { value: 0 },
+      uPixelRatio: { value: 1 },
+      uColor: { value: C.mint.clone() },
+    },
+    vertexShader: /* glsl */ `
+      uniform float uTime;
+      uniform float uPixelRatio;
+      attribute float aSeed;
+      varying float vFacing;
+      varying float vTwinkle;
+      void main() {
+        vec4 view = modelViewMatrix * vec4(position, 1.0);
+        vFacing = normalize(normalMatrix * position).z;
+        vTwinkle = 0.65 + 0.35 * sin(uTime * 1.5 + aSeed * 30.0);
+        gl_Position = projectionMatrix * view;
+        gl_PointSize = 26.0 * uPixelRatio / -view.z;
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      uniform vec3 uColor;
+      varying float vFacing;
+      varying float vTwinkle;
+      void main() {
+        float d = length(gl_PointCoord - 0.5);
+        float dot = smoothstep(0.5, 0.15, d);
+        float facing = mix(0.08, 0.85, smoothstep(-0.3, 0.7, vFacing));
+        gl_FragColor = vec4(uColor, dot * facing * vTwinkle);
+      }
+    `,
+  });
+  group.add(new Points(dotGeometry, dotMaterial));
+
+  // Atmosphere: a soft rim of light.
+  const atmosphere = new Mesh(
+    new SphereGeometry(radius * 1.04, 48, 48),
+    new ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      blending: AdditiveBlending,
+      uniforms: { uColor: { value: C.leaf.clone() } },
+      vertexShader: /* glsl */ `
+        varying float vRim;
+        void main() {
+          vec3 n = normalize(normalMatrix * normal);
+          vec4 view = modelViewMatrix * vec4(position, 1.0);
+          vRim = 1.0 - abs(dot(n, normalize(-view.xyz)));
+          gl_Position = projectionMatrix * view;
+        }
+      `,
+      fragmentShader: /* glsl */ `
+        uniform vec3 uColor;
+        varying float vRim;
+        void main() {
+          float glow = pow(vRim, 3.0);
+          gl_FragColor = vec4(uColor, glow * 0.9);
+        }
+      `,
+    })
+  );
+  group.add(atmosphere);
+
+  // Arcs out from Itanagar, each with a light travelling along it.
+  const origin = latLon(ORIGIN, radius);
+  const arcPositions: number[] = [];
+  const arcT: number[] = [];
+  const arcPhase: number[] = [];
+  const steps = 64;
+  DESTINATIONS.forEach((destination, index) => {
+    const end = latLon(destination, radius);
+    const lift = 1.15 + origin.distanceTo(end) / radius / 3.2;
+    const control = origin
+      .clone()
+      .add(end)
+      .multiplyScalar(0.5)
+      .normalize()
+      .multiplyScalar(radius * lift);
+    const points = new QuadraticBezierCurve3(origin, control, end).getPoints(
+      steps
+    );
+    for (let i = 0; i < steps; i++) {
+      arcPositions.push(...points[i].toArray(), ...points[i + 1].toArray());
+      arcT.push(i / steps, (i + 1) / steps);
+      arcPhase.push(index / DESTINATIONS.length, index / DESTINATIONS.length);
+    }
+  });
+  const arcGeometry = new BufferGeometry();
+  arcGeometry.setAttribute(
+    "position",
+    new BufferAttribute(new Float32Array(arcPositions), 3)
+  );
+  arcGeometry.setAttribute(
+    "aT",
+    new BufferAttribute(new Float32Array(arcT), 1)
+  );
+  arcGeometry.setAttribute(
+    "aPhase",
+    new BufferAttribute(new Float32Array(arcPhase), 1)
+  );
+  const arcMaterial = new ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    uniforms: { uTime: { value: 0 }, uColor: { value: C.lime.clone() } },
+    vertexShader: /* glsl */ `
+      attribute float aT;
+      attribute float aPhase;
+      varying float vT;
+      varying float vPhase;
+      void main() {
+        vT = aT;
+        vPhase = aPhase;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      uniform float uTime;
+      uniform vec3 uColor;
+      varying float vT;
+      varying float vPhase;
+      void main() {
+        float head = fract(uTime * 0.22 + vPhase) * 1.4;
+        float trail = smoothstep(head - 0.4, head, vT) * step(vT, head);
+        gl_FragColor = vec4(uColor, 0.12 + trail * 0.9);
+      }
+    `,
+  });
+  group.add(new LineSegments(arcGeometry, arcMaterial));
+
+  // Itanagar: a bright point with a pulsing ring.
+  const marker = new Mesh(
+    new SphereGeometry(radius * 0.025, 16, 16),
+    new MeshBasicMaterial({ color: C.lime })
+  );
+  marker.position.copy(origin);
+  const ringMaterial = new MeshBasicMaterial({
+    color: C.lime,
+    transparent: true,
+    side: DoubleSide,
+    depthWrite: false,
+  });
+  const ring = new Mesh(
+    new RingGeometry(radius * 0.05, radius * 0.065, 48),
+    ringMaterial
+  );
+  ring.position.copy(origin.clone().multiplyScalar(1.002));
+  ring.lookAt(origin.clone().multiplyScalar(2));
+  group.add(marker, ring);
+
+  // Turn the globe so Itanagar faces us, tilted towards its latitude.
+  const facing = -Math.atan2(origin.x, origin.z);
+
+  return {
+    object: group,
+    facing,
+    setPixelRatio: (ratio: number) => {
+      dotMaterial.uniforms.uPixelRatio.value = ratio;
+    },
+    update: (time: number) => {
+      dotMaterial.uniforms.uTime.value = time;
+      arcMaterial.uniforms.uTime.value = time;
+      const pulse = (time * 0.6) % 1;
+      ring.scale.setScalar(1 + pulse * 2.2);
+      ringMaterial.opacity = 0.9 * (1 - pulse);
+    },
+  };
+}
+
+function globeWorld(
+  scene: Scene,
+  camera: PerspectiveCamera,
+  particles: ReturnType<typeof risingParticles>,
+  pixelRatio: number
+): World {
+  camera.position.set(0, 1.2, 12);
+  camera.lookAt(0, 0.6, 0);
+
+  const sun = dawn(16, 0);
+  sun.object.position.z = -40;
+  particles.object.position.set(0, -4, -6);
+
+  const earth = globe();
+  earth.setPixelRatio(pixelRatio);
+  const anchor = new Group();
+  anchor.add(earth.object);
+  earth.object.rotation.x = ORIGIN[0] * DEG * 0.7;
+
+  scene.add(sun.object, particles.object, anchor);
+
+  return {
+    resize(width, height) {
+      placeFocus(camera, width, height, anchor, 6.2, sun); // Globe and rim.
+    },
+    update({ time, pointer }) {
+      sun.update(time);
+      particles.update(time);
+      earth.update(time);
+      // Keep Itanagar facing the camera from wherever the globe sits, and
+      // drift gently around it rather than spinning it out of view.
+      const toCamera = Math.atan2(
+        camera.position.x - anchor.position.x,
+        camera.position.z
+      );
+      const tilt = Math.atan2(
+        anchor.position.y - camera.position.y,
+        camera.position.z
+      );
+      earth.object.rotation.y =
+        earth.facing + toCamera + Math.sin(time * 0.15) * 0.3 + pointer.x * 0.3;
+      earth.object.rotation.x = ORIGIN[0] * DEG * 0.8 + tilt - pointer.y * 0.15;
+      camera.position.x = pointer.x * 0.4;
+      camera.lookAt(0, 0.6, 0);
+    },
+  };
+}
+
+type Build = (
+  scene: Scene,
+  camera: PerspectiveCamera,
+  particles: ReturnType<typeof risingParticles>,
+  pixelRatio: number
+) => World;
+
+const WORLDS: Record<SceneVariant, Build> = {
+  hero: heroWorld,
+  pillars: pillarsWorld,
+  field: fieldWorld,
+  globe: globeWorld,
+};
+
+// Only these scenes have reflective materials that need an environment.
+const NEEDS_ENVIRONMENT: SceneVariant[] = ["hero", "pillars"];
 
 /* ------------------------------------------------------------------ */
 /* Host                                                                */
 /* ------------------------------------------------------------------ */
+
+type Options = { reduceMotion: boolean };
 
 // Mounts a scene into `host` and returns a cleanup function. Renders only
 // while on screen; with reduced motion it draws a single still frame.
 export function mount(
   host: HTMLElement,
   variant: SceneVariant,
-  { reduceMotion }: { reduceMotion: boolean },
+  options: Options
 ) {
-  let renderer: THREE.WebGLRenderer;
+  let cancelled = false;
+  let cleanup: (() => void) | undefined;
+
+  setup(host, variant, options, () => cancelled).then((dispose) => {
+    if (cancelled) dispose();
+    else cleanup = dispose;
+  });
+
+  return () => {
+    cancelled = true;
+    cleanup?.();
+  };
+}
+
+// Lets the browser handle input and paint between setup steps, so building
+// a scene never shows up as one long main-thread task.
+const pause = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+async function setup(
+  host: HTMLElement,
+  variant: SceneVariant,
+  { reduceMotion }: Options,
+  isCancelled: () => boolean
+): Promise<() => void> {
+  let renderer: WebGLRenderer;
   try {
-    renderer = new THREE.WebGLRenderer({
+    renderer = new WebGLRenderer({
       antialias: true,
       alpha: true,
       powerPreference: "high-performance",
@@ -582,9 +927,11 @@ export function mount(
     return () => {};
   }
 
-  const pixelRatio = Math.min(window.devicePixelRatio, 1.75);
+  // Phones get fewer pixels and particles; both are hard to see at that size.
+  const small = window.innerWidth < 640;
+  const pixelRatio = Math.min(window.devicePixelRatio, small ? 1.5 : 1.75);
   renderer.setPixelRatio(pixelRatio);
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;
   renderer.setClearColor(0x000000, 0);
 
@@ -593,18 +940,47 @@ export function mount(
     "display:block;width:100%;height:100%;opacity:0;transition:opacity 1.2s ease";
   host.appendChild(canvas);
 
-  const scene = new THREE.Scene();
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environment = environment;
+  const scene = new Scene();
+  let pmrem: PMREMGenerator | undefined;
 
-  const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 200);
-  const small = window.innerWidth < 640;
+  // Frees whatever has been built so far.
+  const release = () => {
+    scene.traverse((object) => {
+      const mesh = object as Mesh;
+      mesh.geometry?.dispose();
+      const materials = Array.isArray(mesh.material)
+        ? mesh.material
+        : [mesh.material];
+      materials.forEach((material) => material?.dispose());
+    });
+    scene.environment?.dispose();
+    pmrem?.dispose();
+    renderer.dispose();
+    canvas.remove();
+  };
+
+  await pause();
+  if (isCancelled()) return release;
+
+  if (NEEDS_ENVIRONMENT.includes(variant)) {
+    // A small environment is plenty for soft reflections, and far cheaper.
+    pmrem = new PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, {
+      size: 64,
+    }).texture;
+    await pause();
+    if (isCancelled()) return release;
+  }
+
+  const camera = new PerspectiveCamera(35, 1, 0.1, 200);
   const particles = risingParticles({
-    count: variant === "pillars" ? 500 : small ? 500 : 1100,
+    count: variant === "pillars" || variant === "globe" || small ? 500 : 1100,
   });
   particles.setPixelRatio(pixelRatio);
-  const world = WORLDS[variant](scene, camera, particles);
+  const world = WORLDS[variant](scene, camera, particles, pixelRatio);
+
+  await pause();
+  if (isCancelled()) return release;
 
   const resize = () => {
     const { clientWidth: width, clientHeight: height } = host;
@@ -615,12 +991,12 @@ export function mount(
     world.resize(width, height);
   };
 
-  const pointer = new THREE.Vector2();
-  const target = new THREE.Vector2();
+  const pointer = new Vector2();
+  const target = new Vector2();
   const onPointer = (event: PointerEvent) => {
     target.set(
       (event.clientX / window.innerWidth) * 2 - 1,
-      -((event.clientY / window.innerHeight) * 2 - 1),
+      -((event.clientY / window.innerHeight) * 2 - 1)
     );
   };
 
@@ -652,8 +1028,13 @@ export function mount(
     render(Math.min(tick(), 0.05));
   };
 
+  // Nothing renders until the shaders have compiled off the main thread
+  // (where the browser supports it), so the first frames don't stutter.
+  let ready = false;
+  let disposed = false;
+
   const start = () => {
-    if (frame || reduceMotion) return;
+    if (frame || reduceMotion || !ready) return;
     last = 0;
     loop();
   };
@@ -665,7 +1046,7 @@ export function mount(
 
   const resizeObserver = new ResizeObserver(() => {
     resize();
-    if (reduceMotion || !visible) render(0);
+    if (ready && (reduceMotion || !visible)) render(0);
   });
   resizeObserver.observe(host);
 
@@ -677,26 +1058,26 @@ export function mount(
   visibility.observe(host);
 
   resize();
-  if (reduceMotion)
-    render(10); // A still frame with the pillars grown.
-  else window.addEventListener("pointermove", onPointer, { passive: true });
+  renderer
+    .compileAsync(scene, camera)
+    .catch(() => {})
+    .then(() => {
+      if (disposed) return;
+      ready = true;
+      if (reduceMotion)
+        render(10); // A still frame with the pillars grown.
+      else if (visible) start();
+    });
+  if (!reduceMotion) {
+    window.addEventListener("pointermove", onPointer, { passive: true });
+  }
 
   return () => {
+    disposed = true;
     stop();
     resizeObserver.disconnect();
     visibility.disconnect();
     window.removeEventListener("pointermove", onPointer);
-    scene.traverse((object) => {
-      const mesh = object as THREE.Mesh;
-      mesh.geometry?.dispose();
-      const materials = Array.isArray(mesh.material)
-        ? mesh.material
-        : [mesh.material];
-      materials.forEach((material) => material?.dispose());
-    });
-    environment.dispose();
-    pmrem.dispose();
-    renderer.dispose();
-    canvas.remove();
+    release();
   };
 }

@@ -36,12 +36,14 @@ export default async function AboutPage() {
           breadcrumb: [{ name: "Studio", path: "/about" }],
         })}
       />
+      <PageHeader
+        eyebrow={about.eyebrow}
+        title={about.title}
+        description={about.intro}
+        scene="hero"
+      />
+
       <Container>
-        <PageHeader
-          eyebrow={about.eyebrow}
-          title={about.title}
-          description={about.intro}
-        />
 
         <div className="pb-12">
           {about.whoParagraphs.length > 0 && (

@@ -39,7 +39,7 @@ export default async function ContactPage() {
   };
 
   return (
-    <Container className="pb-24 sm:pb-32">
+    <>
       <JsonLd
         data={webPageJsonLd({
           type: "ContactPage",
@@ -53,41 +53,46 @@ export default async function ContactPage() {
         eyebrow={contact.eyebrow}
         title={contact.title}
         description={contact.intro}
+        scene="globe"
       />
 
-      <div className="grid gap-16 pt-16 sm:pt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-24">
-        <dl className="animate-fade-up space-y-8 text-sm [animation-delay:200ms]">
-          <div>
-            <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
-              Email
-            </dt>
-            <dd className="mt-3">
-              <a
-                href={`mailto:${site.contactEmail}`}
-                className="font-display border-b border-line-strong pb-0.5 text-2xl hover:border-ink"
-              >
-                {site.contactEmail}
-              </a>
-            </dd>
-          </div>
-          {site.location && (
+      <Container className="pb-24 sm:pb-32">
+        <div className="grid gap-16 pt-16 sm:pt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-24">
+          <dl className="animate-fade-up space-y-8 text-sm [animation-delay:200ms]">
             <div>
               <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
-                Studio
+                Email
               </dt>
-              <dd className="font-display mt-3 text-2xl">{site.location}</dd>
+              <dd className="mt-3">
+                <a
+                  href={`mailto:${site.contactEmail}`}
+                  className="font-display border-b border-line-strong pb-0.5 text-2xl hover:border-ink"
+                >
+                  {site.contactEmail}
+                </a>
+              </dd>
             </div>
-          )}
-        </dl>
+            {site.location && (
+              <div>
+                <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
+                  Studio
+                </dt>
+                <dd className="font-display mt-3 text-2xl">{site.location}</dd>
+              </div>
+            )}
+          </dl>
 
-        <div className="animate-fade-up [animation-delay:150ms]">
-          {/* The page stays static; the URL-aware form takes over in the
+          <div className="animate-fade-up [animation-delay:150ms]">
+            {/* The page stays static; the URL-aware form takes over in the
               browser, with the plain form in the prerendered HTML. */}
-          <Suspense fallback={<ContactForm text={formText} groups={groups} />}>
-            <ContactFormFromUrl text={formText} groups={groups} />
-          </Suspense>
+            <Suspense
+              fallback={<ContactForm text={formText} groups={groups} />}
+            >
+              <ContactFormFromUrl text={formText} groups={groups} />
+            </Suspense>
+          </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </>
   );
 }

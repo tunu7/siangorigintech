@@ -52,7 +52,11 @@ export default async function Hero() {
             </p>
 
             <div className="mt-10 flex animate-fade-up flex-wrap items-center gap-3 [animation-delay:220ms]">
-              <ButtonLink href={contactHref({ from: "/" })} variant="lime" arrow>
+              <ButtonLink
+                href={contactHref({ from: "/" })}
+                variant="lime"
+                arrow
+              >
                 {home.heroPrimaryCta}
               </ButtonLink>
               <ButtonLink href="/services" variant="outline">
